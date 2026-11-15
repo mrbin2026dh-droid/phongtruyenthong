@@ -1,0 +1,16 @@
+.virtual-host{color:#25454e;font-family:"Noto Sans",sans-serif}
+.host-card{position:relative;display:grid;grid-template-columns:72px minmax(0,1fr);gap:0 14px;align-items:center;padding:16px;border:1px solid #d4c9b4;border-radius:20px;background:linear-gradient(130deg,#fffdf6,#ece6d9);box-shadow:0 3px 13px #263c4010;text-align:left}
+.host-portrait{position:relative;width:72px;height:72px;overflow:hidden;border-radius:50%;background:radial-gradient(circle at 45% 30%,#527981,#193f50);border:2px solid #d1b46d;box-shadow:0 0 0 4px #c5aa6a18;isolation:isolate}
+.host-portrait img{position:absolute;display:block;max-width:none;width:165%;height:220%;left:-35%;top:0;object-fit:cover;object-position:center top}
+.host-portrait>span{display:grid;place-items:center;height:100%;color:#f2d799;font-size:14px}
+.host-content{min-width:0;padding:0}.host-label{font-size:9px;letter-spacing:.13em;color:#8e703b}.host-invite{font:600 12px/1.6 "Noto Serif",serif;margin:4px 0 6px;color:#25454e}
+.host-card .host-audio{display:inline-flex;align-items:center;gap:7px;min-height:44px;font-size:11px;padding:6px 12px;border-radius:24px;border:1px solid #b79b60;background:#254b56;color:#fff1d2}.host-audio span{font-size:19px}
+.host-card .host-close{position:absolute;right:5px;top:5px;width:36px;min-height:36px;padding:0;border:0;border-radius:50%;background:#fff9efa8;color:#29454e;font-size:23px}
+.host-caption{grid-column:1/-1;border-top:1px solid #cfb77d55;margin-top:12px;padding-top:10px}.host-caption-label{font-size:9px;letter-spacing:.06em;color:#8d713c}.host-caption p{max-height:130px;overflow:auto;margin:5px 0 0;font-size:12px;line-height:1.75}
+.virtual-host-welcome{margin-top:16px}.virtual-host-welcome .host-card{width:100%;box-sizing:border-box}
+.virtual-host-floating{position:absolute;right:14px;top:65px;z-index:26;max-width:calc(100% - 28px)}
+.host-launch{display:flex;align-items:center;gap:7px;min-height:44px;padding:3px 10px 3px 3px;border:1px solid #c8af7c80;border-radius:25px;background:#fff9eff0;color:#244953;font-size:10px;box-shadow:0 3px 10px #12303b18}
+.host-launch img{width:34px;height:34px;object-fit:cover;object-position:50% 15%;border-radius:50%;background:#254b56}
+.virtual-host-floating .host-card{width:280px;max-width:100%;box-sizing:border-box;grid-template-columns:64px minmax(0,1fr);padding:18px 14px;backdrop-filter:blur(8px)}.virtual-host-floating .host-portrait{width:64px;height:64px}.virtual-host-floating .host-content{padding-top:15px}
+.virtual-host-floating .host-card:focus-visible{outline:2px solid #bd9954;outline-offset:2px}.host-launch:focus-visible,.host-audio:focus-visible,.host-close:focus-visible{outline:3px solid #bd9954;outline-offset:2px}
+@media(max-width:650px){.virtual-host-floating{top:62px;right:10px;max-width:calc(100% - 20px)}.virtual-host-floating .host-card{width:264px;grid-template-columns:56px minmax(0,1fr)}.virtual-host-floating .host-portrait{width:56px;height:56px}.host-caption p{max-height:90px;font-size:11px}.host-launch span{font-size:10px}.virtual-host-welcome .host-card{grid-template-columns:64px minmax(0,1fr);gap:12px;padding:14px}.virtual-host-welcome .host-portrait{width:64px;height:64px}}

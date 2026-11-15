@@ -1,0 +1,51 @@
+.welcome-host{max-width:none;margin:0;padding:0;background:#f3ecdf}
+.welcome-page{max-width:1600px;margin:0 auto;padding:22px 26px 14px}
+.welcome-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);align-items:stretch;background:#132e40;border:1px solid #b99a60;border-radius:18px;overflow:hidden;box-shadow:0 12px 32px #17303c16}
+.welcome-intro{min-width:0;padding:30px clamp(22px,2vw,34px);color:#f6ead0;display:flex;flex-direction:column;justify-content:center}
+.welcome-intro>*{width:100%;max-width:420px;margin-left:auto;margin-right:auto}
+.welcome-eyebrow{font:500 9px/1.6 "Noto Sans";letter-spacing:.16em;color:#d4b36f}
+.welcome-greeting{font:400 15px/1.5 "Noto Serif";margin:18px 0 8px;color:#eee4d2}
+.welcome-intro h1{font:700 clamp(21px,1.55vw,27px)/1.45 "Noto Serif";margin:0;color:#f0d18d;letter-spacing:-.025em;text-transform:uppercase}
+.welcome-intro h1 span{font-size:.92em;color:#f5dfaa}
+.welcome-lead{font:400 12px/1.85 "Noto Sans";color:#d6e0e1;max-width:410px;margin:17px 0}
+.welcome-ornament{display:flex;gap:12px;align-items:center;color:#c9a76a;margin:16px auto 20px;font-size:12px}
+.welcome-ornament span{height:1px;background:linear-gradient(90deg,transparent,#d2b67c);flex:1}.welcome-ornament span:last-child{transform:rotate(180deg)}
+.welcome-intro .welcome-start{display:flex;align-items:center;justify-content:center;gap:13px;min-height:50px;border:1px solid #f0d18d;border-radius:28px;background:linear-gradient(110deg,#f7df9f,#d0a249);box-shadow:inset 0 1px #fff8d6,0 4px 16px #0719273d;color:#183047;padding:12px 18px;font-size:14px;font-weight:700;width:100%;max-width:340px}
+.welcome-start svg{width:23px;height:23px;flex-shrink:0}.welcome-start svg:last-child{width:22px;margin-left:auto}.welcome-start span{flex:1}
+.welcome-start:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.welcome-tour-note{display:block;font-size:9px;line-height:1.7;margin-top:12px;color:#bfcbd0}
+.welcome-intro .welcome-greeting-action{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:8px 0;margin-top:8px;background:transparent;border:0;color:#e1c58d;font-size:11px}
+.welcome-greeting-action svg{width:20px;height:20px}.welcome-greeting-action:hover span{text-decoration:underline}
+.welcome-campus{align-self:stretch;position:relative;margin:0;min-width:0;min-height:440px;display:flex;background:#102838;border-left:1px solid #c7ab6d55}
+.welcome-campus img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 43%}
+.welcome-campus figcaption{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px 18px;font:400 11px/1.7 "Noto Sans";color:#d3dedc;text-align:center}
+.welcome-campus-mark{color:#d9b771;font-size:13px}
+.welcome-intro .welcome-start{max-width:420px;margin-left:auto;margin-right:auto}
+.welcome-intro h1{margin-left:auto;margin-right:auto}.welcome-intro .welcome-lead{margin-left:auto;margin-right:auto}
+.welcome-intro .welcome-greeting-action{justify-content:flex-start}
+.welcome-choices{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:-4px 0 0;padding:20px 0 0}
+.welcome-choice{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;background:linear-gradient(130deg,#fffdf6,#ece6d9);border:1px solid #d4c9b4;border-radius:20px;padding:22px 24px;box-shadow:0 3px 13px #263c4010}
+.welcome-open{border:2px solid #c2a05b;box-shadow:inset 0 0 0 4px #fff8df,0 6px 18px #8b6d2e17}
+.welcome-choice-head{display:flex;align-items:flex-start;gap:13px;position:relative;z-index:1}
+.welcome-choice-icon{width:40px;color:#173b58;flex-shrink:0;margin-top:6px}.welcome-choice-icon svg{width:40px;height:40px}
+.welcome-choice-number{font:600 9px "Noto Sans";letter-spacing:.12em;color:#9b793d}.welcome-choice h2{font:700 clamp(17px,1.5vw,21px)/1.45 "Noto Serif";color:#183b58;margin:7px 0 0}
+.welcome-choice>p{font:400 12px/1.75 "Noto Sans";color:#727568;max-width:280px;margin:14px 0 18px;position:relative;z-index:1}
+.welcome-choice>button{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;gap:18px;margin-top:auto;min-height:44px;padding:10px 18px;border-radius:22px;border:1px solid #b99853;background:#18384f;color:#f2d48e;font:600 12px "Noto Sans";min-width:190px}
+.welcome-choice button svg{width:20px;height:20px}.welcome-planned .welcome-choice-icon{color:#848981}.welcome-planned h2{color:#696d65}.welcome-planned>button{background:#e4e4db;border-color:#cecec2;color:#6c776e}
+.welcome-status{font:600 8px/1.4 "Noto Sans";letter-spacing:.07em;padding:4px 10px;border:1px solid #c8b18c;border-radius:5px;background:#e8dfce;color:#967748;margin:12px 0 -5px}
+.welcome-choice-motif{position:absolute;z-index:0;right:-23px;bottom:22px;color:#9c895928;transform:rotate(-9deg)}.welcome-choice-motif svg{width:155px;height:155px}
+.welcome-facts{display:grid;grid-template-columns:1fr 1fr 1fr;background:#fffaf0;border:1px solid #dfd4c1;border-radius:10px;margin-top:19px;padding:15px 22px}
+.welcome-facts>div,.welcome-facts>button{display:flex;align-items:center;gap:14px;padding:4px 24px;min-width:0;border:0;border-right:1px solid #e1d7c4;border-radius:0;background:transparent;color:#23435b;text-align:left;box-shadow:none}
+.welcome-facts>*:first-child{padding-left:0}.welcome-facts>*:last-child{border-right:0;padding-right:0}.welcome-facts svg{width:35px;height:35px;flex-shrink:0}.welcome-facts p{margin:0}.welcome-facts b,.welcome-facts span{display:block}.welcome-facts b{font:600 12px "Noto Sans"}.welcome-facts span{font:400 10px/1.6 "Noto Sans";color:#7d8175;margin-top:5px}.welcome-facts button>svg:last-child{width:23px;margin-left:auto}
+.welcome-sample-note{margin:12px 0 0;text-align:center;font:400 10px/1.6 "Noto Sans";color:#8a897d}
+.welcome-subtitle{padding:12px 16px;font:400 12px/1.7 "Noto Sans";color:#35525b;background:#fffaf0;border:1px solid #d8c9aa;border-radius:10px}
+.welcome-page button:focus-visible{outline:3px solid #c19a4b;outline-offset:4px}
+@media(max-width:1000px){.welcome-hero{grid-template-columns:minmax(300px,1fr) minmax(0,1.65fr)}.welcome-intro{padding:27px 25px}.welcome-intro h1{font-size:24px}.welcome-choice{padding:18px}.welcome-choice-icon{width:32px}.welcome-choice-icon svg{width:32px;height:32px}.welcome-choice-head{gap:10px}.welcome-facts{padding:14px}.welcome-facts>div,.welcome-facts>button{padding:4px 12px;gap:10px}}
+@media(max-width:700px){
+ .welcome-page{padding:12px 12px 15px}.welcome-hero{grid-template-columns:minmax(0,1fr);border-radius:14px}
+ .welcome-campus{grid-row:1;min-height:0;aspect-ratio:16/9;border:0}
+ .welcome-intro{grid-row:2;padding:25px 23px}.welcome-eyebrow{font-size:8px}.welcome-greeting{font-size:14px;margin-top:12px}.welcome-intro h1{font-size:25px}.welcome-lead{font-size:12px}.welcome-tour-note{font-size:8px}.welcome-intro .welcome-start{font-size:14px}
+ .welcome-choices{grid-template-columns:1fr;padding-top:14px;gap:12px}.welcome-choice{padding:20px 22px}.welcome-choice h2{font-size:20px}.welcome-choice-icon,.welcome-choice-icon svg{width:40px}.welcome-choice>p{max-width:85%;font-size:12px}.welcome-choice>button{min-width:210px}
+ .welcome-facts{grid-template-columns:1fr;gap:12px;padding:16px 20px}.welcome-facts>div,.welcome-facts>button{border-right:0;border-bottom:1px solid #e1d7c4;padding:0 0 12px;gap:15px}.welcome-facts>*:last-child{padding-bottom:0;border-bottom:0}.welcome-facts svg{width:30px;height:30px}.welcome-sample-note{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.welcome-start:hover{transform:none}}

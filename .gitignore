@@ -1,0 +1,22 @@
+# Không đưa lên GitHub
+node_modules/
+dist/
+# Ảnh người thật dùng thử, ảnh chụp kiểm tra, kết quả đo — chỉ trên máy quản trị
+local-preview/
+.env
+.env.*
+*.log
+# Chỉ mục của công cụ lập trình, không thuộc website
+.codegraph/
+.claude/
+
+# Old HTML prototype (kept on this machine only, not part of the public site)
+legacy.html
+app.js
+styles.css
+README-LEGACY.md
+assets/
+
+# Reports written by the global pre-commit auditor
+tests/f12_diagnostic_report.json
+tests/f12_error_log.js

@@ -1,0 +1,1465 @@
+{
+  "people": [
+    {
+      "id": "GV001",
+      "name": "Giáo viên mẫu 01",
+      "role": "Hiệu trưởng",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 1990,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV002",
+      "name": "Giáo viên mẫu 02",
+      "role": "Phó Hiệu trưởng",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 1990,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV003",
+      "name": "Giáo viên mẫu 03",
+      "role": "Phó Hiệu trưởng",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 1991,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV004",
+      "name": "Giáo viên mẫu 04",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 1991,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV005",
+      "name": "Giáo viên mẫu 05",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 1992,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV006",
+      "name": "Giáo viên mẫu 06",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 1992,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV007",
+      "name": "Giáo viên mẫu 07",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 1993,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV008",
+      "name": "Giáo viên mẫu 08",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 1993,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV009",
+      "name": "Giáo viên mẫu 09",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 1994,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV010",
+      "name": "Giáo viên mẫu 10",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 1994,
+      "endYear": null,
+      "periods": [
+        "TK01",
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV011",
+      "name": "Giáo viên mẫu 11",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 1995,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV012",
+      "name": "Giáo viên mẫu 12",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 1995,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV013",
+      "name": "Giáo viên mẫu 13",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 1996,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV014",
+      "name": "Giáo viên mẫu 14",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 1996,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV015",
+      "name": "Giáo viên mẫu 15",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 1997,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV016",
+      "name": "Giáo viên mẫu 16",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 1997,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV017",
+      "name": "Giáo viên mẫu 17",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 1998,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV018",
+      "name": "Giáo viên mẫu 18",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 1998,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV019",
+      "name": "Giáo viên mẫu 19",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 1999,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV020",
+      "name": "Giáo viên mẫu 20",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 1999,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV021",
+      "name": "Giáo viên mẫu 21",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2000,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV022",
+      "name": "Giáo viên mẫu 22",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2000,
+      "endYear": null,
+      "periods": [
+        "TK02",
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV023",
+      "name": "Giáo viên mẫu 23",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2001,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV024",
+      "name": "Giáo viên mẫu 24",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2001,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV025",
+      "name": "Giáo viên mẫu 25",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2002,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV026",
+      "name": "Giáo viên mẫu 26",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2002,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV027",
+      "name": "Giáo viên mẫu 27",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2003,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV028",
+      "name": "Giáo viên mẫu 28",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2003,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV029",
+      "name": "Giáo viên mẫu 29",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2004,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV030",
+      "name": "Giáo viên mẫu 30",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2004,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV031",
+      "name": "Giáo viên mẫu 31",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2005,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV032",
+      "name": "Giáo viên mẫu 32",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2005,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV033",
+      "name": "Giáo viên mẫu 33",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2006,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV034",
+      "name": "Giáo viên mẫu 34",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2006,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV035",
+      "name": "Giáo viên mẫu 35",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2007,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV036",
+      "name": "Giáo viên mẫu 36",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2007,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV037",
+      "name": "Giáo viên mẫu 37",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2008,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV038",
+      "name": "Giáo viên mẫu 38",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2008,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV039",
+      "name": "Giáo viên mẫu 39",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2009,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV040",
+      "name": "Giáo viên mẫu 40",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2009,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV041",
+      "name": "Giáo viên mẫu 41",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2010,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV042",
+      "name": "Giáo viên mẫu 42",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2010,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV043",
+      "name": "Giáo viên mẫu 43",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2011,
+      "endYear": null,
+      "periods": [
+        "TK03",
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV044",
+      "name": "Giáo viên mẫu 44",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2011,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV045",
+      "name": "Giáo viên mẫu 45",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2012,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV046",
+      "name": "Giáo viên mẫu 46",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2012,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV047",
+      "name": "Giáo viên mẫu 47",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2013,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV048",
+      "name": "Giáo viên mẫu 48",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2013,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV049",
+      "name": "Giáo viên mẫu 49",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2014,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV050",
+      "name": "Giáo viên mẫu 50",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2014,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV051",
+      "name": "Giáo viên mẫu 51",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2015,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV052",
+      "name": "Giáo viên mẫu 52",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2015,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV053",
+      "name": "Giáo viên mẫu 53",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2016,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV054",
+      "name": "Giáo viên mẫu 54",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2016,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV055",
+      "name": "Giáo viên mẫu 55",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2017,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV056",
+      "name": "Giáo viên mẫu 56",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2017,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV057",
+      "name": "Giáo viên mẫu 57",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2018,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV058",
+      "name": "Giáo viên mẫu 58",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2018,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV059",
+      "name": "Giáo viên mẫu 59",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2019,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV060",
+      "name": "Giáo viên mẫu 60",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2019,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV061",
+      "name": "Giáo viên mẫu 61",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV062",
+      "name": "Giáo viên mẫu 62",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV063",
+      "name": "Giáo viên mẫu 63",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV064",
+      "name": "Giáo viên mẫu 64",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV065",
+      "name": "Giáo viên mẫu 65",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV066",
+      "name": "Giáo viên mẫu 66",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV067",
+      "name": "Giáo viên mẫu 67",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV068",
+      "name": "Giáo viên mẫu 68",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV069",
+      "name": "Giáo viên mẫu 69",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV070",
+      "name": "Giáo viên mẫu 70",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV071",
+      "name": "Giáo viên mẫu 71",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV072",
+      "name": "Giáo viên mẫu 72",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV073",
+      "name": "Giáo viên mẫu 73",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV074",
+      "name": "Giáo viên mẫu 74",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV075",
+      "name": "Giáo viên mẫu 75",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV076",
+      "name": "Giáo viên mẫu 76",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV077",
+      "name": "Giáo viên mẫu 77",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV078",
+      "name": "Giáo viên mẫu 78",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV079",
+      "name": "Giáo viên mẫu 79",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV080",
+      "name": "Giáo viên mẫu 80",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV081",
+      "name": "Giáo viên mẫu 81",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV082",
+      "name": "Giáo viên mẫu 82",
+      "role": "Giáo viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV083",
+      "name": "Giáo viên mẫu 83",
+      "role": "Giáo viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV084",
+      "name": "Giáo viên mẫu 84",
+      "role": "Giáo viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV085",
+      "name": "Giáo viên mẫu 85",
+      "role": "Giáo viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV086",
+      "name": "Giáo viên mẫu 86",
+      "role": "Giáo viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV087",
+      "name": "Giáo viên mẫu 87",
+      "role": "Giáo viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV088",
+      "name": "Giáo viên mẫu 88",
+      "role": "Nhân viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV089",
+      "name": "Giáo viên mẫu 89",
+      "role": "Nhân viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV090",
+      "name": "Giáo viên mẫu 90",
+      "role": "Nhân viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV091",
+      "name": "Giáo viên mẫu 91",
+      "role": "Nhân viên",
+      "dept": "Toán – Tin",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV092",
+      "name": "Giáo viên mẫu 92",
+      "role": "Nhân viên",
+      "dept": "Ngữ văn",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV093",
+      "name": "Giáo viên mẫu 93",
+      "role": "Nhân viên",
+      "dept": "Ngoại ngữ",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV094",
+      "name": "Giáo viên mẫu 94",
+      "role": "Nhân viên",
+      "dept": "Khoa học tự nhiên",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV095",
+      "name": "Giáo viên mẫu 95",
+      "role": "Nhân viên",
+      "dept": "Khoa học xã hội",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    },
+    {
+      "id": "GV096",
+      "name": "Giáo viên mẫu 96",
+      "role": "Nhân viên",
+      "dept": "Văn phòng",
+      "status": "Đang công tác",
+      "startYear": 2020,
+      "endYear": null,
+      "periods": [
+        "TK04"
+      ],
+      "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+      "image": ""
+    }
+  ],
+  "periods": [
+    {
+      "id": "TK01",
+      "name": "Thời kỳ 1",
+      "years": "1990–2000",
+      "subtitle": "Đặt nền móng",
+      "principal": "Hiệu trưởng thời kỳ 1",
+      "desc": "Giai đoạn đầu hình thành và xây dựng nền tảng phát triển nhà trường."
+    },
+    {
+      "id": "TK02",
+      "name": "Thời kỳ 2",
+      "years": "2000–2010",
+      "subtitle": "Ổn định và phát triển",
+      "principal": "Hiệu trưởng thời kỳ 2",
+      "desc": "Giai đoạn củng cố đội ngũ, xây dựng truyền thống và phát triển hoạt động giáo dục."
+    },
+    {
+      "id": "TK03",
+      "name": "Thời kỳ 3",
+      "years": "2010–2020",
+      "subtitle": "Đổi mới và hội nhập",
+      "principal": "Hiệu trưởng thời kỳ 3",
+      "desc": "Giai đoạn nâng cao chất lượng giảng dạy, mở rộng hoạt động chuyên môn."
+    },
+    {
+      "id": "TK04",
+      "name": "Thời kỳ 4",
+      "years": "2020–nay",
+      "subtitle": "Vươn tầm và hiện đại hóa",
+      "principal": "Hiệu trưởng thời kỳ 4",
+      "desc": "Giai đoạn chuyển đổi số, gìn giữ truyền thống và phát triển nhà trường."
+    }
+  ],
+  "departments": [
+    "Toán – Tin",
+    "Ngữ văn",
+    "Ngoại ngữ",
+    "Khoa học tự nhiên",
+    "Khoa học xã hội",
+    "Văn phòng"
+  ]
+}

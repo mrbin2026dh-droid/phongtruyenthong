@@ -1,0 +1,1 @@
+export function isStaleModuleError(message){return /failed to fetch dynamically imported module|error loading dynamically imported module|importing a module script failed|loading chunk .+ failed/i.test(String(message));}

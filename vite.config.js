@@ -1,0 +1,92 @@
+import { defineConfig } from 'vite';
+import { cpSync, createReadStream,appendFileSync,mkdirSync,writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { execFile } from 'node:child_process';
+import { buildPublication, writePublication, existingPhotoFiles } from './scripts/publishData.mjs';
+
+// GĐ4 benchmark results may come from a phone on the same Wi-Fi (private address ranges only).
+function privateClient(addr=''){const a=String(addr).replace(/^::ffff:/,'');return a==='::1'||/^127\./.test(a)||/^10\./.test(a)||/^192\.168\./.test(a)||/^172\.(1[6-9]|2\d|3[01])\./.test(a);}
+
+// Cách 1 — admin “Xuất bản lên website” (dev server only, this computer only).
+// Writes public/data (catalog.json + photos), then commits and pushes ONLY that folder to GitHub.
+const ROOT=fileURLToPath(new URL('.',import.meta.url)).replace(/[\\/]$/,'');
+const loopback=addr=>['127.0.0.1','::1','::ffff:127.0.0.1'].includes(addr);
+function git(args){return new Promise(resolve=>execFile('git',args,{cwd:ROOT,timeout:120000,windowsHide:true},(err,stdout,stderr)=>resolve({ok:!err,out:String(stdout||'')+String(stderr||'')})));}
+async function pushPublication(){
+ if(!(await git(['rev-parse','--is-inside-work-tree'])).ok)return {state:'no-repo',message:'Đã lưu trên máy. Chưa kết nối GitHub (thư mục website chưa là kho Git) — xem HUONG-DAN-QUAN-TRI.md mục “Lần đầu”.'};
+ const add=await git(['add','--','public/data']);if(!add.ok)return {state:'error',message:'Không thêm được tệp vào Git: '+add.out.slice(0,300)};
+ const staged=await git(['diff','--cached','--quiet','--','public/data']);
+ if(staged.ok)return {state:'nothing',message:'Không có thay đổi mới để đưa lên GitHub.'};
+ const stamp=new Date().toLocaleString('vi-VN',{timeZone:'Asia/Bangkok'});
+ const commit=await git(['commit','-m','Cập nhật dữ liệu phòng truyền thống ('+stamp+')','--','public/data']);
+ if(!commit.ok)return {state:'error',message:'Không tạo được bản ghi Git: '+commit.out.slice(0,300)};
+ if(!(await git(['remote'])).out.trim())return {state:'no-remote',message:'Đã lưu và ghi vào Git trên máy, nhưng chưa có kho GitHub (remote) để đưa lên.'};
+ const push=await git(['push']);
+ return push.ok?{state:'pushed',message:'Đã đưa lên GitHub.'}:{state:'error',message:'Đã lưu trên máy nhưng chưa đưa lên GitHub được (kiểm tra mạng/đăng nhập GitHub): '+push.out.slice(0,300)};
+}
+function localAdmin(server){
+ server.middlewares.use((req,res,next)=>{
+  if(req.url?.split('?')[0]!=='/__local-admin/publish')return next();
+  const fail=(code,error)=>{res.statusCode=code;res.setHeader('Content-Type','application/json');res.end(JSON.stringify({error}));};
+  if(!loopback(req.socket.remoteAddress)||req.method!=='POST')return fail(403,'Chỉ xuất bản được từ chính máy quản trị.');
+  const origin=req.headers.origin;if(!origin||origin!=='http://'+req.headers.host)return fail(403,'Yêu cầu không hợp lệ.');
+  let body='';req.on('data',chunk=>{body+=chunk;if(body.length>200e6)req.destroy();});
+  req.on('end',async()=>{
+   try{
+    const input=JSON.parse(body);if(input.consent!==true)throw new Error('Cần xác nhận các thầy cô đã đồng ý công khai.');
+    const before=existingPhotoFiles(ROOT),publication=buildPublication(input.people||[],before);
+    writePublication(ROOT,publication);
+    const gitResult=await pushPublication();
+    res.setHeader('Content-Type','application/json');
+    res.end(JSON.stringify({written:publication.catalog.people.length,photos:publication.files.size,removedPhotos:publication.removed.length,git:gitResult,published:{people:publication.catalog.people}}));
+   }catch(err){fail(400,err instanceof Error?err.message:'Không xuất bản được.');}
+  });
+ });
+}
+
+// User-supplied photos stay outside public and the build; loopback preview only.
+function localPortrait(server){
+ server.middlewares.use((req,res,next)=>{
+  // Dev-only: save a ?bench=1 report (JSON ≤ 64 KB) to local-preview/bench/. Same-origin, private network only.
+  if(req.url?.split('?')[0]==='/__local-preview/bench'){
+   if(!privateClient(req.socket.remoteAddress)||req.method!=='POST'){res.statusCode=403;res.end();return;}
+   const origin=req.headers.origin;
+   if(origin&&origin!=='http://'+req.headers.host){res.statusCode=403;res.end();return;}
+   let body='';req.on('data',chunk=>{body+=chunk;if(body.length>65536)req.destroy();});
+   req.on('end',()=>{try{const data=JSON.parse(body);if(!data||typeof data!=='object'||!data.summary)throw 0;
+    const dir=fileURLToPath(new URL('./local-preview/bench/',import.meta.url));mkdirSync(dir,{recursive:true});
+    const name='bench-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';
+    writeFileSync(dir+name,JSON.stringify({...data,client:String(req.socket.remoteAddress||'')},null,1));res.statusCode=204;}catch{res.statusCode=400;}res.end();});return;
+  }
+  // Dev-only QA helper: save a canvas snapshot (JPEG data URL) to local-preview/snapshots/<name>.jpg.
+  // Loopback + same-origin only; used by AI sessions to inspect the scene at full resolution.
+  if(req.url?.split('?')[0]==='/__local-preview/snapshot'){
+   if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||req.method!=='POST'){res.statusCode=403;res.end();return;}
+   const origin=req.headers.origin;
+   if(origin&&origin!=='http://'+req.headers.host){res.statusCode=403;res.end();return;}
+   let body='';req.on('data',chunk=>{body+=chunk;if(body.length>12e6)req.destroy();});
+   req.on('end',()=>{try{const {name,data}=JSON.parse(body);const safe=String(name||'snapshot').replace(/[^a-z0-9_-]/gi,'').slice(0,60)||'snapshot';
+    const m=/^data:image\/jpeg;base64,(.+)$/.exec(String(data||''));if(!m)throw 0;
+    const dir=fileURLToPath(new URL('./local-preview/snapshots/',import.meta.url));mkdirSync(dir,{recursive:true});
+    writeFileSync(dir+safe+'.jpg',Buffer.from(m[1],'base64'));res.statusCode=204;}catch{res.statusCode=400;}res.end();});return;
+  }
+  if(req.url?.split('?')[0]==='/__local-preview/scene-error'){
+   if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||req.method!=='POST'){res.statusCode=403;res.end();return;}
+   const origin=req.headers.origin;
+   if(origin&&origin!=='http://'+req.headers.host){res.statusCode=403;res.end();return;}
+   let body='';req.on('data',chunk=>{body+=chunk;if(body.length>32768)req.destroy();});
+   req.on('end',()=>{try{const input=JSON.parse(body);const entry={time:String(input.time||'').slice(0,80),message:String(input.message||'').slice(0,4000),stack:String(input.stack||'').slice(0,12000),componentStack:String(input.componentStack||'').slice(0,12000)};mkdirSync(fileURLToPath(new URL('./local-preview',import.meta.url)),{recursive:true});appendFileSync(fileURLToPath(new URL('./local-preview/scene-errors.jsonl',import.meta.url)),JSON.stringify(entry)+'\n');res.statusCode=204;}catch{res.statusCode=400;}res.end();});return;
+  }
+  const files={'/__local-preview/portrait.jpg':'portrait.jpg','/__local-preview/school-campus.jpg':'school-campus.jpg'};
+  const file=files[req.url?.split('?')[0]];
+  if(!file)return next();
+  if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)){res.statusCode=403;res.end();return;}
+  if(!['GET','HEAD'].includes(req.method)){res.statusCode=405;res.end();return;}
+  const stream=createReadStream(fileURLToPath(new URL('./local-preview/'+file,import.meta.url)));
+  stream.on('error',()=>{if(!res.headersSent)res.statusCode=404;res.end();});
+  res.setHeader('Content-Type','image/jpeg');res.setHeader('Cache-Control','no-store');
+  res.setHeader('X-Content-Type-Options','nosniff');
+  if(req.method==='HEAD'){stream.destroy();res.end();}else stream.pipe(res);
+ });
+}
+export default defineConfig({base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});

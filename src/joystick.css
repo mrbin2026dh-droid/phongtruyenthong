@@ -1,0 +1,16 @@
+/* Two independent pointer-captured thumb controls, away from the central artwork. */
+.twin-sticks{position:absolute;inset:0;z-index:24;pointer-events:none}
+.thumbstick{position:absolute;bottom:20px;width:112px;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:auto}
+.thumbstick-move{left:max(20px,env(safe-area-inset-left))}.thumbstick-look{right:max(20px,env(safe-area-inset-right))}
+.thumbstick .thumbstick-base{position:relative;display:block;width:112px;height:112px;min-width:112px;min-height:112px;padding:0;border-radius:50%;border:1px solid #ffffff80;background:#edf2e522;box-shadow:inset 0 0 24px #304c5210,0 3px 15px #20353d0b;color:#3a646f;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;backdrop-filter:blur(3px);cursor:grab;outline-offset:5px}
+.thumbstick .thumbstick-base:active{cursor:grabbing}.thumbstick .thumbstick-base:focus-visible{outline:3px solid #d7b66a}
+.thumbstick-guide{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;fill:none;stroke:#406a7566;stroke-width:1.2}
+.thumbstick-guide circle{stroke-dasharray:2 6;stroke:#ffffffaa}
+.thumbstick-knob{position:absolute;left:calc(50% - 22px);top:calc(50% - 22px);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#f3f4e9c9;border:1px solid #ffffffb3;box-shadow:0 3px 10px #29495322;pointer-events:none;transition:background .15s}
+.thumbstick-knob svg{width:23px;height:23px;fill:none;stroke:#3d6972;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.thumbstick.is-active .thumbstick-knob{background:#e2c888ee;border-color:#f5dfad}.thumbstick.is-active .thumbstick-base{background:#edf2e539;border-color:#d6b875a3}
+.thumbstick-caption{color:#3f636e;font:500 10px/1.4 "Noto Sans";background:#f2f2e6a1;border:1px solid #ffffff5c;border-radius:12px;padding:3px 9px;pointer-events:none;letter-spacing:.02em}
+.visitor-dock button[aria-pressed=true]{background:#d5e3da;color:#244b56}
+@media(max-width:700px){.thumbstick{bottom:100px;width:98px}.thumbstick-move{left:max(14px,env(safe-area-inset-left))}.thumbstick-look{right:max(14px,env(safe-area-inset-right))}.thumbstick .thumbstick-base{width:98px;height:98px;min-width:98px;min-height:98px}.thumbstick-caption{font-size:9px;padding:2px 8px}.thumbstick-knob{left:calc(50% - 20px);top:calc(50% - 20px);width:40px;height:40px}}
+@media(max-height:500px) and (min-width:701px){.thumbstick{bottom:12px}.thumbstick-caption{display:none}.thumbstick .thumbstick-base{width:96px;height:96px;min-width:96px;min-height:96px}.thumbstick{width:96px}}
+@media(prefers-reduced-motion:reduce){.thumbstick-knob{transition:none}}
