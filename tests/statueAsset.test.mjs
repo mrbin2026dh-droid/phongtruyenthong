@@ -88,5 +88,5 @@ test('Baked shell (GĐ3) is the default (?scene=classic opts out), has a mobile 
  }
  assert.match(baked,/new MeshBasicMaterial\(\{map,toneMapped:false\}\)/);
  assert.match(hall,/function Architecture\(\{baked=false\}[^)]*\)\{if\(baked\)return <DoorMotto\/>;/);
- assert.match(hall,/<Frames slots=\{p\.layout\.slots\}\/>/);assert.match(hall,/<ChuVanAnStatue\/>/);
+ assert.match(hall,/<Frames slots=\{p\.layout\.slots\.filter\(isLeaderSlot\)\} material=\{brass\}\/>/);assert.match(hall,/<ChuVanAnStatue\/>/);
 });

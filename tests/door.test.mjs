@@ -117,7 +117,7 @@ test('Scene is revealed only after the room, statue and all portraits have loade
 test('Walking sticks are always offered inside the room; touching one switches to walking mode (image 3)',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const sticks=readFileSync(new URL('../src/scene/TwinSticks.tsx',import.meta.url),'utf8');
- assert.ok(tour.includes('{ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&<TwinSticks input={input} onEngage={enterManual}/>}'));
+ assert.ok(tour.includes('{ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}'),'also hidden during a portrait close-up (16/11)');
  assert.ok(!tour.includes('{manual&&!moving&&!p.paused&&!panel&&<TwinSticks'),'no longer hidden behind the Tự bước button');
  assert.ok(sticks.includes('onEngage?.();'));
 });

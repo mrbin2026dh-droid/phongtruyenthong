@@ -28,6 +28,13 @@ type Props={layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;pause
 const cube=new BoxGeometry(1,1,1);
 // Portrait frames (15/11): satin brass, less mirror-like, so every frame reads the same tone from any angle.
 const brass=new MeshStandardMaterial({color:'#c4a062',metalness:.35,roughness:.48});
+// 16/11 (user: teacher frames vanished into the oak slats — measured contrast ≈1.4:1): teacher and staff frames are dark
+// walnut (≈4:1 against the oak) with a thin gold lip along the opening; Ban Giám hiệu keeps brass on its dark panel.
+export const FRAME_COLORS={walnut:'#2a1f18',lip:'#d9b468'};
+const walnut=new MeshStandardMaterial({color:FRAME_COLORS.walnut,metalness:.08,roughness:.55});
+const goldLip=new MeshStandardMaterial({color:FRAME_COLORS.lip,metalness:.55,roughness:.32});
+export const FRAME_LIP=.006,FRAME_LIP_INSET=.001,FRAME_LIP_DEPTH=.003;
+export const isLeaderSlot=(s:{group:string})=>s.group==='principal'||s.group==='deputy';
 const woodGrain=(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const data=ctx.createImageData(256,256);for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=185+18*Math.sin(x*.19+Math.sin(y*.016)*2)+7*Math.sin(x*.91+y*.018);const i=(y*256+x)*4;data.data[i]=data.data[i+1]=data.data[i+2]=n;data.data[i+3]=255;}ctx.putImageData(data,0,0);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
 
 const WOOD=['#493328','#69513b','#5e3e2c','#80633d','#4f362a','#644631','#563b2c'];
@@ -128,17 +135,28 @@ function Architecture({baked=false}:{baked?:boolean}){if(baked)return <DoorMotto
  </group>;
 }
 
-function Frames({slots}:{slots:any[]}){
- const ref=useRef<InstancedMesh>(null);
- useLayoutEffect(()=>{if(!ref.current)return;const m=new Matrix4(),local=new Matrix4(),base=new Matrix4();let n=0;
+function Frames({slots,material,lip=false}:{slots:any[];material:MeshStandardMaterial;lip?:boolean}){
+ const ref=useRef<InstancedMesh>(null),lipRef=useRef<InstancedMesh>(null);
+ useLayoutEffect(()=>{if(!ref.current)return;const m=new Matrix4(),local=new Matrix4(),base=new Matrix4();let n=0,k=0;
  for(const s of slots){base.makeRotationY(s.yaw);base.setPosition(s.x,s.y,s.z);
   const fw=s.width||.55,fh=s.height||.735;
   const b=FRAME_BAR;for(const [x,y,w,h] of [[-(fw-b)/2,0,b,fh],[(fw-b)/2,0,b,fh],[0,(fh-b)/2,fw,b],[0,-(fh-b)/2,fw,b]]){
    // 2.2 cm deep bars standing on the wall (z 0…0.022); the photo sits inside them, like a real frame.
    local.makeScale(w,h,.022);local.setPosition(x,y,.011);m.multiplyMatrices(base,local);ref.current.setMatrixAt(n++,m);
   }
- }ref.current.instanceMatrix.needsUpdate=true;ref.current.computeBoundingSphere();},[slots]);
- return <instancedMesh ref={ref} args={[cube,brass,slots.length*4]} frustumCulled={false}/>;
+  if(lip&&lipRef.current){
+   // gold line on the inner edge of the bars, framing the photo. 16/11 (user: edges flickered): the first version shared
+   // its inner side faces with the bars' (same plane, z 0….022) → z-fighting when seen at an angle. Now the lip is only
+   // a thin strip ON the bars' front (z .022….025) and reaches 1 mm into the opening, so no face is ever coplanar.
+   const L=FRAME_LIP,I=FRAME_LIP_INSET,iw=fw-2*b-2*I,ih=fh-2*b-2*I,z0=.0225,dz=FRAME_LIP_DEPTH;
+   for(const [x,y,w,h] of [[-(iw+L)/2,0,L,ih+2*L],[(iw+L)/2,0,L,ih+2*L],[0,(ih+L)/2,iw,L],[0,-(ih+L)/2,iw,L]]){
+    local.makeScale(w,h,dz);local.setPosition(x,y,z0+dz/2);m.multiplyMatrices(base,local);lipRef.current.setMatrixAt(k++,m);
+   }
+  }
+ }ref.current.instanceMatrix.needsUpdate=true;ref.current.computeBoundingSphere();
+ if(lipRef.current){lipRef.current.instanceMatrix.needsUpdate=true;lipRef.current.computeBoundingSphere();}},[slots,lip]);
+ return <><instancedMesh ref={ref} args={[cube,material,Math.max(1,slots.length*4)]} count={slots.length*4} frustumCulled={false}/>
+  {lip&&<instancedMesh ref={lipRef} args={[cube,goldLip,Math.max(1,slots.length*4)]} count={slots.length*4} frustumCulled={false}/>}</>;
 }
 
 /** 16/11 (user: “ảnh và khung chưa khít”, measured on real photos): the photo used to be 2–7 mm SMALLER than
@@ -251,7 +269,7 @@ export default function HallScene(p:Props){
   <pointLight position={[0,3.6,-6.3]} intensity={16} distance={9} color="#ffe8bc" decay={2}/>
   <pointLight position={[-8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/><pointLight position={[8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/>
 
-  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><Frames slots={p.layout.slots}/><ZoneNames layout={p.layout}/>
+  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><Frames slots={p.layout.slots.filter(isLeaderSlot)} material={brass}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/>
   {p.layout.slots.map((slot:any)=><Photo key={slot.person.id} slot={slot} onSelect={id=>{if(!p.moving&&!p.paused)p.onSelect(id);}}/>)}
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}

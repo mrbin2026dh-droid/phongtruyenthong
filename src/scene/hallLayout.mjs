@@ -55,8 +55,35 @@ export function layoutHall(people,sort='service',page=0){
  return {slots,zones,stops:finalStops,signs,pages:1,page:0,total:people.length,displayed:slots.length,warnings,reserved:definitions.length-slots.length};
 }
 // A dedicated wide shot on portrait screens keeps all four principals visible.
-export function fitHallStops(stops,aspect){
- return stops.map(s=>s.id==='principal-0'&&aspect<1.1?{...s,eye:[0,1.7,-2.6]}:s);
+/** Phones held sideways (16/11, user: teacher photos too small): stand 1.9 m from the teacher/staff walls instead of
+ * 2.8 m — the closest distance at which both rows still fit the 62° vertical view — aimed at the middle of the rows. */
+export const PHONE_WALL_DISTANCE=1.9,ROWS_CENTER_Y=2.02,CLOSEUP_DISTANCE=1.1;
+export function fitHallStops(stops,aspect,phone=false){
+ return stops.map(s=>{
+  if(s.id==='principal-0'&&aspect<1.1)return {...s,eye:[0,1.7,-2.6]};
+  if(phone&&aspect>=1.1&&(s.group==='teacher'||s.group==='staff')&&Number.isFinite(s.yaw)){
+   const [tx,,tz]=s.target,eye=[tx+Math.sin(s.yaw)*PHONE_WALL_DISTANCE,1.7,tz+Math.cos(s.yaw)*PHONE_WALL_DISTANCE];
+   if(isWalkable(eye))return {...s,eye,target:[tx,ROWS_CENTER_Y,tz]};
+  }
+  return s;
+ });
+}
+/** Close-up of one portrait (phones): 1.1 m in front of it — the whole frame fits a short landscape screen above the
+ * close-up bar — eye at the photo's height, aimed 5 cm low so the photo sits in the free upper part (kept walkable). */
+export function closeupStop(slot,title){
+ const y=Math.min(2.3,Math.max(1.4,slot.y));
+ for(const d of [CLOSEUP_DISTANCE,1.3,1.5]){
+  const eye=[slot.x+Math.sin(slot.yaw)*d,y,slot.z+Math.cos(slot.yaw)*d];
+  if(isWalkable(eye))return {id:'closeup:'+slot.slotId,title,group:'closeup',slotId:slot.slotId,eye,target:[slot.x,slot.y-.05,slot.z],dwell:0};
+ }
+ return null;
+}
+/** Reading order for “Trước / Sau” in a close-up: same zone, wall by wall, column by column, top row first. */
+export function closeupOrder(slots,group){
+ const wallOrder={right:0,back:1,left:2,front:3};
+ const along=s=>s.wall==='right'?-s.z:s.wall==='back'?-s.x:s.wall==='left'?s.z:s.x;
+ return slots.filter(s=>s.group===group||(group!=='teacher'&&group!=='staff'&&(s.group==='principal'||s.group==='deputy')))
+  .sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||along(a)-along(b)||b.y-a.y);
 }
 export function isWalkable([x,y,z]){
  if(!Number.isFinite(x+y+z)||y<1.3||y>2.4)return false;
