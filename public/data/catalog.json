@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "publishedAt": "2026-11-15T15:17:53.961Z",
+ "publishedAt": "2026-11-15T16:11:52.922Z",
  "people": [
   {
    "id": "GV002",
@@ -395,15 +395,15 @@
   },
   {
    "id": "GV009",
-   "name": "Giáo viên mẫu 09",
+   "name": "Thầy: Mai Kế Phụng",
    "role": "Giáo viên",
-   "dept": "Ngoại ngữ",
+   "dept": "KHTN",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV009-f010947fcf.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-006",
    "workHistory": [
     {
@@ -418,14 +418,14 @@
   },
   {
    "id": "GV010",
-   "name": "Giáo viên mẫu 10",
+   "name": "Thầy Nguyễn Ngọc Tuân",
    "role": "Giáo viên",
-   "dept": "Khoa học tự nhiên",
+   "dept": "Văn Thể Mỹ",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV010-117851ae70.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-007",
    "workHistory": [
@@ -441,15 +441,15 @@
   },
   {
    "id": "GV011",
-   "name": "Giáo viên mẫu 11",
+   "name": "Thầy Nguyễn Mạnh Toản",
    "role": "Giáo viên",
-   "dept": "Khoa học xã hội",
+   "dept": "Thể dục",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV011-2105df04c4.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-008",
    "workHistory": [
     {
@@ -1844,14 +1844,14 @@
   },
   {
    "id": "GV072",
-   "name": "Giáo viên mẫu 72",
+   "name": "Cô Ngô Thị Thuận",
    "role": "Giáo viên",
-   "dept": "Văn phòng",
+   "dept": "Toán - Tin",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV072-4173fd0e58.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-069",
    "workHistory": [
@@ -1867,15 +1867,15 @@
   },
   {
    "id": "GV073",
-   "name": "Giáo viên mẫu 73",
+   "name": "Nguyễn Thị Hải Quyên",
    "role": "Giáo viên",
-   "dept": "Toán – Tin",
+   "dept": "Ngữ Văn",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV073-ba1e0db096.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-070",
    "workHistory": [
     {
@@ -1890,14 +1890,14 @@
   },
   {
    "id": "GV074",
-   "name": "Giáo viên mẫu 74",
+   "name": "Cô Nguyễn Thị Ái Thùy",
    "role": "Giáo viên",
    "dept": "Ngữ văn",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV074-b2fe504e4c.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-071",
    "workHistory": [
@@ -1913,15 +1913,15 @@
   },
   {
    "id": "GV075",
-   "name": "Giáo viên mẫu 75",
+   "name": "Cô Nguyễn Thị Hoa",
    "role": "Giáo viên",
-   "dept": "Ngoại ngữ",
+   "dept": "Ngữ Văn",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV075-4381765e18.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-072",
    "workHistory": [
     {
@@ -1936,14 +1936,14 @@
   },
   {
    "id": "GV076",
-   "name": "Giáo viên mẫu 76",
+   "name": "Nguyễn Thị Hồng Dược",
    "role": "Giáo viên",
    "dept": "Khoa học tự nhiên",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV076-46469c37b1.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-073",
    "workHistory": [
@@ -1959,15 +1959,15 @@
   },
   {
    "id": "GV077",
-   "name": "Giáo viên mẫu 77",
+   "name": "Cô Nguyễn Thị Oanh",
    "role": "Giáo viên",
-   "dept": "Khoa học xã hội",
+   "dept": "Mỹ Thuật",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV077-6baa0fefd4.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-074",
    "workHistory": [
     {
@@ -1982,14 +1982,14 @@
   },
   {
    "id": "GV078",
-   "name": "Giáo viên mẫu 78",
+   "name": "Nguyễn Thị Loan",
    "role": "Giáo viên",
-   "dept": "Văn phòng",
+   "dept": "Mỹ Thuật",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV078-b1094c1ba0.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-075",
    "workHistory": [
@@ -2005,22 +2005,22 @@
   },
   {
    "id": "GV079",
-   "name": "Giáo viên mẫu 79",
-   "role": "Giáo viên",
-   "dept": "Toán – Tin",
+   "name": "Nguyễn Thị Lợi",
+   "role": "Tổ trưởng",
+   "dept": "KHTN",
    "group": "teacher",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV079-085c1478b4.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-076",
    "workHistory": [
     {
      "id": "GV079-work-1",
      "startYear": 2020,
      "endYear": null,
-     "role": "Giáo viên"
+     "role": "Tổ trưởng"
     }
    ],
    "startYear": 2020,
@@ -2211,6 +2211,29 @@
    "endYear": null
   },
   {
+   "id": "GV117",
+   "name": "Nguyễn Thị Mến Thương",
+   "role": "Giáo viên",
+   "dept": "Sử - Địa",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV117-8b32f4e140.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-091",
+   "workHistory": [
+    {
+     "id": "52725a18-99c8-4e36-b1c0-520cce0a53ca",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
    "id": "GV099",
    "name": "Nguyễn Thị Thanh Thúy",
    "role": "Tổ trưởng",
@@ -2363,6 +2386,121 @@
    "workHistory": [
     {
      "id": "53a23882-4134-439a-b605-8a39544bc5ec",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV112",
+   "name": "Nguyễn Thị Hồng Thắm",
+   "role": "Giáo viên",
+   "dept": "Sử - Địa",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV112-0dbac9947e.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-100",
+   "workHistory": [
+    {
+     "id": "3e004460-6364-4a9b-a5c5-bb858b49369d",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV113",
+   "name": "Huỳnh Thị Trang",
+   "role": "Giáo viên",
+   "dept": "Sử - Địa",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV113-43b639839e.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-101",
+   "workHistory": [
+    {
+     "id": "a8d74a4b-4652-4c42-b05e-762c9393194f",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV114",
+   "name": "Lê Thị Hiền Lương",
+   "role": "Giáo viên",
+   "dept": "Văn - Sử",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV114-d25680762c.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-102",
+   "workHistory": [
+    {
+     "id": "c0c2199c-ecf9-48e6-b897-955608299b20",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV115",
+   "name": "Lê Thị Thu Trang",
+   "role": "Giáo viên",
+   "dept": "Toán - Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV115-2a46acc0f7.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-103",
+   "workHistory": [
+    {
+     "id": "f9d8456e-1510-4c67-9c30-0adedc167eca",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV116",
+   "name": "Lưu Thị Mai Hương",
+   "role": "Giáo viên",
+   "dept": "Toán - Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV116-dd16c97ac9.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-104",
+   "workHistory": [
+    {
+     "id": "c1532b75-3c7f-4888-97c9-ca1e2cf390b4",
      "startYear": 2026,
      "endYear": null,
      "role": "Giáo viên"
