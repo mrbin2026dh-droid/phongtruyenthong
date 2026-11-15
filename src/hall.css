@@ -25,3 +25,11 @@
 .hall-you-dot{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:#c8953d;border:2px solid #fffaf0;box-shadow:0 0 0 3px #c8953d55}
 .hall-you-cone{position:absolute;left:0;top:-14px;width:34px;height:28px;transform-origin:0 50%;transform:rotate(var(--heading,0rad));background:linear-gradient(90deg,#c8953d99,#c8953d00);clip-path:polygon(0 50%,100% 0,100% 100%)}
 .hall-you-label{position:absolute;left:10px;top:-26px;white-space:nowrap;font:600 10px "Noto Sans";color:#5a4320;background:#fffaf0e6;border:1px solid #d1b77a;border-radius:8px;padding:1px 6px}
+
+/* 15/11: waiting at the closed entrance doors — the whole scene is the tap target. */
+.hall-door-prompt{position:absolute;inset:0;z-index:11;border:0;margin:0;padding:0 0 100px;background:transparent;cursor:pointer;display:flex;align-items:flex-end;justify-content:center}
+.hall-door-prompt span{padding:9px 20px;border-radius:999px;background:#0e2a32b8;color:#f8e9c6;font-size:14px;letter-spacing:.02em;border:1px solid #d9b56f88;box-shadow:0 4px 18px #0004;animation:door-hint 2.4s ease-in-out infinite}
+.hall-door-prompt:focus-visible span{outline:2px solid #f3d38c;outline-offset:3px}
+@keyframes door-hint{0%,100%{opacity:.72}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hall-door-prompt span{animation:none}}
+@media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-door-prompt{padding-bottom:66px}}

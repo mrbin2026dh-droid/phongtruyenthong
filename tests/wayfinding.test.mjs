@@ -29,7 +29,7 @@ test('Controls: keyboard works without clicking the scene, pinch zoom, home can 
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  assert.match(ctl,/window\.addEventListener\('keydown',keydown\)/);assert.ok(!/c\.addEventListener\('keydown'/.test(ctl));
  assert.match(ctl,/keyTargetIgnored\(e\.target\)/);assert.match(ctl,/pinch\.current/);
- assert.match(tour,/icon\('Về cổng vào','home',\(\)=>go\('gate',true\),!ready\)/);
+ assert.ok(tour.includes("icon('Về cổng vào','home',()=>go('gate',true),!ready||atDoor)"));
  assert.match(tour,/s\.id===\(moving\?command\.to:current\)/);
  assert.match(tour,/<YouAreHere pose=\{pose\}\/>/);
 });

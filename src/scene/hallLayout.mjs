@@ -60,7 +60,7 @@ export function fitHallStops(stops,aspect){
 }
 export function isWalkable([x,y,z]){
  if(!Number.isFinite(x+y+z)||y<1.3||y>2.4)return false;
- if(z>7.45)return Math.abs(x)<1.8&&z<=10.5;
+ if(z>7.45)return Math.abs(x)<1.8&&z<=10.9;
  if(Math.abs(x)>11.5||Math.abs(z)>7.45)return false;
  if(Math.abs(x-MONUMENT.x)<MONUMENT.clearance&&Math.abs(z-MONUMENT.z)<MONUMENT.clearance)return false;
  if(x>3.35&&x<10.85&&z>6.65)return false; // cabinet cases and standing clearance

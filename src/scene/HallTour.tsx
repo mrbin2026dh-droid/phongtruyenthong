@@ -23,6 +23,7 @@ import {QUALITY_CHOICES,QUALITY_LEVELS,initialLevel,benchRoute,benchSummary} fro
 import {bakedEnabled,bakedVariant} from './BakedHall';
 import type {DoorState} from './EntranceDoors';
 import {entryDelayMs} from './doorMotion.mjs';
+const DOOR_KEY='museum-door-opened';
 import {statsEnabled} from './SceneStats';
 
 const QUALITY_KEY='hall-quality-choice';
@@ -101,6 +102,9 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  // Entrance doors: closed on arrival, open once per page load (instantly for reduced motion / bench).
  const autoPaused=useRef(false);
  const door=useRef<DoorState>({target:0,value:0}),[doorOpening,setDoorOpening]=useState(false);
+ // 15/11: the visitor waits at the closed door and taps to open it (first visit in this tab session).
+ const [atDoor,setAtDoor]=useState(false),walkTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ useEffect(()=>()=>clearTimeout(walkTimer.current),[]);
  // QA hook (only with ?stats=1 / ?bench=1): lets a tester replay the door animation.
  useEffect(()=>{if(!statsEnabled())return;(window as any).__door=door;return()=>{delete (window as any).__door;};},[]);
  const reducedMotion=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch{return false;}};
@@ -113,19 +117,27 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  useEffect(()=>{if(!sceneReady)return;let walk:ReturnType<typeof setTimeout>|undefined;
   const timer=setTimeout(()=>{
    setReady(true);
-   const wait=entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects});
-   if(!wait){door.current={target:1,value:1};setCommand({serial:1,from:'arrival',to:'entrance',instant:benchOn});return;}
-   // Doors swing open first; the visitor walks in once they are wide enough.
-   door.current.target=1;setDoorOpening(true);window.dispatchEvent(new Event('museum-navigation-input'));
-   walk=setTimeout(()=>{setDoorOpening(false);setCommand({serial:1,from:'arrival',to:'entrance'});},wait);
+   let seen=false;try{seen=sessionStorage.getItem(DOOR_KEY)==='1';}catch{/* private mode */}
+   if(benchOn||seen)openDoor();else setAtDoor(true);
   },Math.max(0,700-(performance.now()-openedAt.current)));
-  return()=>{clearTimeout(timer);clearTimeout(walk);};},[sceneReady]);
+  return()=>clearTimeout(timer);},[sceneReady]);
+ function openDoor(){
+  setAtDoor(false);setArriving(true);setChooseMode(true);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
+  const wait=entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects});
+  if(!wait){door.current={target:1,value:1};setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance',instant:benchOn}));return;}
+  // Doors slide open first; the visitor glides in once the opening is wide enough.
+  door.current.target=1;setDoorOpening(true);window.dispatchEvent(new Event('museum-navigation-input'));
+  clearTimeout(walkTimer.current);
+  walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},wait);
+ }
+ // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
+ useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;setAutomatic(false);setAtDoor(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
  const skipEntry=()=>{door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
  const active=layout.stops.find((s:any)=>s.id===current);
  const remaining=useRef(presentationDwell(active));
  useEffect(()=>{remaining.current=presentationDwell(active);},[current]);
  useEffect(()=>{
-  if(!benchOn||benchResult||!ready||moving||arriving)return;
+  if(!benchOn||benchResult||!ready||moving||arriving||atDoor)return;
   const stops=benchRoute(layout.stops);
   if(benchStep.current<0){benchFrames.current=[];benchStep.current=0;}
   else if(current===stops[benchStep.current])benchStep.current++;
@@ -134,15 +146,15 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    setBenchResult({summary:benchSummary(frames),finishedAt:new Date().toISOString(),device:deviceInfo({qualityChoice,qualityLevel,sceneFile:bakedEnabled()?bakedVariant():'classic',stops:stops.length})});return;
   }
   const t=setTimeout(()=>go(stops[benchStep.current]),700);return()=>clearTimeout(t);
- },[benchOn,benchResult,ready,moving,arriving,current]);
+ },[benchOn,benchResult,ready,moving,arriving,atDoor,current]);
  useEffect(()=>{
-  if(!automatic||!ready||moving||pause||panel||hostOpen||p.paused||document.hidden)return;
+  if(!automatic||!ready||atDoor||moving||pause||panel||hostOpen||p.paused||document.hidden)return;
   const next=nextPresentationStop(layout.stops,current);
   if(!next){setAutomatic(false);setComplete(true);return;}
   const started=performance.now();
   const timer=setTimeout(()=>{remaining.current=0;setCommand(c=>({serial:c.serial+1,from:current,to:next.id}));},remaining.current);
   return()=>{clearTimeout(timer);remaining.current=Math.max(0,remaining.current-(performance.now()-started));};
- },[automatic,ready,moving,pause,panel,hostOpen,p.paused,current,layout]);
+ },[automatic,ready,atDoor,moving,pause,panel,hostOpen,p.paused,current,layout]);
  // Hidden tab → pause; visible again → resume ONLY if the system paused it (14/11 fix: the entry walk
  // used to stay stuck on "Đang tạm dừng" after the visitor switched tabs while the scene was loading).
  useEffect(()=>{const suspend=()=>{if(document.hidden){autoPaused.current=true;setPause(true);input.current=neutralInput();}else if(autoPaused.current){autoPaused.current=false;setPause(false);}};document.addEventListener('visibilitychange',suspend);window.addEventListener('blur',suspend);return()=>{document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);};},[]);
@@ -150,8 +162,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  useEffect(()=>{if(p.paused){setManual(false);input.current=neutralInput();}},[p.paused]);
 
  // force: "Về cổng vào" may interrupt a walk or the presentation.
- const go=(id:string,force=false)=>{if(!ready||(moving&&!force)||p.paused||!plan.nodes[id])return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);setCommand(c=>({serial:c.serial+1,from:current,to:id}));};
- function start(fromHere=false){setChooseMode(false);setComplete(false);setManual(false);setPause(false);setPanel(null);remaining.current=presentationDwell(active);setAutomatic(true);if((!fromHere&&current!=='entrance')||current==='finish')setCommand(c=>({serial:c.serial+1,from:current,to:'entrance'}));}
+ const go=(id:string,force=false)=>{if(!ready||atDoor||(moving&&!force)||p.paused||!plan.nodes[id])return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);setCommand(c=>({serial:c.serial+1,from:current,to:id}));};
+ function start(fromHere=false){if(atDoor){openDoor();return;}setChooseMode(false);setComplete(false);setManual(false);setPause(false);setPanel(null);remaining.current=presentationDwell(active);setAutomatic(true);if((!fromHere&&current!=='entrance')||current==='finish')setCommand(c=>({serial:c.serial+1,from:current,to:'entrance'}));}
  const toggle=(next:'map'|'more',e:React.MouseEvent<HTMLButtonElement>)=>{trigger.current=e.currentTarget;setManual(false);setPanel(v=>v===next?null:next);};
  function full(){if(document.fullscreenElement)void document.exitFullscreen();else void host.current?.requestFullscreen();}
  function audio(){if(p.speaking){p.onSilence();setVoice(false);}else{setVoice(true);p.onNarrate(hallNarration(active,{displayed:layout.displayed,mockCount:p.mockCount}));}}
@@ -162,7 +174,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   <div className="hall-version-bar">
    <div className="location-chip">
     <span className="location-dot"/>
-    <span role="status">{failed?'Mất WebGL':!ready?'Đang tải…':pause?'Đang tạm dừng':moving?'Đang đến: '+plan.nodes[command.to]?.title:active?.title||'Phòng trưng bày chung'}</span>
+    <span role="status">{failed?'Mất WebGL':!ready?'Đang tải…':atDoor?'Cửa vào phòng truyền thống':pause?'Đang tạm dừng':moving?'Đang đến: '+plan.nodes[command.to]?.title:active?.title||'Phòng trưng bày chung'}</span>
     {p.mockCount>0&&<span className="location-period">Ảnh minh họa</span>}
    </div>
   </div>
@@ -195,8 +207,9 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </Suspense>
 
   {!ready&&!failed&&<VisitLoading overlay/>}
+  {ready&&atDoor&&!panel&&<button type="button" className="hall-door-prompt" onClick={openDoor} autoFocus aria-label="Chạm để mở cửa vào phòng truyền thống"><span>Chạm để mở cửa</span></button>}
   {ready&&arriving&&(moving||doorOpening)&&<button className="hall-skip-entry" onClick={skipEntry}>Bỏ qua đoạn vào cửa</button>}
-  {ready&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
+  {ready&&!atDoor&&!doorOpening&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
   {ready&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&!chooseMode&&active?.group==='memory'&&<div className="hall-memory-note"><strong>{active.title}</strong><p>{active.description}</p><small>Hiện vật minh họa · Chờ tư liệu chính thức</small></div>}
   {automatic&&!panel&&<div className="hall-progress">{pause?'Đang tạm dừng':'Trình diễn tự động'} · Điểm {Math.max(1,layout.stops.findIndex((s:any)=>s.id===(moving?command.to:current))+1)}/{layout.stops.length}</div>}
   {complete&&!panel&&<div className="hall-progress" role="status">Đã hoàn thành một vòng tham quan</div>}
@@ -207,10 +220,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </section></div>}
 
   <div className="visitor-controls"><nav className="visitor-dock hall-dock" aria-label="Điều hướng phòng chung">
-   {icon('Về cổng vào','home',()=>go('gate',true),!ready)}
-   <button aria-label="Sơ đồ phòng chung" title="Sơ đồ phòng chung" aria-expanded={panel==='map'} onClick={e=>toggle('map',e)}><TourIcon name="map"/></button>
+   {icon('Về cổng vào','home',()=>go('gate',true),!ready||atDoor)}
+   <button aria-label="Sơ đồ phòng chung" title="Sơ đồ phòng chung" aria-expanded={panel==='map'} disabled={atDoor} onClick={e=>toggle('map',e)}><TourIcon name="map"/></button>
    {icon(automatic?(pause?'Tiếp tục trình diễn':'Tạm dừng trình diễn'):moving?(pause?'Tiếp tục hành trình':'Tạm dừng hành trình'):'Trình diễn tự động',automatic||moving?(pause?'play':'pause'):'play',()=>{autoPaused.current=false;if(automatic||moving)setPause(v=>!v);else start();},!ready)}
-   <button aria-label="Tự bước" title="Tự bước" aria-pressed={manual} disabled={p.paused||!ready} onClick={()=>{setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(v=>!v);}}><TourIcon name="walk"/></button>
+   <button aria-label="Tự bước" title="Tự bước" aria-pressed={manual} disabled={p.paused||!ready||atDoor} onClick={()=>{setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(v=>!v);}}><TourIcon name="walk"/></button>
    {icon(p.speaking?'Tắt lời dẫn':'Nghe giới thiệu','sound',audio)}
    <button aria-label="Tùy chọn" title="Tùy chọn" aria-expanded={panel==='more'} onClick={e=>toggle('more',e)}><TourIcon name="more"/></button>
   </nav></div>
