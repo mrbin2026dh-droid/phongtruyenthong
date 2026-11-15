@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "publishedAt": "2026-11-15T16:11:52.922Z",
+ "publishedAt": "2026-11-15T16:38:29.387Z",
  "people": [
   {
    "id": "GV002",
@@ -2225,6 +2225,29 @@
    "workHistory": [
     {
      "id": "52725a18-99c8-4e36-b1c0-520cce0a53ca",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV118",
+   "name": "Cô Nguyễn Thị Như",
+   "role": "Giáo viên",
+   "dept": "Toán - Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV118-94e67d0455.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-092",
+   "workHistory": [
+    {
+     "id": "6d9c80a4-afde-476e-b4fc-521445afaa74",
      "startYear": 2026,
      "endYear": null,
      "role": "Giáo viên"
