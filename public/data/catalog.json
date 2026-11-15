@@ -1,0 +1,2467 @@
+{
+ "schemaVersion": 1,
+ "publishedAt": "2026-11-15T13:48:33.931Z",
+ "people": [
+  {
+   "id": "GV002",
+   "name": "Giáo viên mẫu 02",
+   "role": "Phó Hiệu trưởng",
+   "dept": "Ngữ văn",
+   "group": "management",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "deputy-001",
+   "workHistory": [
+    {
+     "id": "GV002-work-1",
+     "startYear": 1990,
+     "endYear": null,
+     "role": "Phó Hiệu trưởng"
+    }
+   ],
+   "startYear": 1990,
+   "endYear": null
+  },
+  {
+   "id": "GV003",
+   "name": "Ngô Thị Liền",
+   "role": "Phó Hiệu trưởng",
+   "dept": "Ngoại ngữ",
+   "group": "management",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "data/photos/GV003-9aa5a2aa34.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "deputy-002",
+   "workHistory": [
+    {
+     "id": "GV003-work-1",
+     "startYear": 1991,
+     "endYear": null,
+     "role": "Phó Hiệu trưởng"
+    }
+   ],
+   "startYear": 1991,
+   "endYear": null
+  },
+  {
+   "id": "GV001",
+   "name": "Giáo viên mẫu 01",
+   "role": "Hiệu trưởng",
+   "dept": "Toán – Tin",
+   "group": "management",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "principal-001",
+   "workHistory": [
+    {
+     "id": "GV001-work-1",
+     "startYear": 1990,
+     "endYear": null,
+     "role": "Hiệu trưởng"
+    }
+   ],
+   "startYear": 1990,
+   "endYear": null
+  },
+  {
+   "id": "GV088",
+   "name": "Giáo viên mẫu 88",
+   "role": "Nhân viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "staff-001",
+   "workHistory": [
+    {
+     "id": "GV088-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV089",
+   "name": "Giáo viên mẫu 89",
+   "role": "Nhân viên",
+   "dept": "Khoa học xã hội",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "staff-002",
+   "workHistory": [
+    {
+     "id": "GV089-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV090",
+   "name": "Giáo viên mẫu 90",
+   "role": "Nhân viên",
+   "dept": "Văn phòng",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "staff-003",
+   "workHistory": [
+    {
+     "id": "GV090-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV091",
+   "name": "Giáo viên mẫu 91",
+   "role": "Nhân viên",
+   "dept": "Toán – Tin",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "staff-004",
+   "workHistory": [
+    {
+     "id": "GV091-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV092",
+   "name": "Giáo viên mẫu 92",
+   "role": "Nhân viên",
+   "dept": "Ngữ văn",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "staff-005",
+   "workHistory": [
+    {
+     "id": "GV092-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV093",
+   "name": "Giáo viên mẫu 93",
+   "role": "Nhân viên",
+   "dept": "Ngoại ngữ",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "staff-006",
+   "workHistory": [
+    {
+     "id": "GV093-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV094",
+   "name": "Giáo viên mẫu 94",
+   "role": "Nhân viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "staff-007",
+   "workHistory": [
+    {
+     "id": "GV094-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV095",
+   "name": "Giáo viên mẫu 95",
+   "role": "Nhân viên",
+   "dept": "Khoa học xã hội",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "staff-008",
+   "workHistory": [
+    {
+     "id": "GV095-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV096",
+   "name": "Giáo viên mẫu 96",
+   "role": "Nhân viên",
+   "dept": "Văn phòng",
+   "group": "staff",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "staff-009",
+   "workHistory": [
+    {
+     "id": "GV096-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV004",
+   "name": "Giáo viên mẫu 04",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-001",
+   "workHistory": [
+    {
+     "id": "GV004-work-1",
+     "startYear": 1991,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1991,
+   "endYear": null
+  },
+  {
+   "id": "GV005",
+   "name": "Lại Văn Trọng",
+   "role": "Giáo viên",
+   "dept": "Toán - Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "data/photos/GV005-a0de2d7574.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-002",
+   "workHistory": [
+    {
+     "id": "GV005-work-1",
+     "startYear": 1992,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1992,
+   "endYear": null
+  },
+  {
+   "id": "GV006",
+   "name": "Giáo viên mẫu 06",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-003",
+   "workHistory": [
+    {
+     "id": "GV006-work-1",
+     "startYear": 1992,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1992,
+   "endYear": null
+  },
+  {
+   "id": "GV007",
+   "name": "Giáo viên mẫu 07",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-004",
+   "workHistory": [
+    {
+     "id": "GV007-work-1",
+     "startYear": 1993,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1993,
+   "endYear": null
+  },
+  {
+   "id": "GV008",
+   "name": "Giáo viên mẫu 08",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-005",
+   "workHistory": [
+    {
+     "id": "GV008-work-1",
+     "startYear": 1993,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1993,
+   "endYear": null
+  },
+  {
+   "id": "GV009",
+   "name": "Giáo viên mẫu 09",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-006",
+   "workHistory": [
+    {
+     "id": "GV009-work-1",
+     "startYear": 1994,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1994,
+   "endYear": null
+  },
+  {
+   "id": "GV010",
+   "name": "Giáo viên mẫu 10",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-007",
+   "workHistory": [
+    {
+     "id": "GV010-work-1",
+     "startYear": 1994,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1994,
+   "endYear": null
+  },
+  {
+   "id": "GV011",
+   "name": "Giáo viên mẫu 11",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-008",
+   "workHistory": [
+    {
+     "id": "GV011-work-1",
+     "startYear": 1995,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1995,
+   "endYear": null
+  },
+  {
+   "id": "GV012",
+   "name": "Giáo viên mẫu 12",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-009",
+   "workHistory": [
+    {
+     "id": "GV012-work-1",
+     "startYear": 1995,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1995,
+   "endYear": null
+  },
+  {
+   "id": "GV013",
+   "name": "Giáo viên mẫu 13",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-010",
+   "workHistory": [
+    {
+     "id": "GV013-work-1",
+     "startYear": 1996,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1996,
+   "endYear": null
+  },
+  {
+   "id": "GV014",
+   "name": "Giáo viên mẫu 14",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-011",
+   "workHistory": [
+    {
+     "id": "GV014-work-1",
+     "startYear": 1996,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1996,
+   "endYear": null
+  },
+  {
+   "id": "GV015",
+   "name": "Giáo viên mẫu 15",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-012",
+   "workHistory": [
+    {
+     "id": "GV015-work-1",
+     "startYear": 1997,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1997,
+   "endYear": null
+  },
+  {
+   "id": "GV016",
+   "name": "Giáo viên mẫu 16",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-013",
+   "workHistory": [
+    {
+     "id": "GV016-work-1",
+     "startYear": 1997,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1997,
+   "endYear": null
+  },
+  {
+   "id": "GV017",
+   "name": "Giáo viên mẫu 17",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-014",
+   "workHistory": [
+    {
+     "id": "GV017-work-1",
+     "startYear": 1998,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1998,
+   "endYear": null
+  },
+  {
+   "id": "GV018",
+   "name": "Giáo viên mẫu 18",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-015",
+   "workHistory": [
+    {
+     "id": "GV018-work-1",
+     "startYear": 1998,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1998,
+   "endYear": null
+  },
+  {
+   "id": "GV019",
+   "name": "Giáo viên mẫu 19",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-016",
+   "workHistory": [
+    {
+     "id": "GV019-work-1",
+     "startYear": 1999,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1999,
+   "endYear": null
+  },
+  {
+   "id": "GV020",
+   "name": "Giáo viên mẫu 20",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-017",
+   "workHistory": [
+    {
+     "id": "GV020-work-1",
+     "startYear": 1999,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 1999,
+   "endYear": null
+  },
+  {
+   "id": "GV021",
+   "name": "Giáo viên mẫu 21",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-018",
+   "workHistory": [
+    {
+     "id": "GV021-work-1",
+     "startYear": 2000,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2000,
+   "endYear": null
+  },
+  {
+   "id": "GV022",
+   "name": "Giáo viên mẫu 22",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-019",
+   "workHistory": [
+    {
+     "id": "GV022-work-1",
+     "startYear": 2000,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2000,
+   "endYear": null
+  },
+  {
+   "id": "GV023",
+   "name": "Giáo viên mẫu 23",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-020",
+   "workHistory": [
+    {
+     "id": "GV023-work-1",
+     "startYear": 2001,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2001,
+   "endYear": null
+  },
+  {
+   "id": "GV024",
+   "name": "Giáo viên mẫu 24",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-021",
+   "workHistory": [
+    {
+     "id": "GV024-work-1",
+     "startYear": 2001,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2001,
+   "endYear": null
+  },
+  {
+   "id": "GV025",
+   "name": "Giáo viên mẫu 25",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-022",
+   "workHistory": [
+    {
+     "id": "GV025-work-1",
+     "startYear": 2002,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2002,
+   "endYear": null
+  },
+  {
+   "id": "GV026",
+   "name": "Giáo viên mẫu 26",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-023",
+   "workHistory": [
+    {
+     "id": "GV026-work-1",
+     "startYear": 2002,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2002,
+   "endYear": null
+  },
+  {
+   "id": "GV027",
+   "name": "Giáo viên mẫu 27",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-024",
+   "workHistory": [
+    {
+     "id": "GV027-work-1",
+     "startYear": 2003,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2003,
+   "endYear": null
+  },
+  {
+   "id": "GV028",
+   "name": "Giáo viên mẫu 28",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-025",
+   "workHistory": [
+    {
+     "id": "GV028-work-1",
+     "startYear": 2003,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2003,
+   "endYear": null
+  },
+  {
+   "id": "GV029",
+   "name": "Giáo viên mẫu 29",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-026",
+   "workHistory": [
+    {
+     "id": "GV029-work-1",
+     "startYear": 2004,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2004,
+   "endYear": null
+  },
+  {
+   "id": "GV030",
+   "name": "Giáo viên mẫu 30",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-027",
+   "workHistory": [
+    {
+     "id": "GV030-work-1",
+     "startYear": 2004,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2004,
+   "endYear": null
+  },
+  {
+   "id": "GV031",
+   "name": "Giáo viên mẫu 31",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-028",
+   "workHistory": [
+    {
+     "id": "GV031-work-1",
+     "startYear": 2005,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2005,
+   "endYear": null
+  },
+  {
+   "id": "GV032",
+   "name": "Giáo viên mẫu 32",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-029",
+   "workHistory": [
+    {
+     "id": "GV032-work-1",
+     "startYear": 2005,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2005,
+   "endYear": null
+  },
+  {
+   "id": "GV033",
+   "name": "Giáo viên mẫu 33",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-030",
+   "workHistory": [
+    {
+     "id": "GV033-work-1",
+     "startYear": 2006,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2006,
+   "endYear": null
+  },
+  {
+   "id": "GV034",
+   "name": "Giáo viên mẫu 34",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-031",
+   "workHistory": [
+    {
+     "id": "GV034-work-1",
+     "startYear": 2006,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2006,
+   "endYear": null
+  },
+  {
+   "id": "GV035",
+   "name": "Giáo viên mẫu 35",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-032",
+   "workHistory": [
+    {
+     "id": "GV035-work-1",
+     "startYear": 2007,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2007,
+   "endYear": null
+  },
+  {
+   "id": "GV036",
+   "name": "Giáo viên mẫu 36",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-033",
+   "workHistory": [
+    {
+     "id": "GV036-work-1",
+     "startYear": 2007,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2007,
+   "endYear": null
+  },
+  {
+   "id": "GV037",
+   "name": "Giáo viên mẫu 37",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-034",
+   "workHistory": [
+    {
+     "id": "GV037-work-1",
+     "startYear": 2008,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2008,
+   "endYear": null
+  },
+  {
+   "id": "GV038",
+   "name": "Giáo viên mẫu 38",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-035",
+   "workHistory": [
+    {
+     "id": "GV038-work-1",
+     "startYear": 2008,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2008,
+   "endYear": null
+  },
+  {
+   "id": "GV039",
+   "name": "Giáo viên mẫu 39",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-036",
+   "workHistory": [
+    {
+     "id": "GV039-work-1",
+     "startYear": 2009,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2009,
+   "endYear": null
+  },
+  {
+   "id": "GV040",
+   "name": "Giáo viên mẫu 40",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-037",
+   "workHistory": [
+    {
+     "id": "GV040-work-1",
+     "startYear": 2009,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2009,
+   "endYear": null
+  },
+  {
+   "id": "GV041",
+   "name": "Giáo viên mẫu 41",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-038",
+   "workHistory": [
+    {
+     "id": "GV041-work-1",
+     "startYear": 2010,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2010,
+   "endYear": null
+  },
+  {
+   "id": "GV042",
+   "name": "Giáo viên mẫu 42",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-039",
+   "workHistory": [
+    {
+     "id": "GV042-work-1",
+     "startYear": 2010,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2010,
+   "endYear": null
+  },
+  {
+   "id": "GV043",
+   "name": "Giáo viên mẫu 43",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-040",
+   "workHistory": [
+    {
+     "id": "GV043-work-1",
+     "startYear": 2011,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2011,
+   "endYear": null
+  },
+  {
+   "id": "GV044",
+   "name": "Giáo viên mẫu 44",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-041",
+   "workHistory": [
+    {
+     "id": "GV044-work-1",
+     "startYear": 2011,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2011,
+   "endYear": null
+  },
+  {
+   "id": "GV045",
+   "name": "Giáo viên mẫu 45",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-042",
+   "workHistory": [
+    {
+     "id": "GV045-work-1",
+     "startYear": 2012,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2012,
+   "endYear": null
+  },
+  {
+   "id": "GV046",
+   "name": "Giáo viên mẫu 46",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-043",
+   "workHistory": [
+    {
+     "id": "GV046-work-1",
+     "startYear": 2012,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2012,
+   "endYear": null
+  },
+  {
+   "id": "GV047",
+   "name": "Giáo viên mẫu 47",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-044",
+   "workHistory": [
+    {
+     "id": "GV047-work-1",
+     "startYear": 2013,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2013,
+   "endYear": null
+  },
+  {
+   "id": "GV048",
+   "name": "Giáo viên mẫu 48",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-045",
+   "workHistory": [
+    {
+     "id": "GV048-work-1",
+     "startYear": 2013,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2013,
+   "endYear": null
+  },
+  {
+   "id": "GV049",
+   "name": "Giáo viên mẫu 49",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-046",
+   "workHistory": [
+    {
+     "id": "GV049-work-1",
+     "startYear": 2014,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2014,
+   "endYear": null
+  },
+  {
+   "id": "GV050",
+   "name": "Giáo viên mẫu 50",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-047",
+   "workHistory": [
+    {
+     "id": "GV050-work-1",
+     "startYear": 2014,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2014,
+   "endYear": null
+  },
+  {
+   "id": "GV051",
+   "name": "Giáo viên mẫu 51",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-048",
+   "workHistory": [
+    {
+     "id": "GV051-work-1",
+     "startYear": 2015,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2015,
+   "endYear": null
+  },
+  {
+   "id": "GV052",
+   "name": "Giáo viên mẫu 52",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-049",
+   "workHistory": [
+    {
+     "id": "GV052-work-1",
+     "startYear": 2015,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2015,
+   "endYear": null
+  },
+  {
+   "id": "GV053",
+   "name": "Giáo viên mẫu 53",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-050",
+   "workHistory": [
+    {
+     "id": "GV053-work-1",
+     "startYear": 2016,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2016,
+   "endYear": null
+  },
+  {
+   "id": "GV054",
+   "name": "Giáo viên mẫu 54",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-051",
+   "workHistory": [
+    {
+     "id": "GV054-work-1",
+     "startYear": 2016,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2016,
+   "endYear": null
+  },
+  {
+   "id": "GV055",
+   "name": "Giáo viên mẫu 55",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-052",
+   "workHistory": [
+    {
+     "id": "GV055-work-1",
+     "startYear": 2017,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2017,
+   "endYear": null
+  },
+  {
+   "id": "GV056",
+   "name": "Giáo viên mẫu 56",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-053",
+   "workHistory": [
+    {
+     "id": "GV056-work-1",
+     "startYear": 2017,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2017,
+   "endYear": null
+  },
+  {
+   "id": "GV057",
+   "name": "Giáo viên mẫu 57",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-054",
+   "workHistory": [
+    {
+     "id": "GV057-work-1",
+     "startYear": 2018,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2018,
+   "endYear": null
+  },
+  {
+   "id": "GV058",
+   "name": "Giáo viên mẫu 58",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-055",
+   "workHistory": [
+    {
+     "id": "GV058-work-1",
+     "startYear": 2018,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2018,
+   "endYear": null
+  },
+  {
+   "id": "GV059",
+   "name": "Giáo viên mẫu 59",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-056",
+   "workHistory": [
+    {
+     "id": "GV059-work-1",
+     "startYear": 2019,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2019,
+   "endYear": null
+  },
+  {
+   "id": "GV060",
+   "name": "Giáo viên mẫu 60",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-057",
+   "workHistory": [
+    {
+     "id": "GV060-work-1",
+     "startYear": 2019,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2019,
+   "endYear": null
+  },
+  {
+   "id": "GV061",
+   "name": "Giáo viên mẫu 61",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-058",
+   "workHistory": [
+    {
+     "id": "GV061-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV062",
+   "name": "Giáo viên mẫu 62",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-059",
+   "workHistory": [
+    {
+     "id": "GV062-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV063",
+   "name": "Giáo viên mẫu 63",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-060",
+   "workHistory": [
+    {
+     "id": "GV063-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV064",
+   "name": "Giáo viên mẫu 64",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-061",
+   "workHistory": [
+    {
+     "id": "GV064-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV065",
+   "name": "Giáo viên mẫu 65",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-062",
+   "workHistory": [
+    {
+     "id": "GV065-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV066",
+   "name": "Giáo viên mẫu 66",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-063",
+   "workHistory": [
+    {
+     "id": "GV066-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV067",
+   "name": "Giáo viên mẫu 67",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-064",
+   "workHistory": [
+    {
+     "id": "GV067-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV068",
+   "name": "Giáo viên mẫu 68",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-065",
+   "workHistory": [
+    {
+     "id": "GV068-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV069",
+   "name": "Giáo viên mẫu 69",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-066",
+   "workHistory": [
+    {
+     "id": "GV069-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV070",
+   "name": "Giáo viên mẫu 70",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-067",
+   "workHistory": [
+    {
+     "id": "GV070-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV071",
+   "name": "Giáo viên mẫu 71",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-068",
+   "workHistory": [
+    {
+     "id": "GV071-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV072",
+   "name": "Giáo viên mẫu 72",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-069",
+   "workHistory": [
+    {
+     "id": "GV072-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV073",
+   "name": "Giáo viên mẫu 73",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-070",
+   "workHistory": [
+    {
+     "id": "GV073-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV074",
+   "name": "Giáo viên mẫu 74",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-071",
+   "workHistory": [
+    {
+     "id": "GV074-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV075",
+   "name": "Giáo viên mẫu 75",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-072",
+   "workHistory": [
+    {
+     "id": "GV075-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV076",
+   "name": "Giáo viên mẫu 76",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-073",
+   "workHistory": [
+    {
+     "id": "GV076-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV077",
+   "name": "Giáo viên mẫu 77",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-074",
+   "workHistory": [
+    {
+     "id": "GV077-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV078",
+   "name": "Giáo viên mẫu 78",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-075",
+   "workHistory": [
+    {
+     "id": "GV078-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV079",
+   "name": "Giáo viên mẫu 79",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-076",
+   "workHistory": [
+    {
+     "id": "GV079-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV080",
+   "name": "Giáo viên mẫu 80",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-077",
+   "workHistory": [
+    {
+     "id": "GV080-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV081",
+   "name": "Giáo viên mẫu 81",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-078",
+   "workHistory": [
+    {
+     "id": "GV081-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV082",
+   "name": "Giáo viên mẫu 82",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-079",
+   "workHistory": [
+    {
+     "id": "GV082-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV083",
+   "name": "Giáo viên mẫu 83",
+   "role": "Giáo viên",
+   "dept": "Khoa học xã hội",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-080",
+   "workHistory": [
+    {
+     "id": "GV083-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV084",
+   "name": "Giáo viên mẫu 84",
+   "role": "Giáo viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-081",
+   "workHistory": [
+    {
+     "id": "GV084-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV085",
+   "name": "Giáo viên mẫu 85",
+   "role": "Giáo viên",
+   "dept": "Toán – Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-082",
+   "workHistory": [
+    {
+     "id": "GV085-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV086",
+   "name": "Giáo viên mẫu 86",
+   "role": "Giáo viên",
+   "dept": "Ngữ văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-083",
+   "workHistory": [
+    {
+     "id": "GV086-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV087",
+   "name": "Giáo viên mẫu 87",
+   "role": "Giáo viên",
+   "dept": "Ngoại ngữ",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
+   "image": "",
+   "photoRatio": 0.75,
+   "displaySlot": "teacher-084",
+   "workHistory": [
+    {
+     "id": "GV087-work-1",
+     "startYear": 2020,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2020,
+   "endYear": null
+  },
+  {
+   "id": "GV099",
+   "name": "Nguyễn Thị Thanh Thúy",
+   "role": "Tổ trưởng",
+   "dept": "Sử - Địa",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV099-4649901202.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-093",
+   "workHistory": [
+    {
+     "id": "8da711c4-4e35-4af3-bdda-006f1b1bf90a",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Tổ trưởng"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV106",
+   "name": "Đặng Thị Hồng Nguyên",
+   "role": "Nhân viên",
+   "dept": "Văn Phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV106-f81f078cc0.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-094",
+   "workHistory": [
+    {
+     "id": "fe065513-e896-4329-a715-5536b4d69392",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV107",
+   "name": "Đặng Thị Trà",
+   "role": "Giáo viên",
+   "dept": "KHTN",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV107-ec3115ce9b.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-095",
+   "workHistory": [
+    {
+     "id": "9de9f1a5-9b3c-4766-9d88-00f73f0da8b8",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV100",
+   "name": "Nguyễn Đăng Khương",
+   "role": "Giáo viên",
+   "dept": "Toán - Tin",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV100-d9ecc10d3f.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-105",
+   "workHistory": [
+    {
+     "id": "aebeca6f-8aac-4826-81ab-d4c6bb9a0db8",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV104",
+   "name": "Võ Huy Thiện",
+   "role": "Giáo viên",
+   "dept": "KHTN",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV104-f980ad1dc6.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-106",
+   "workHistory": [
+    {
+     "id": "5ab97ae8-b474-493c-8b66-e14ba4536ffc",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV101",
+   "name": "Nguyễn Đình Ngọc",
+   "role": "Giáo viên",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV101-6e54a5fbf9.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-107",
+   "workHistory": [
+    {
+     "id": "dce12b60-6875-44d4-941f-488e3a50d03d",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV105",
+   "name": "Nguyễn Ngọc Hải",
+   "role": "Giáo viên",
+   "dept": "Ngữ Văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV105-0ba8153532.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-108",
+   "workHistory": [
+    {
+     "id": "15205bdb-d0a6-4b80-8162-7b3435ddec0b",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Giáo viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV097",
+   "name": "Nguyễn Thị Kim Thoa",
+   "role": "Tổ phó",
+   "dept": "Ngữ Văn",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": 1900,
+   "description": "",
+   "image": "data/photos/GV097-d2eed74ca8.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-109",
+   "workHistory": [
+    {
+     "id": "b9f7c558-8af9-4aa5-bc7b-a873031d5c21",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Tổ phó"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV102",
+   "name": "Trần Thị Cẩm Tú",
+   "role": "Tổ trưởng",
+   "dept": "Tiếng anh",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV102-ddfc191807.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-110",
+   "workHistory": [
+    {
+     "id": "4e89b6a8-53b2-44a4-9c88-99be6929e8f6",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Tổ trưởng"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV098",
+   "name": "Nguyễn Thị Kim Lan",
+   "role": "Tổ phó",
+   "dept": "Khoa học tự nhiên",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV098-978fca5b01.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-111",
+   "workHistory": [
+    {
+     "id": "0685c1b6-f087-40f8-b1f2-365621005840",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Tổ phó"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  },
+  {
+   "id": "GV103",
+   "name": "Nguyễn Thị Minh",
+   "role": "Nhân viên",
+   "dept": "Văn phòng",
+   "group": "teacher",
+   "status": "Đang công tác",
+   "birthYear": null,
+   "description": "",
+   "image": "data/photos/GV103-d0bb89cf1a.jpg",
+   "photoRatio": 0.6666666666666666,
+   "displaySlot": "teacher-112",
+   "workHistory": [
+    {
+     "id": "637a7cd2-8931-4179-a436-bddca7d2308a",
+     "startYear": 2026,
+     "endYear": null,
+     "role": "Nhân viên"
+    }
+   ],
+   "startYear": 2026,
+   "endYear": null
+  }
+ ]
+}
