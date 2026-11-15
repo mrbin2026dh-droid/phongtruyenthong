@@ -5,6 +5,7 @@ function Emblem({kind}:{kind:'people'|'trophy'|'cap'|'book'|'arrow'|'sound'|'dev
  const p={viewBox:'0 0 48 48',fill:'none',stroke:'currentColor',strokeWidth:1.8,strokeLinecap:'round' as const,strokeLinejoin:'round' as const,'aria-hidden':true as const};
  return <svg {...p}>{kind==='people'?<><circle cx="24" cy="13" r="6"/><circle cx="9" cy="17" r="4"/><circle cx="39" cy="17" r="4"/><path d="M13 39V31a11 11 0 0 1 22 0v8ZM2 36v-8a7 7 0 0 1 10-6M46 36v-8a7 7 0 0 0-10-6"/></>:kind==='trophy'?<><path d="M15 7h18v13a9 9 0 0 1-18 0ZM24 29v9M16 41h16M15 11H7v5a9 9 0 0 0 10 9M33 11h8v5a9 9 0 0 1-10 9"/><path d="m24 12 2 4 4 .5-3 3 .8 4-3.8-2-3.8 2 .8-4-3-3 4-.5Z"/></>:kind==='cap'?<><path d="m3 17 21-9 21 9-21 9ZM11 22v11c8 6 18 6 26 0V22M43 18v17M40 39h6l-3-6Z"/></>:kind==='book'?<><path d="M24 10v31M5 8c8-1 14 1 19 5 5-4 11-6 19-5v29c-8-1-14 1-19 5-5-4-11-6-19-5ZM10 17l8 2M10 23l8 2M30 19l8-2M30 25l8-2"/></>:kind==='arrow'?<path d="M9 24h30M29 14l10 10-10 10"/>:kind==='sound'?<><path d="M7 19h7l10-8v26l-10-8H7ZM31 17a10 10 0 0 1 0 14M36 11a18 18 0 0 1 0 26"/></>:<><rect x="4" y="7" width="29" height="23" rx="3"/><path d="M18 31v8M10 40h16"/><rect x="32" y="20" width="12" height="23" rx="2"/></>}</svg>;
 }
+const WELCOME=import.meta.env.BASE_URL+'welcome/welcome-architecture';
 export default function Welcome({minimal=false,count,onEnter,onModule,onList,onGreeting,speaking,caption}:Props){
  const [showCaption,setShowCaption]=useState(false);
  const [schoolPhoto,setSchoolPhoto]=useState(['localhost','127.0.0.1','[::1]'].includes(window.location.hostname));
@@ -19,7 +20,18 @@ export default function Welcome({minimal=false,count,onEnter,onModule,onList,onG
     <VirtualHost active={showCaption} caption={caption} speaking={speaking} onPlay={()=>{setShowCaption(true);onGreeting();}} onStop={()=>{if(speaking)onGreeting();setShowCaption(false);}}/>
    </div>
    <figure className="welcome-campus">
-    <img src={schoolPhoto?'/__local-preview/school-campus.jpg':import.meta.env.BASE_URL+'welcome/welcome-architecture.png'} alt={schoolPhoto?'Toàn cảnh khuôn viên trường từ trên cao, các dãy nhà mái đỏ bao quanh sân trường và cây xanh':'Phối cảnh phòng truyền thống minh họa dựng bằng Blender'} width="2048" height="1152" fetchPriority="high" onError={()=>{if(schoolPhoto)setSchoolPhoto(false);}}/>
+    {schoolPhoto
+     ?<img src="/__local-preview/school-campus.jpg" alt="Toàn cảnh khuôn viên trường từ trên cao, các dãy nhà mái đỏ bao quanh sân trường và cây xanh" width="2048" height="1152" fetchPriority="high" onError={()=>setSchoolPhoto(false)}/>
+     // 15/11 (P0): 1,9 MB PNG → AVIF q95 4:4:4 (218 KB, SSIM .9966) / WebP q95 fallback / PNG for very old browsers.
+     // Wide screens always get the full 1600 px (the box is object-fit:cover, it may scale past its width);
+     // the 1024 px file only for ≤ 700 px screens (fixed 16:9 box) — high-DPI phones still pick 1600.
+     :<picture>
+      <source type="image/avif" media="(max-width:700px)" srcSet={WELCOME+'-1024.avif 1024w, '+WELCOME+'-1600.avif 1600w'} sizes="100vw"/>
+      <source type="image/webp" media="(max-width:700px)" srcSet={WELCOME+'-1024.webp 1024w, '+WELCOME+'-1600.webp 1600w'} sizes="100vw"/>
+      <source type="image/avif" srcSet={WELCOME+'-1600.avif'}/>
+      <source type="image/webp" srcSet={WELCOME+'-1600.webp'}/>
+      <img src={WELCOME+'.png'} alt="Phối cảnh phòng truyền thống minh họa dựng bằng Blender" width="1600" height="900" fetchPriority="high"/>
+     </picture>}
    </figure>
   </section>
   {/* 16/11 (user): the public site shows only the welcome card above — everything focuses on the 3D visit */}
