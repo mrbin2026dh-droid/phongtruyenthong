@@ -123,6 +123,9 @@ const ASSET_V=assetHash.digest('hex').slice(0,10);
 // (QUAN-TRI.cmd) where vite-plugin-pwa does nothing, so admin pages are never cached.
 const pwa=VitePWA({
  injectRegister:false,              // registered in src/main.tsx, production only
+ // P3 KILL-SWITCH: if a published version ever breaks visitors' phones, set selfDestroying:true and push once —
+ // every phone removes the service worker and its caches and loads straight from GitHub again. Set back to false later.
+ selfDestroying:false,
  registerType:'prompt',             // a new version waits until every tab of the app is closed (update bar = P3)
  includeAssets:['icons/apple-touch-icon-180.png'],   // manifest icons are added automatically
  manifest:{

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {preloadPhotos} from './data/photoStore';
+import {markNeedRefresh,setUpdater} from './data/pwa';
 import '@fontsource/noto-sans/latin-400.css';
 import '@fontsource/noto-sans/vietnamese-400.css';
 import '@fontsource/noto-sans/latin-600.css';
@@ -17,7 +18,15 @@ if(import.meta.env.PROD&&'serviceWorker' in navigator){
  // First visit: catalog.json was fetched before the worker took control — fetch it once more through the worker so the
  // published data (not the sample data) is there when the visitor opens the app offline later.
  navigator.serviceWorker.addEventListener('controllerchange',()=>{void fetch(import.meta.env.BASE_URL+'data/catalog.json',{cache:'no-cache'}).catch(()=>undefined);},{once:true});
- void import('virtual:pwa-register').then(({registerSW})=>registerSW({immediate:true})).catch(()=>undefined);
+ // P3: a new version waits (no skipWaiting) and the welcome page shows “Đã có nội dung mới — Cập nhật”.
+ // Installed apps stay open for days: look for a new version every hour and whenever the app comes back to the screen.
+ void import('virtual:pwa-register').then(({registerSW})=>{
+  const update=registerSW({immediate:true,onNeedRefresh:markNeedRefresh,onRegisteredSW(_url,reg){
+   if(!reg)return;const check=()=>{if(navigator.onLine)void reg.update().catch(()=>undefined);};
+   setInterval(check,60*60*1000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check();});
+  }});
+  setUpdater(update);
+ }).catch(()=>undefined);
 }
 const root=document.getElementById('root')!;
 root.textContent='Đang chuẩn bị không gian tham quan…';

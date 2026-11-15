@@ -1,0 +1,36 @@
+/* PWA P3–P4 + open-in-browser screen (16/11). Palette of the welcome card: navy #132e40, gold #e2c17a / #d0a249, cream. */
+.open-browser{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:#f3ecdf;overflow-y:auto}
+.open-browser-card{width:100%;max-width:400px;background:#fffcf5;border:1px solid #e0cfaf;border-radius:22px;padding:30px 22px 22px;text-align:center;box-shadow:0 14px 40px #17303c1f;display:flex;flex-direction:column;align-items:stretch;gap:12px}
+.open-browser-icon{width:64px;height:64px;border-radius:16px;margin:0 auto 4px;box-shadow:0 6px 16px #132e4033}
+.open-browser h1{font:700 23px/1.35 "Noto Serif",Georgia,serif;color:#132e40;margin:0;letter-spacing:-.01em}
+.open-browser-card>p{font:400 14px/1.65 "Noto Sans",sans-serif;color:#5d6a6c;margin:0 0 8px}
+.open-browser-primary,.open-browser-secondary{display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;border-radius:14px;font:700 15px/1.2 "Noto Sans",sans-serif;text-decoration:none;padding:12px 16px}
+.open-browser-primary{background:#132e40;color:#f7e3b0;border:1px solid #132e40;box-shadow:0 4px 14px #132e4040}
+.open-browser-primary:hover{background:#1c3d52}
+.open-browser .open-browser-secondary{background:#fffcf5;color:#132e40;border:1px solid #cfb688}
+.open-browser .open-browser-secondary:hover{background:#f6ecd8}
+.open-browser-secondary small{font-weight:400;color:#7b6a4b}
+.open-browser .open-browser-copy{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:0;color:#2b5d6b;font:600 14px/1.2 "Noto Sans",sans-serif;min-height:44px;margin-top:2px}
+.open-browser .open-browser-copy:hover{background:transparent;text-decoration:underline}
+.open-browser-copy svg{width:18px;height:18px}
+.open-browser-field{width:100%;font-size:12px;padding:8px;border:1px solid #d6c7b1;border-radius:8px}
+.open-browser-manual{text-align:left;background:#fbf3e2;border:1px solid #e6d2a8;border-radius:12px;padding:12px 14px;font:400 13px/1.6 "Noto Sans",sans-serif;color:#3d4b4f}
+.open-browser-manual ol{margin:6px 0 0;padding-left:20px}
+.open-browser-note{font:400 12px/1.5 "Noto Sans",sans-serif!important;color:#8a8a80!important;margin:2px 0 0!important}
+
+/* “Cài ứng dụng” under the start button (welcome card, navy background) */
+.welcome-intro .install-app{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;margin:12px auto 0;padding:8px 18px;background:transparent;border:1px solid #d2b37699;border-radius:24px;color:#f0d18d;font:600 13px/1.2 "Noto Sans",sans-serif;width:auto;max-width:340px}
+.welcome-intro .install-app:hover{background:#ffffff12}
+.install-app svg{width:20px;height:20px;flex-shrink:0}
+.install-steps{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:14px;counter-reset:step}
+.install-steps li{display:flex;align-items:center;gap:14px;font-size:14px;line-height:1.6}
+.install-step-icon{flex-shrink:0;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#f3ecdf;color:#132e40;border:1px solid #e0cfaf}
+.install-step-icon svg{width:24px;height:24px}.install-step-icon img{border-radius:7px}
+
+/* P3 update bar (outside the 3D room) */
+.update-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:90;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100% - 32px);padding:10px 12px 10px 18px;background:#132e40;color:#e8eef0;border:1px solid #d2b37680;border-radius:16px;box-shadow:0 10px 30px #0719274d;font:400 13px/1.5 "Noto Sans",sans-serif}
+.update-bar b{color:#f0d18d;margin-right:6px}
+.update-bar .update-bar-go{min-height:40px;padding:8px 16px;background:linear-gradient(110deg,#f7df9f,#d0a249);color:#183047;border:0;border-radius:12px;font-weight:700}
+.update-bar .update-bar-later{min-height:40px;padding:8px 12px;background:transparent;color:#cfd8da;border:1px solid #ffffff33;border-radius:12px}
+.update-bar .update-bar-later:hover{background:#ffffff14}
+@media(max-width:480px){.update-bar{left:16px;right:16px;transform:none;width:auto}.open-browser h1{font-size:21px}}

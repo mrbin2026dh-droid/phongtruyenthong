@@ -14,6 +14,9 @@ import {webglAvailable} from './data/loadWatch.mjs';
 import {vietnameseVoice} from './data/narration.mjs';
 import {enterImmersive} from './data/immersive';
 import {primeHallSound} from './scene/hallAudio';
+import {inAppBrowser,platformOf} from './data/browserEnv.mjs';
+import OpenInBrowser from './components/OpenInBrowser';
+import UpdateBar from './components/UpdateBar';
 // 16/11 (user): the public site (GitHub) shows only the welcome card and the 3D visit. The local admin machine keeps everything.
 const minimal=!adminAvailable;
 const GuidedTour=lazy(()=>import('./scene/GuidedTour'));
@@ -45,6 +48,18 @@ export default function PeopleApp(){
  useEffect(()=>{document.body.classList.toggle('public-site',minimal);},[]);
  /** The visitor's tap on “Bắt đầu tham quan”: fullscreen + landscape on phones, unlock the music, open the room. */
  function startVisit(){void enterImmersive();primeHallSound();navigate('room');}
+ // 16/11: link opened inside Zalo/Facebook on a phone → offer Chrome (Android) / Safari or Chrome (iPhone) first.
+ // “Ở lại” is remembered for this tab only.
+ const [openIn,setOpenIn]=useState(()=>{
+  // preview on a computer: ?xem-thu=zalo-android or ?xem-thu=zalo-ios shows this screen as Zalo would
+  const demo=new URLSearchParams(location.search).get('xem-thu');
+  if(demo==='zalo-android'||demo==='zalo-ios')return {app:'Zalo',platform:(demo==='zalo-ios'?'ios':'android') as 'android'|'ios'};
+  if(!minimal)return null;const ua=navigator.userAgent,app=inAppBrowser(ua),platform=platformOf(ua,navigator.maxTouchPoints);
+  if(!app||platform==='other')return null;
+  try{if(sessionStorage.getItem('ptt-o-lai-trinh-duyet')==='1')return null;}catch{/* storage blocked: still offer */}
+  return {app,platform:platform as 'android'|'ios'};
+ });
+ if(openIn)return <OpenInBrowser app={openIn.app} platform={openIn.platform} onStay={()=>{try{sessionStorage.setItem('ptt-o-lai-trinh-duyet','1');}catch{/* fine */}setOpenIn(null);}}/>;
  return <><header><div className="brand"><span className="emblem">▤</span><div><b>PHÒNG TRUYỀN THỐNG</b><small>NHÀ TRƯỜNG ẢO 3D</small></div></div><nav aria-label="Điều hướng chính">{([['home','Trang chủ'],['room','Tham quan 3D'],['list','Tra cứu'],['admin','Quản trị hồ sơ']] as const).filter(([v])=>!minimal&&(v!=='admin'||(adminAvailable&&admin))).map(([v,label])=><button key={v} className={view===v?'active':''} onClick={()=>navigate(v)}>{label}</button>)}</nav>{!minimal&&<span className="demo">DỮ LIỆU GIẢ LẬP</span>}</header>
  <main className={view==='room'?'museum-view':view==='home'?'welcome-host':undefined}>{(view==='list'||view==='admin')&&<section className="intro"><div><p className="eyebrow">LƯU GIỮ KÝ ỨC · KẾT NỐI CÁC THẾ HỆ</p><h1>{view==='list'?'Đội ngũ qua các thế hệ':'Quản trị hồ sơ chung'}</h1><p>Mỗi người một hồ sơ · Ghi nhận mọi đợt công tác tại trường</p></div>{minimal&&view==='list'?<div className="list-back"><button className="gold" onClick={()=>navigate('room')}>Vào tham quan 3D</button><button onClick={()=>navigate('home')}>Trang đầu</button></div>:<div className="counts"><b>{people.length}</b><span>HỒ SƠ GIẢ LẬP<br/>PHÂN HỆ 01</span></div>}</section>}
  {samplePortraitMode&&view!=='home'&&<p className="sample-photo-note">Xem thử ảnh thẻ · Cùng một ảnh được lặp để kiểm tra khung hình; tên và hồ sơ vẫn là dữ liệu giả lập.</p>}
@@ -59,6 +74,7 @@ export default function PeopleApp(){
  {(view==='list'||view==='admin')&&!minimal&&<section className="modules" aria-label="Ba phân hệ"><button className="module-card available" onClick={()=>navigate('room')}><span>01 · ĐANG THỬ NGHIỆM</span><h3>CBQL – Giáo viên – Nhân viên</h3><p>Những người đã và đang công tác tại trường</p><b>Vào tham quan →</b></button>{[2,3].map(n=><button className="module-card" key={n} onClick={()=>setModule(n)}><span>0{n} · ĐANG XÂY DỰNG</span><h3>Tôn vinh {n===2?'giáo viên':'học sinh'} xuất sắc</h3><p>Khu vực giới thiệu — chưa triển khai</p><b>Xem thông báo →</b></button>)}</section>}
  {(view==='list'||view==='admin')&&!minimal&&<aside className="mc"><div><b>MC · Lời dẫn thử nghiệm</b><p role="status">{caption}</p></div><button onClick={()=>speaking?silence():speak(greeting)}>{speaking?'Tắt âm thanh':'Nghe lời chào'}</button></aside>}</main>
  {view!=='room'&&!minimal&&<footer><i>Tự hào quá khứ — Kiến tạo tương lai</i><span>{samplePortraitMode?'Hồ sơ giả lập · Ảnh thử do người dùng cung cấp':'Hồ sơ nhân sự giả lập · Website đang thử nghiệm'}</span></footer>}
+ {view!=='room'&&<UpdateBar/>}
  {module&&<Dialog title="Phân hệ đang xây dựng" onClose={()=>setModule(null)}><p>Khu vực “Tôn vinh {module===2?'giáo viên':'học sinh'} xuất sắc” hiện đang xây dựng. Vui lòng quay lại sau.</p><button className="gold" onClick={()=>setModule(null)}>Đã hiểu</button></Dialog>}
  {person&&<Dialog title="Hồ sơ cán bộ, giáo viên, nhân viên" onClose={()=>{silence();setPerson(null);}}><div className="profile"><div><Photo p={person}/><p className="fine">{samplePortraitMode?'Ảnh do người dùng cung cấp để thử khung':'Ảnh minh họa giả lập'} · {person.id}</p></div><div><p className="eyebrow">{person.id} · MỘT HỒ SƠ GỐC</p><h3>{person.name}</h3><dl>{[['Khu trưng bày',GROUPS.find(g=>g.id===person.group)?.name],['Chức danh hiện tại / gần nhất',person.role],['Tổ / bộ phận',person.dept],['Năm sinh',person.birthYear??'Chưa cập nhật'],['Các đợt công tác',workHistoryText(person)],['Trạng thái mới nhất',person.status]].map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl><ol className="profile-history">{person.workHistory.map(h=><li key={h.id}>{h.startYear} – {h.endYear??(person.status==='Đang công tác'?'nay':'chưa xác định')} · {h.role||person.role}</li>)}</ol><p>{person.description}</p><button onClick={()=>speak(person.name+'. '+person.role+'. Công tác: '+workHistoryText(person)+'. '+person.description)}>Nghe MC giới thiệu</button></div></div></Dialog>}
  </>;
