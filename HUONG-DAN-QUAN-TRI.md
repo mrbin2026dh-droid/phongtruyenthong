@@ -27,3 +27,15 @@ Website công khai **chỉ để xem**. Mọi thay đổi ảnh và thông tin �
 ## Lần đầu (một lần, có người phụ trách kỹ thuật)
 - Tạo tài khoản và kho GitHub, bật GitHub Pages: làm theo `09-NHAT-KY-AI/PROMPTS/ANTIGRAVITY-HUONG-DAN-GITHUB-FIREBASE.md` (**chỉ Giai đoạn A**, bỏ Firebase).
 - Nếu bấm Xuất bản mà báo “Chưa kết nối GitHub”: dữ liệu **đã lưu trên máy** (`public/data`), chỉ chưa đưa lên được. Hoàn tất bước tạo kho rồi bấm Xuất bản lại.
+
+## Chuẩn hóa trang phục (đồng bộ ảnh giáo viên) — chỉ trên máy quản trị
+1. Mở ảnh một người trên tường → **Chọn ảnh từ máy** (hoặc dùng ảnh đang có) → **Chuẩn hóa trang phục…**
+2. Lần đầu chờ 5–10 giây để công cụ nhận diện tải xong. Ảnh gốc và ảnh sau chuẩn hóa hiện cạnh nhau.
+3. Chọn:
+   - **Đổi màu áo sang xanh than, giữ sơ mi trắng** (khuyên dùng): áo khoác/áo ngoài thành xanh than, giữ nếp vải; nền xám xanh chung.
+   - **Ghép vest đồng phục (thử nghiệm)**: chọn **Nam** (có cà vạt đỏ đô) hoặc **Nữ** (cổ V). Hợp với ảnh mặc áo thun/áo không cổ; xem kỹ viền cổ.
+   - Bỏ dấu **Thay nền chung** nếu chỉ muốn đổi áo.
+4. Dòng **“✓ Khuôn mặt, tóc, kính giữ nguyên 100 %”** xác nhận công cụ không sửa một điểm ảnh nào trên mặt/tóc.
+5. Đánh dấu **“Thầy/cô trong ảnh đã đồng ý…”** → **Dùng ảnh này** → **Lưu lên tường**. Hoặc **Giữ ảnh gốc**.
+- Ảnh gốc trong máy không bị thay đổi. Mọi xử lý chạy ngay trên máy này, không gửi ảnh đi đâu.
+- Tóc dài phủ vai, khăn choàng, ảnh nghiêng: có thể lem viền vai — khi đó giữ ảnh gốc hoặc nhờ chụp lại.

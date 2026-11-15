@@ -4,7 +4,7 @@ import {BoxGeometry,InstancedMesh,Matrix4,MeshStandardMaterial,SRGBColorSpace,Ca
 
 import {Texture,GalleryEnvironment} from './BlenderMuseum';
 import HallController from './HallController';
-import HallPhoto from './HallPhoto';
+import HallPhoto,{type PhotoTier} from './HallPhoto';
 import ChuVanAnStatue from './ChuVanAnStatue';
 import SceneStats,{statsEnabled} from './SceneStats';
 import StaticInstancer,{boxMaterial} from './StaticInstancer';
@@ -16,11 +16,14 @@ import type {VisitorPose,RouteState} from './HallController';
 import {StopMarkers,RouteDots} from './Wayfinding';
 import PerfProbe from './PerfProbe';
 import EntranceDoors from './EntranceDoors';
+import FoyerView from './FoyerView';
+import RoomProbes from './RoomProbes';
+import PostFX from './PostFX';
 import EmptySlots from './EmptySlots';
 import type {DoorState} from './EntranceDoors';
 import type {QualityControl} from './PerfProbe';
 
-type Props={layout:any;plan:any;command:any;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
+type Props={layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
 
 const cube=new BoxGeometry(1,1,1);
 // Portrait frames (15/11): satin brass, less mirror-like, so every frame reads the same tone from any angle.
@@ -130,7 +133,7 @@ function Frames({slots}:{slots:any[]}){
  useLayoutEffect(()=>{if(!ref.current)return;const m=new Matrix4(),local=new Matrix4(),base=new Matrix4();let n=0;
  for(const s of slots){base.makeRotationY(s.yaw);base.setPosition(s.x,s.y,s.z);
   const fw=s.width||.55,fh=s.height||.735;
-  for(const [x,y,w,h] of [[-(fw-.028)/2,0,.028,fh],[(fw-.028)/2,0,.028,fh],[0,(fh-.028)/2,fw,.028],[0,-(fh-.028)/2,fw,.028]]){
+  const b=FRAME_BAR;for(const [x,y,w,h] of [[-(fw-b)/2,0,b,fh],[(fw-b)/2,0,b,fh],[0,(fh-b)/2,fw,b],[0,-(fh-b)/2,fw,b]]){
    // 2.2 cm deep bars standing on the wall (z 0…0.022); the photo sits inside them, like a real frame.
    local.makeScale(w,h,.022);local.setPosition(x,y,.011);m.multiplyMatrices(base,local);ref.current.setMatrixAt(n++,m);
   }
@@ -138,9 +141,26 @@ function Frames({slots}:{slots:any[]}){
  return <instancedMesh ref={ref} args={[cube,brass,slots.length*4]} frustumCulled={false}/>;
 }
 
+/** 16/11 (user: “ảnh và khung chưa khít”, measured on real photos): the photo used to be 2–7 mm SMALLER than
+ * the frame opening, so the slatted wall showed through a dark sliver. Now it is 6 mm larger on its tight
+ * side (2:3 kept), so the 2.8 cm brass bars always overlap its edges, as in a real frame. */
+export const FRAME_BAR=.028,PHOTO_OVERLAP=.006;
+export function photoSize(fw:number,fh:number):[number,number]{
+ const ow=fw-2*FRAME_BAR,oh=fh-2*FRAME_BAR,w=Math.max(ow+2*PHOTO_OVERLAP,(oh+2*PHOTO_OVERLAP)/1.5);return [w,w*1.5];
+}
+
+/** Distance tiers with hysteresis (no flip-flop while standing on a threshold). */
+export function photoTier(cur:PhotoTier,d:number):PhotoTier{
+ if(d<(cur===2?3:2.4))return 2;
+ return d<(cur>=1?8.5:6.5)?1:0;
+}
+
 function Photo({slot,onSelect}:{slot:any;onSelect:(id:string)=>void}){
- const [near,setNear]=useState(false);const {camera}=useThree();const principal=slot.group==='principal'||slot.group==='deputy';
- useFrame(()=>{const d=Math.hypot(camera.position.x-slot.x,camera.position.z-slot.z);const next=near?d<8.5:d<6.5;if(next!==near)setNear(next);});
+ const principal=slot.group==='principal'||slot.group==='deputy';const [tier,setTier]=useState<PhotoTier>(principal?2:0);const {camera}=useThree();
+ // 16/11: the 3 Ban Giám hiệu portraits (1 m frames, the focal wall) always use the sharp version — no blurry
+ // far copy and no visible swap while walking towards them.
+ // teachers: far → near (6.5 m, back at 8.5) → close, full upload resolution (2.4 m, back at 3.0)
+ useFrame(()=>{if(principal)return;const next=photoTier(tier,Math.hypot(camera.position.x-slot.x,camera.position.z-slot.z));if(next!==tier)setTier(next);});
  return <group position={[slot.x,slot.y,slot.z]} rotation={[0,slot.yaw,0]} onClick={e=>{e.stopPropagation();if(e.delta<6)onSelect(slot.person.id);}}>
   {principal&&<>
    <Box p={[0,-.06,-.06]} s={[slot.width+.22,slot.height+.47,.07]} color="#563b2c"/>
@@ -154,7 +174,7 @@ function Photo({slot,onSelect}:{slot:any;onSelect:(id:string)=>void}){
   </>}
   {/* 15/11: Ban Giám hiệu photo fills the whole brass opening (no cream margin). It sits just behind the
       front face of the 2.8 cm frame bars (z .03 < .0345) so the bars neatly cover its 4–5 mm overlap. */}
-  <mesh position={[0,0,principal ? .016 : .015]}><planeGeometry args={principal?[(slot.height-.07)/1.5,slot.height-.07]:[slot.width-.06,(slot.width-.06)*3/2]}/><HallPhoto person={slot.person} near={near}/></mesh>
+  <mesh position={[0,0,principal ? .016 : .015]}><planeGeometry args={photoSize(slot.width||.55,slot.height||.735)}/><HallPhoto person={slot.person} tier={tier}/></mesh>
   <mesh position={[0,-(slot.height/2+.12),principal ? .065 : .04]}><planeGeometry args={[principal ? slot.width+.10 : .69,principal ? .19 : .14375]}/><Texture person={slot.person} label/></mesh>
  </group>;
 }
@@ -236,11 +256,15 @@ export default function HallScene(p:Props){
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}
   {p.route&&<RouteDots route={p.route}/>}
-  <HallController plan={p.plan} command={p.command} paused={p.paused} effects={p.effects} input={p.input} loadedRooms={[0]} onArrive={p.onArrive} onMotion={p.onMotion} onRegion={()=>{}} controlsLocked={p.controlsLocked} pose={p.pose} route={p.route}/>
+  <HallController plan={p.plan} command={p.command} atDoor={Boolean(p.atDoor)} intro={Boolean(p.intro)} paused={p.paused} effects={p.effects} input={p.input} loadedRooms={[0]} onArrive={p.onArrive} onMotion={p.onMotion} onRegion={()=>{}} controlsLocked={p.controlsLocked} pose={p.pose} route={p.route}/>
   <Ready onReady={p.onReady} onLost={p.onLost}/>
   {statsEnabled()&&<SceneStats/>}
   {p.quality&&<PerfProbe {...p.quality}/>}
+  {/* 15/11 Bước 1: real-room reflection probes + post-processing (quality-gated) */}
+  {baked&&<RoomProbes level={p.quality?.level||'high'}/>}
+  {baked&&p.quality&&p.quality.level!=='low'&&<PostFX level={p.quality.level}/>}
   <EntranceDoors door={p.door}/>
+  {baked&&<FoyerView/>}
  </Canvas>;
 }
 

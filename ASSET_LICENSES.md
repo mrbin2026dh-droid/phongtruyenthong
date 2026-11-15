@@ -6,3 +6,13 @@
 - React, Three.js, React Three Fiber, Drei và Vite: giấy phép MIT; TypeScript: Apache-2.0. Xem LICENSE trong các gói npm đã cài.
 - Chưa có logo chính thức, ảnh trường thật, MP3 hoặc MC GLB. Không dùng tên trường giả trên hình thiết kế làm danh tính thật.
 
+
+# Âm thanh (15/11/2026)
+- `public/audio/nhac-nen-piano-strings.m4a`: “Ambient Piano and Strings” — Good_B_Music, Pixabay
+  (https://pixabay.com/music/beautiful-plays-ambient-piano-and-strings-10711/), **Pixabay Content License**
+  (dùng miễn phí, kể cả thương mại, không bắt buộc ghi công; không bán/phân phối riêng file nhạc). Tải ngày 15/11/2026;
+  bản gốc MP3 256 kbps (3:37) lưu cục bộ ở `audio-src/` (không đưa lên git). Bản web: chuẩn hóa âm lượng −20 LUFS,
+  vào nhỏ dần 2,5 s / tắt dần 4 s, AAC 96 kbps, 2,66 MB.
+- Tiếng cửa trượt và không khí phòng: tự tổng hợp bằng Web Audio trong mã (`src/scene/hallAudio.ts`), không dùng file ngoài.
+- `@mediapipe/tasks-vision` 1.2.0 (Apache-2.0) và mô hình `selfie_multiclass_256x256.tflite` (Apache-2.0, Google MediaPipe):
+  chỉ dùng cho công cụ ảnh trên máy quản trị (`tools-models/`, không đưa lên web).

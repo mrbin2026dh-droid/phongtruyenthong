@@ -8,7 +8,7 @@ export async function readPortraitFile(file:File){
   if(!img.naturalWidth||!img.naturalHeight)throw new Error('Không đọc được kích thước ảnh.');
   const scale=Math.min(1,900/img.naturalHeight,900/img.naturalWidth),canvas=document.createElement('canvas');
   canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-  const ctx=canvas.getContext('2d')!;ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  const ctx=canvas.getContext('2d')!;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
   return {image:canvas.toDataURL('image/jpeg',.88),ratio:img.naturalWidth/img.naturalHeight,width:img.naturalWidth,height:img.naturalHeight};
  }finally{URL.revokeObjectURL(url);}
 }
@@ -24,7 +24,7 @@ export async function preparePortraitBlob(file:File){
   const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)throw new Error('Không đọc được kích thước ảnh.');
   const scale=Math.min(1,900/w,1350/h),canvas=document.createElement('canvas');
   canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
-  const ctx=canvas.getContext('2d')!;ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  const ctx=canvas.getContext('2d')!;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
   const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Không nén được ảnh.')),'image/jpeg',.9));
   return {blob,width:w,height:h,small:Math.min(w,h*2/3)<400};
  }finally{URL.revokeObjectURL(url);}

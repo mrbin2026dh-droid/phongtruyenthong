@@ -22,7 +22,8 @@ import type {BenchResult} from './BenchPanel';
 import {QUALITY_CHOICES,QUALITY_LEVELS,initialLevel,benchRoute,benchSummary} from './quality.mjs';
 import {bakedEnabled,bakedVariant} from './BakedHall';
 import type {DoorState} from './EntranceDoors';
-import {entryDelayMs} from './doorMotion.mjs';
+import {entryDelayMs,DOOR_SECONDS} from './doorMotion.mjs';
+import {startHallSound,stopHallSound,resumeHallSound,duckHallMusic,doorSound,soundEnabled,setSoundEnabled,subscribeSound} from './hallAudio';
 const DOOR_KEY='museum-door-opened';
 import {statsEnabled} from './SceneStats';
 
@@ -30,6 +31,7 @@ const QUALITY_KEY='hall-quality-choice';
 function storedChoice(){try{const v=localStorage.getItem(QUALITY_KEY);return QUALITY_CHOICES.some(c=>c.id===v)?v as string:'auto';}catch{return 'auto';}}
 function startLevel(){try{const nav=navigator as Navigator&{deviceMemory?:number};return initialLevel({coarse:matchMedia('(pointer: coarse)').matches,smallScreen:Math.min(screen.width,screen.height)<900,deviceMemory:nav.deviceMemory});}catch{return 'high';}}
 import TwinSticks from './TwinSticks';
+import {sceneAssetsLoaded,subscribeAssets} from './sceneAssets';
 import {TourIcon} from './VisitorDock';
 import type {Person} from '../data/repository';
 import '../hall.css';
@@ -114,14 +116,32 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  const [hostOpen,setHostOpen]=useState(false);
  useEffect(()=>{if(!host.current)return;const observer=new ResizeObserver(([entry])=>setAspect(entry.contentRect.width/Math.max(1,entry.contentRect.height)));observer.observe(host.current);return()=>observer.disconnect();},[]);
 
- useEffect(()=>{if(!sceneReady)return;let walk:ReturnType<typeof setTimeout>|undefined;
-  const timer=setTimeout(()=>{
+ // 15/11: reveal the scene only when the room, the statue and all portraits are loaded (or after 30 s at worst).
+ const required=useMemo(()=>bakedEnabled()?['baked','statue']:['statue'],[]);
+ const assetsLoaded=useSyncExternalStore(subscribeAssets,()=>sceneAssetsLoaded(required));
+ const [assetTimeout,setAssetTimeout]=useState(false);
+ useEffect(()=>{if(!sceneReady)return;const t=setTimeout(()=>setAssetTimeout(true),30000);return()=>clearTimeout(t);},[sceneReady]);
+ const revealed=useRef(false),revealTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ useEffect(()=>()=>clearTimeout(revealTimer.current),[]);
+ useEffect(()=>{if(!sceneReady||!(assetsLoaded||assetTimeout)||revealed.current)return;revealed.current=true;
+  window.dispatchEvent(new Event('museum-navigation-input'));
+  // 15/11 fix: the reveal timer must survive later asset-count changes (it used to be cleared by the next effect
+  // run, which then returned early — the loading screen stayed forever). Only unmount cancels it.
+  revealTimer.current=setTimeout(()=>{
    setReady(true);
-   let seen=false;try{seen=sessionStorage.getItem(DOOR_KEY)==='1';}catch{/* private mode */}
-   if(benchOn||seen)openDoor();else setAtDoor(true);
-  },Math.max(0,700-(performance.now()-openedAt.current)));
-  return()=>clearTimeout(timer);},[sceneReady]);
+   // 15/11: always wait at the closed door (repeat visits used to auto-open — looked like a bug to the user)
+   if(benchOn)openDoor();else setAtDoor(true);
+  },Math.max(400,700-(performance.now()-openedAt.current)));
+  },[sceneReady,assetsLoaded,assetTimeout]);
+ // Touching a stick = walk on my own (also interrupts the automatic presentation).
+ const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
+ // establishing shot over the schoolyard on the first arrival at the door (not for reduced motion / effects off)
+ const [intro,setIntro]=useState(()=>!reducedMotion());
+ useEffect(()=>{const done=()=>setIntro(false);window.addEventListener('museum-intro-done',done);return()=>window.removeEventListener('museum-intro-done',done);},[]);
  function openDoor(){
+  setIntro(false);
+  // 15/11: the tap that opens the door also starts the music (browsers only allow sound after a gesture).
+  startHallSound();if(entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects}))doorSound(DOOR_SECONDS);
   setAtDoor(false);setArriving(true);setChooseMode(true);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
   const wait=entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects});
   if(!wait){door.current={target:1,value:1};setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance',instant:benchOn}));return;}
@@ -131,7 +151,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},wait);
  }
  // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
- useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;setAutomatic(false);setAtDoor(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
+ useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
  const skipEntry=()=>{door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
  const active=layout.stops.find((s:any)=>s.id===current);
  const remaining=useRef(presentationDwell(active));
@@ -158,6 +178,9 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  // Hidden tab → pause; visible again → resume ONLY if the system paused it (14/11 fix: the entry walk
  // used to stay stuck on "Đang tạm dừng" after the visitor switched tabs while the scene was loading).
  useEffect(()=>{const suspend=()=>{if(document.hidden){autoPaused.current=true;setPause(true);input.current=neutralInput();}else if(autoPaused.current){autoPaused.current=false;setPause(false);}};document.addEventListener('visibilitychange',suspend);window.addEventListener('blur',suspend);return()=>{document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);};},[]);
+ const sound=useSyncExternalStore(subscribeSound,soundEnabled);
+ useEffect(()=>{duckHallMusic(Boolean(p.speaking));},[p.speaking]);
+ useEffect(()=>()=>stopHallSound(),[]);
  useEffect(()=>{if(panel)close.current?.focus();const esc=(e:KeyboardEvent)=>{if(e.key==='Escape'){setPanel(null);setManual(false);trigger.current?.focus();}};document.addEventListener('keydown',esc);return()=>document.removeEventListener('keydown',esc);},[panel]);
  useEffect(()=>{if(p.paused){setManual(false);input.current=neutralInput();}},[p.paused]);
 
@@ -170,7 +193,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
 
  const icon=(label:string,name:string,action:()=>void,disabled=false,active=false)=><button type="button" aria-label={label} title={label} onClick={action} className={active?'active':''} disabled={disabled||p.paused}><TourIcon name={name}/></button>;
 
- return <div className="guided-tour immersive-tour"><section ref={host} className="scene-shell guided-scene hall-scene" aria-label="Phòng trưng bày chung 3D">
+ return <div className="guided-tour immersive-tour"><section ref={host} className="scene-shell guided-scene hall-scene" aria-label="Phòng trưng bày chung 3D" onPointerDown={resumeHallSound}>
   <div className="hall-version-bar">
    <div className="location-chip">
     <span className="location-dot"/>
@@ -180,6 +203,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </div>
 
   <button className="visitor-fullscreen" aria-label="Toàn màn hình" onClick={full}><TourIcon name="fullscreen"/></button>
+  <button className="visitor-sound" aria-label={sound?'Tắt nhạc nền':'Bật nhạc nền'} title={sound?'Tắt nhạc nền':'Bật nhạc nền'} aria-pressed={sound} onClick={()=>setSoundEnabled(!sound)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5V5.5l10-2v12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><circle cx="6.6" cy="17.5" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.7"/><circle cx="16.6" cy="15.5" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.7"/>{!sound&&<path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>}</svg></button>
 
   <Suspense fallback={null}>
    <Scene
@@ -189,7 +213,9 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     paused={p.paused||pause||Boolean(panel)||!ready||hostOpen}
     moving={moving}
     effects={effects}
-    controlsLocked={automatic}
+    controlsLocked={automatic||atDoor}
+    atDoor={atDoor}
+    intro={atDoor&&intro&&effects}
     input={input}
     pose={pose}
     route={route}
@@ -207,13 +233,16 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </Suspense>
 
   {!ready&&!failed&&<VisitLoading overlay/>}
-  {ready&&atDoor&&!panel&&<button type="button" className="hall-door-prompt" onClick={openDoor} autoFocus aria-label="Chạm để mở cửa vào phòng truyền thống"><span>Chạm để mở cửa</span></button>}
+  {ready&&atDoor&&!panel&&(intro&&effects
+   ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>
+   :<button type="button" className="hall-door-prompt" onClick={openDoor} autoFocus aria-label="Chạm để mở cửa vào phòng truyền thống"><span>Chạm để mở cửa</span></button>)}
   {ready&&arriving&&(moving||doorOpening)&&<button className="hall-skip-entry" onClick={skipEntry}>Bỏ qua đoạn vào cửa</button>}
-  {ready&&!atDoor&&!doorOpening&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
+  {ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
   {ready&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&!chooseMode&&active?.group==='memory'&&<div className="hall-memory-note"><strong>{active.title}</strong><p>{active.description}</p><small>Hiện vật minh họa · Chờ tư liệu chính thức</small></div>}
   {automatic&&!panel&&<div className="hall-progress">{pause?'Đang tạm dừng':'Trình diễn tự động'} · Điểm {Math.max(1,layout.stops.findIndex((s:any)=>s.id===(moving?command.to:current))+1)}/{layout.stops.length}</div>}
   {complete&&!panel&&<div className="hall-progress" role="status">Đã hoàn thành một vòng tham quan</div>}
-  {manual&&!moving&&!p.paused&&!panel&&<TwinSticks input={input}/>}
+  {/* 15/11: the sticks are always offered once inside, so visitors never forget they can walk on their own. */}
+  {ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&<TwinSticks input={input} onEngage={enterManual}/>}
 
   {panel&&<div className="hall-panel-shade" onPointerDown={e=>{if(e.target===e.currentTarget)setPanel(null);}}><section className="hall-panel" aria-label={panel==='map'?'Sơ đồ phòng chung':'Tùy chọn tham quan'}><div className="visitor-panel-heading"><h2>{panel==='map'?'Một phòng · Năm khu':'Tùy chọn'}</h2><button ref={close} aria-label="Đóng bảng điều khiển" onClick={()=>{setPanel(null);trigger.current?.focus();}}><TourIcon name="close"/></button></div>
    {panel==='map'?<><div className="hall-plan" aria-label="Sơ đồ mặt bằng phòng 24 × 16 mét"><YouAreHere pose={pose}/><span className="hall-plan-entry">Lối vào</span><span className="hall-map-wall hall-map-left"/><span className="hall-map-wall hall-map-right"/>{layout.stops.filter((s:any,i:number,a:any[])=>s.group&&!a.slice(0,i).some(v=>v.group===s.group)).map((s:any)=><button key={s.id} aria-label={'Đến '+s.title} title={s.title} className={current===s.id?'selected':''} style={{left:(s.eye[0]+12)/24*100+'%',top:(s.eye[2]+8)/16*100+'%'}} onClick={()=>go(s.id)} disabled={moving}>{({principal:'HT',deputy:'PHT',teacher:'GV',staff:'NV',memory:'KV'} as Record<string,string>)[s.group]}</button>)}</div><div className="hall-zone-list"><button disabled={moving} onClick={()=>go(CABINETS[0].id)}><span>Kỷ vật và thành tích nhà trường</span><small>3 tủ minh họa</small><TourIcon name="right"/></button>{layout.zones.map((z:any)=><button key={z.id} disabled={moving} onClick={()=>go((layout.stops.find((s:any)=>s.group===z.id)||layout.stops.find((s:any)=>s.id==='principal-0')).id)}><span>{z.name}</span><small>{z.people.length}/{z.capacity} vị trí</small><TourIcon name="right"/></button>)}</div></>:<div className="visitor-options"><button onClick={p.onList}><TourIcon name="search"/>Tìm hồ sơ</button><button disabled={moving} onClick={()=>go(nextPresentationStop(layout.stops,current)?.id||'entrance')}>Điểm tham quan tiếp</button><button disabled={moving} onClick={()=>start(true)}>Trình diễn từ điểm hiện tại</button><label><input type="checkbox" checked={!effects} onChange={()=>setEffects(v=>!v)}/>Giảm chuyển động</label><label>Chất lượng hình<select aria-label="Chất lượng hình" value={qualityChoice} onChange={e=>chooseQuality(e.target.value)}>{QUALITY_CHOICES.map(c=><option key={c.id} value={c.id}>{c.label}{c.id==='auto'&&qualityChoice==='auto'?' (đang: '+(QUALITY_LEVELS.find(l=>l.id===qualityLevel)?.label||'')+')':''}</option>)}</select></label><label>Tốc độ di chuyển<select aria-label="Tốc độ di chuyển" defaultValue="1" onChange={e=>{input.current.speed=Number(e.target.value);}}><option value=".75">Chậm</option><option value="1">Vừa</option></select></label><button onClick={()=>{input.current.reset++;window.dispatchEvent(new Event('museum-navigation-input'));setPanel(null);}}>Đặt lại góc nhìn</button><p className="hall-help">Kéo để nhìn quanh, cuộn hoặc chụm hai ngón để phóng to. Máy tính: W/A/S/D để đi.</p><button onClick={()=>p.onModule(2)}>Tôn vinh giáo viên · Đang xây dựng</button><button onClick={()=>p.onModule(3)}>Tôn vinh học sinh · Đang xây dựng</button>{import.meta.env.DEV&&adminAvailable&&(p.admin?<button className="admin-link" onClick={()=>{signOut();setPanel(null);}}>Đăng xuất quản trị</button>:<button className="admin-link" onClick={()=>{setPanel(null);p.onAdminLogin?.();}}>Quản trị viên: đăng nhập</button>)}</div>}

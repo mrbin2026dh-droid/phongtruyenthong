@@ -20,3 +20,9 @@ assets/
 # Reports written by the global pre-commit auditor
 tests/f12_diagnostic_report.json
 tests/f12_error_log.js
+
+# Admin-only AI models (local photo tools, never published)
+tools-models/
+
+# Original downloaded audio (web uses the compressed copy in public/audio)
+audio-src/

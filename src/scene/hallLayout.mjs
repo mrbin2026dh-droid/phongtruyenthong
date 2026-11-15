@@ -1,5 +1,5 @@
 import {EXHIBIT_ZONES,exhibitSlots,assignExhibitSlots} from '../data/exhibitSlots.mjs';
-import {ARRIVAL_START} from './hallArrival.mjs';
+import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
 export const HALL={width:24,depth:16,height:4.2,capacity:127,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
@@ -60,7 +60,8 @@ export function fitHallStops(stops,aspect){
 }
 export function isWalkable([x,y,z]){
  if(!Number.isFinite(x+y+z)||y<1.3||y>2.4)return false;
- if(z>7.45)return Math.abs(x)<1.8&&z<=10.9;
+ // 15/11 (b): doorway strip, then the whole foyer floor (stay clear of the glass, stair opening and facade).
+ if(z>7.45)return z>8.9?Math.abs(x)<4.1&&z<=13.3:Math.abs(x)<1.8;
  if(Math.abs(x)>11.5||Math.abs(z)>7.45)return false;
  if(Math.abs(x-MONUMENT.x)<MONUMENT.clearance&&Math.abs(z-MONUMENT.z)<MONUMENT.clearance)return false;
  if(x>3.35&&x<10.85&&z>6.65)return false; // cabinet cases and standing clearance
@@ -74,7 +75,7 @@ export function segmentWalkable(a,b){
 export function createHallPlan(stops){
  const nodes={},edges={};
  for(const stop of stops)nodes[stop.id]={...stop};
- nodes.gate={id:'gate',title:'Cổng vào',eye:ARRIVAL_START.slice(),target:[0,1.85,-7.8]};
+ nodes.gate={id:'gate',title:'Cổng vào',eye:ARRIVAL_START.slice(),target:gateLook(1.6)};
  [[0,7.1],[-1.65,6.4],[-1.65,3.2]].forEach(([x,z],i)=>{const id='foyer-'+i;nodes[id]={id,eye:[x,1.7,z],target:[0,1.85,-7.8]};});
  [[-8.8,-4.7],[8.8,-4.7],[8.8,4.7],[-8.8,4.7],[0,-1.5]].forEach(([x,z],i)=>{const id='junction-'+i;nodes[id]={id,eye:[x,1.7,z],target:[0,1.7,-7.8]};});
  for(const n of Object.values(nodes))edges[n.id]=Object.values(nodes).filter(o=>o.id!==n.id&&segmentWalkable(n.eye,o.eye)).map(o=>o.id);

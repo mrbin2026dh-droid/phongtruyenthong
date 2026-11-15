@@ -1,10 +1,13 @@
-import {useEffect,useMemo,useState} from 'react';
+import {Suspense,lazy,useEffect,useMemo,useState} from 'react';
 import Dialog from './Dialog';
 import {catalog,portraitPath,type Person} from '../data/repository';
 import {STATUSES,DuplicatePersonError} from '../data/catalog.mjs';
 import {slotDefaults,storedRatio} from '../data/photoRef.mjs';
 import {preparePortraitBlob} from '../data/portraitFile';
 import {savePhoto,deletePhoto,isPhotoRef} from '../data/photoStore';
+
+// 15/11: photo tool (thay áo) — admin computer only, loaded on demand.
+const PortraitStyler=lazy(()=>import('./PortraitStyler'));
 
 const ZONE_NAME:Record<string,string>={principal:'Hiệu trưởng',deputy:'Phó Hiệu trưởng',teacher:'Giáo viên',staff:'Nhân viên'};
 const year=()=>new Date().getFullYear();
@@ -20,12 +23,21 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved}:{slot:{slo
  const [file,setFile]=useState<{blob:Blob;url:string;width:number;height:number;small:boolean}|null>(null),[removePhoto,setRemovePhoto]=useState(false);
  const [error,setError]=useState(''),[busy,setBusy]=useState(false),[dup,setDup]=useState<string>(''),[confirmRemove,setConfirmRemove]=useState(false);
  useEffect(()=>()=>{if(file)URL.revokeObjectURL(file.url);},[file]);
+ const [styling,setStyling]=useState<{blob:Blob;width:number;height:number}|null>(null);
  const preview=useMemo(()=>file?file.url:removePhoto||!person?'':portraitPath(person),[file,removePhoto,person]);
 
  async function pick(f?:File){
   setError('');if(!f)return;
   try{const r=await preparePortraitBlob(f);setFile(old=>{if(old)URL.revokeObjectURL(old.url);return {...r,url:URL.createObjectURL(r.blob)};});setRemovePhoto(false);}
   catch(err){setError(err instanceof Error?err.message:'Không đọc được ảnh.');}
+ }
+
+ async function openStyler(){
+  setError('');
+  try{
+   if(file){setStyling({blob:file.blob,width:file.width,height:file.height});return;}
+   const blob=await (await fetch(preview)).blob();setStyling({blob,width:0,height:0});
+  }catch{setError('Không mở được ảnh để chuẩn hóa.');}
  }
 
  async function save(allowSameName=false){
@@ -63,6 +75,7 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved}:{slot:{slo
    <div className="admin-slot-photo">
     <div className="admin-slot-frame">{preview?<img src={preview} alt="Ảnh chân dung sẽ hiển thị trên tường"/>:<span>Chưa có ảnh</span>}</div>
     <label className="button">Chọn ảnh từ máy<input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e=>{void pick(e.target.files?.[0]);e.currentTarget.value='';}}/></label>
+    {preview&&<button type="button" onClick={()=>void openStyler()}>Chuẩn hóa trang phục…</button>}
     {(file||(!removePhoto&&person?.image))&&<button type="button" onClick={()=>{if(file){URL.revokeObjectURL(file.url);setFile(null);}else setRemovePhoto(true);}}>{file?'Bỏ ảnh vừa chọn':'Xóa ảnh (để trống khung)'}</button>}
     {file?.small&&<p className="fine">Ảnh khá nhỏ ({file.width}×{file.height} px); nên dùng ảnh từ 600×900 px để sắc nét.</p>}
     <p className="fine">Ảnh 4×6 vừa khít khung; ảnh 3×4 sẽ được cắt bớt hai bên vai. Vị trí: {slot.slotId}</p>
@@ -86,5 +99,6 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved}:{slot:{slo
     {person&&confirmRemove&&<span className="admin-confirm">Gỡ {person.name} và xóa hồ sơ này? <button type="button" className="danger" onClick={()=>void remove()} disabled={busy}>Gỡ hẳn</button><button type="button" onClick={()=>setConfirmRemove(false)}>Không</button></span>}
    </div>
   </form>
+  {styling&&<Suspense fallback={null}><PortraitStyler source={styling} onClose={()=>setStyling(null)} onUse={p=>{setFile(old=>{if(old)URL.revokeObjectURL(old.url);return p;});setRemovePhoto(false);setStyling(null);}}/></Suspense>}
  </Dialog>;
 }

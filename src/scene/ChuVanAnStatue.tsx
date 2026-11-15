@@ -1,5 +1,6 @@
 import {useEffect,useMemo} from 'react';
 import {useGLTF} from '@react-three/drei';
+import {markAssetReady} from './sceneAssets';
 import {useFrame} from '@react-three/fiber';
 import {Mesh,MeshStandardMaterial} from 'three';
 /** Seated study repaired in Blender from the user's package; not an authenticated scan.
@@ -24,7 +25,7 @@ export default function ChuVanAnStatue(){
   // matching bronze studio brightness without increasing every wall/frame light.
   for(const material of materials)if(material.envMap!==scene.environment){material.envMap=scene.environment;material.needsUpdate=true;}
  });
- useEffect(()=>()=>{materials.forEach(m=>m.dispose());},[materials]);
+ useEffect(()=>{markAssetReady('statue');return()=>{materials.forEach(m=>m.dispose());};},[materials]);
  // Source is 1.2 m tall, +Y up, +Z facing the entrance. Preserve the existing
  // 1.12 m display height and base footprint so the collision envelope stays valid.
  return <primitive object={model} position={[0,.89,0]} scale={1.12/1.2}/>;

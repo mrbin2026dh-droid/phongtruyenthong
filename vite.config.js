@@ -45,6 +45,26 @@ function localAdmin(server){
 }
 
 // User-supplied photos stay outside public and the build; loopback preview only.
+// 15/11: admin photo tool (thay áo) — MediaPipe model + wasm served ONLY by the dev server, ONLY to this computer.
+// Files stay outside public/, so they are never part of the GitHub Pages site.
+const TOOL_FILES={
+ 'selfie_multiclass_256x256.tflite':['tools-models/selfie_multiclass_256x256.tflite','application/octet-stream'],
+ 'vision_wasm_internal.js':['node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.js','text/javascript'],
+ 'vision_wasm_internal.wasm':['node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.wasm','application/wasm'],
+ 'vision_wasm_nosimd_internal.js':['node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.js','text/javascript'],
+ 'vision_wasm_nosimd_internal.wasm':['node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.wasm','application/wasm'],
+};
+function localTools(server){
+ server.middlewares.use((req,res,next)=>{
+  const p=req.url?.split('?')[0]||'';if(!p.startsWith('/__local-tools/'))return next();
+  const a=String(req.socket.remoteAddress||'').replace(/^::ffff:/,'');
+  if(!(a==='::1'||a.startsWith('127.'))||req.method!=='GET'){res.statusCode=403;res.end();return;}
+  const hit=TOOL_FILES[p.slice('/__local-tools/'.length)];if(!hit){res.statusCode=404;res.end();return;}
+  res.setHeader('Content-Type',hit[1]);res.setHeader('Cache-Control','no-store');
+  createReadStream(fileURLToPath(new URL('./'+hit[0],import.meta.url))).on('error',()=>{res.statusCode=404;res.end();}).pipe(res);
+ });
+}
+
 function localPortrait(server){
  server.middlewares.use((req,res,next)=>{
   // Dev-only: save a ?bench=1 report (JSON ≤ 64 KB) to local-preview/bench/. Same-origin, private network only.
@@ -89,4 +109,4 @@ function localPortrait(server){
   if(req.method==='HEAD'){stream.destroy();res.end();}else stream.pipe(res);
  });
 }
-export default defineConfig({base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});
+export default defineConfig({base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-admin-tools',apply:'serve',configureServer:localTools},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});

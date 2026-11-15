@@ -3,7 +3,7 @@ import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {Vector3,Quaternion,Matrix4,Euler,PerspectiveCamera} from 'three';
 import {dampValue,presentationTurnStep,routeFromPosition,roundedPath,samplePath,cornerSpeed,slideStep,regionAt} from './hallMotion.mjs';
-import {ARRIVAL_START,arrivalRoute} from './hallArrival.mjs';
+import {ARRIVAL_START,arrivalRoute,gateLook} from './hallArrival.mjs';
 import type {Plan,TourCommand} from './GuidedScene';
 
 export type NavigationInput={forward:number;strafe:number;turn:number;look:number;zoom:number;speed:number;reset:number};
@@ -18,7 +18,10 @@ export function keyTargetIgnored(target:EventTarget|null){
  return /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)||el.isContentEditable||Boolean(el.closest?.('.thumbstick-base,dialog,.hall-panel'));
 }
 
-export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,pose,route}:{plan:Plan;command:TourCommand;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
+/** Establishing shot: look at the schoolyard (through the glass behind the visitor), hold, then turn to the door. */
+const INTRO_LOOK:[number,number,number]=[.8,.9,22],INTRO_HOLD=1.2,INTRO_PAN=4.5;
+
+export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,atDoor=false,intro=false,pose,route}:{plan:Plan;command:TourCommand;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
  const {camera,gl,invalidate,size}=useThree();
  const motion=useRef({running:false,orienting:false,settling:false,wallTravel:false,distance:0,speed:0,path:roundedPath([[0,1.7,5.05]],1),to:'lobby',goal:[0,1.85,-5.5]});
  const view=useRef({yaw:0,pitch:0,targetYaw:0,targetPitch:0,fov:62,targetFov:62,vx:0,vz:0,region:-1,reset:0});
@@ -29,8 +32,24 @@ export default function HallController({plan,command,paused,effects,input,loaded
  const pointers=useRef(new Map<number,{x:number;y:number}>()),pinch=useRef(0);
  const euler=useRef(new Euler());
  function readLook(){const e=new Euler().setFromQuaternion(camera.quaternion,'YXZ');view.current.yaw=view.current.targetYaw=e.y;view.current.pitch=view.current.targetPitch=e.x;}
- useEffect(()=>{if(!initialized.current){const entrance=plan.nodes.entrance;camera.position.fromArray(ARRIVAL_START);camera.lookAt(...entrance.target as [number,number,number]);readLook();initialized.current=true;invalidate();}},[camera,invalidate,plan]);
+ useEffect(()=>{if(!initialized.current){camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();initialized.current=true;invalidate();}},[camera,invalidate,plan]);
  useEffect(()=>{view.current.targetFov=size.width/size.height<1.1?78:62;invalidate();},[size,invalidate]);
+ // 15/11: waiting at the door always shows the doors (keys/drag are locked there, see controlsLocked).
+ const frameDoor=()=>{camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
+ // 15/11 establishing shot: the visitor first looks out over the schoolyard, then the camera turns slowly to the door.
+ const pan=useRef({active:false,t:0,start:0,from:new Quaternion(),to:new Quaternion()});
+ const startIntro=()=>{
+  frameDoor();pan.current.to.copy(camera.quaternion);
+  camera.lookAt(...INTRO_LOOK);pan.current.from.copy(camera.quaternion);readLook();
+  pan.current.active=true;pan.current.t=-INTRO_HOLD;pan.current.start=performance.now();(window as any).__museumIntro=true;invalidate();
+ };
+ const endIntro=()=>{if(!pan.current.active)return;pan.current.active=false;(window as any).__museumIntro=false;camera.quaternion.copy(pan.current.to);readLook();invalidate();window.dispatchEvent(new Event('museum-intro-done'));};
+ useEffect(()=>{if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}},[atDoor,intro,size.width>=size.height]);
+ // safety net: the shot always ends even if no frame is drawn (background tab, very slow phone)
+ useEffect(()=>{if(!(atDoor&&intro))return;const id=setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000);return()=>clearTimeout(id);},[atDoor,intro]);
+ useEffect(()=>{const skip=()=>endIntro();window.addEventListener('museum-intro-skip',skip);return()=>window.removeEventListener('museum-intro-skip',skip);});
+ // Dev safety net (EntranceDoors): the door left the view while waiting → frame it again.
+ useEffect(()=>{const fn=()=>{if(live.current.controlsLocked&&!motion.current.running&&!pan.current.active)frameDoor();};window.addEventListener('museum-door-reframe',fn);return()=>window.removeEventListener('museum-door-reframe',fn);});
  useEffect(()=>{if(paused||controlsLocked){keys.current.clear();input.current.forward=0;input.current.strafe=0;input.current.turn=0;input.current.look=0;view.current.vx=0;view.current.vz=0;drag.current=null;}if(paused)motion.current.speed=0;invalidate();},[paused,controlsLocked,invalidate,input]);
  useEffect(()=>{
   if(command.serial===0||handled.current===command.serial)return; // Resize must not replay entry.
@@ -87,6 +106,18 @@ export default function HallController({plan,command,paused,effects,input,loaded
  useEffect(()=>{const wake=()=>invalidate();window.addEventListener('museum-navigation-input',wake);return ()=>window.removeEventListener('museum-navigation-input',wake);},[invalidate]);
  useFrame((_,rawDt)=>{
   if(pose){const e=euler.current.setFromQuaternion(camera.quaternion,'YXZ');pose.current.x=camera.position.x;pose.current.z=camera.position.z;pose.current.yaw=e.y;}
+  if(!Number.isFinite(camera.position.x+camera.position.y+camera.position.z+camera.quaternion.x+camera.quaternion.w)){
+   // Safety net: never leave the visitor looking at an empty frame.
+   camera.position.fromArray(ARRIVAL_START);camera.quaternion.identity();camera.lookAt(...gateLook(1.6) as [number,number,number]);readLook();motion.current.running=false;
+  }
+  if(pan.current.active){
+   // wall clock, not frame dt: a throttled/slow tab still finishes the shot on time (15/11)
+   const p=pan.current;p.t=(performance.now()-p.start)/1000-INTRO_HOLD;
+   const k=Math.max(0,Math.min(1,p.t/INTRO_PAN)),e=k*k*(3-2*k);
+   camera.quaternion.slerpQuaternions(p.from,p.to,e);invalidate();
+   if(k>=1)endIntro();
+   return;
+  }
   if(live.current.paused)return;
   const dt=Math.min(rawDt,.05),m=motion.current,v=view.current,n=input.current;
   if(route?.current&&m.running&&!m.orienting)route.current.travelled=m.distance;

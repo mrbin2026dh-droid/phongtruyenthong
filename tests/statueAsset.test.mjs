@@ -83,8 +83,8 @@ test('Baked shell (GĐ3) is the default (?scene=classic opts out), has a mobile 
  for(const f of ['hall-baked.glb','hall-baked-mobile.glb']){
   const b=readFileSync(new URL('../public/models/'+f,import.meta.url));assert.equal(b.toString('ascii',0,4),'glTF');
   const json=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));
-  assert.equal(json.meshes.length,5,"floor, walls, ceiling, details, oak slats (phương án B)");assert.equal(json.images.length,5);assert.ok(json.images.every(i=>i.mimeType==='image/webp'));
-  assert.ok(json.extensionsRequired.includes('EXT_meshopt_compression'));assert.ok(b.length<(f==='hall-baked.glb'?3.5e6:2.5e6),f+' stays small');
+  assert.equal(json.meshes.length,6,"floor, walls, ceiling, details, oak slats, foyer (15/11)");assert.equal(json.images.length,6);assert.ok(json.images.every(i=>i.mimeType==='image/webp'));
+  assert.ok(json.extensionsRequired.includes('EXT_meshopt_compression'));assert.ok(b.length<(f==='hall-baked.glb'?4.6e6:2.8e6),f+' stays small');
  }
  assert.match(baked,/new MeshBasicMaterial\(\{map,toneMapped:false\}\)/);
  assert.match(hall,/function Architecture\(\{baked=false\}[^)]*\)\{if\(baked\)return <DoorMotto\/>;/);

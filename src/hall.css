@@ -27,9 +27,25 @@
 .hall-you-label{position:absolute;left:10px;top:-26px;white-space:nowrap;font:600 10px "Noto Sans";color:#5a4320;background:#fffaf0e6;border:1px solid #d1b77a;border-radius:8px;padding:1px 6px}
 
 /* 15/11: waiting at the closed entrance doors — the whole scene is the tap target. */
-.hall-door-prompt{position:absolute;inset:0;z-index:11;border:0;margin:0;padding:0 0 100px;background:transparent;cursor:pointer;display:flex;align-items:flex-end;justify-content:center}
+/* The overlay covers the whole scene: it must stay see-through in EVERY state. The global button:hover
+   (#eee1c9) used to win over a lone class and hid the room whenever the pointer rested on it (15/11 bug). */
+.hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{position:absolute;inset:0;z-index:11;border:0;border-radius:0;margin:0;min-height:0;padding:0 0 100px;background:transparent;box-shadow:none;outline:none;cursor:pointer;display:flex;align-items:flex-end;justify-content:center}
+.hall-scene .hall-door-prompt:hover span{opacity:1;background:#0e2a32d9}
 .hall-door-prompt span{padding:9px 20px;border-radius:999px;background:#0e2a32b8;color:#f8e9c6;font-size:14px;letter-spacing:.02em;border:1px solid #d9b56f88;box-shadow:0 4px 18px #0004;animation:door-hint 2.4s ease-in-out infinite}
-.hall-door-prompt:focus-visible span{outline:2px solid #f3d38c;outline-offset:3px}
+.hall-scene .hall-door-prompt:focus-visible span{outline:2px solid #f3d38c;outline-offset:3px}
 @keyframes door-hint{0%,100%{opacity:.72}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.hall-door-prompt span{animation:none}}
-@media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-door-prompt{padding-bottom:66px}}
+@media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-scene .hall-door-prompt{padding-bottom:66px}}
+
+/* 15/11: background-music toggle, left of the fullscreen button. */
+/* Hall panels live outside .visitor-panel; give their icons and option rows explicit sizes. */
+.hall-panel svg{width:22px;height:22px;flex-shrink:0}
+.hall-panel .visitor-options>button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:44px;padding:10px 12px;font-size:13px;text-align:left}
+.hall-panel .visitor-options>.admin-link{order:-1;margin-top:0;border-color:#b88b3d;font-weight:600}
+.visitor-sound{position:absolute;right:66px;top:14px;z-index:21;display:grid;place-items:center;width:44px;height:44px;border:1px solid #ffffffa8;border-radius:12px;background:#eff0e8db;color:#35545e;box-shadow:0 3px 18px #19343c0c;cursor:pointer}
+.visitor-sound svg{width:20px;height:20px}
+.visitor-sound[aria-pressed="false"]{color:#8a8f88}
+@media (max-height:500px) and (orientation:landscape){.immersive-tour .visitor-sound{top:8px;right:58px}}
+
+/* 15/11 establishing shot: quieter hint while the camera looks over the schoolyard */
+.hall-door-prompt .hall-intro-skip{opacity:.55;font-size:12px;animation:none;background:#0e2a3280}

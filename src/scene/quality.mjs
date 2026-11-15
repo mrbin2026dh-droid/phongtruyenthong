@@ -11,7 +11,9 @@ export const QUALITY_CHOICES=[{id:'auto',label:'Tự động'},...QUALITY_LEVELS
 /** Device pixel ratio actually used: never above the screen's own ratio. */
 export function dprFor(levelId,deviceDpr=1){
  const level=QUALITY_LEVELS.find(l=>l.id===levelId)||QUALITY_LEVELS[0];
- return Math.max(.75,Math.min(level.dpr,Math.max(1,deviceDpr)));
+ // 15/11: a 1× screen (most school PCs/projectors) is never drawn below its own resolution — that only blurs.
+ if(deviceDpr<=1)return 1;
+ return Math.max(.75,Math.min(level.dpr,deviceDpr));
 }
 
 /** Start phones/tablets one step lower; desktops start high.

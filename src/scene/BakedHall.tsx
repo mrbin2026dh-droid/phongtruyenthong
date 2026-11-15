@@ -1,5 +1,7 @@
 import {useEffect,useMemo} from 'react';
 import {useGLTF} from '@react-three/drei';
+import {markAssetReady} from './sceneAssets';
+import {applyBakedDetail,detailFor} from './bakedDetail';
 import {useThree} from '@react-three/fiber';
 import {Mesh,MeshBasicMaterial,MeshStandardMaterial,SRGBColorSpace,Texture} from 'three';
 
@@ -30,13 +32,13 @@ export default function BakedHall(){
   const model=gltf.scene.clone(true),materials:MeshBasicMaterial[]=[];
   model.traverse(o=>{if(!(o instanceof Mesh))return;
    const map=(o.material as MeshStandardMaterial).map as Texture|null;
-   if(map){map.colorSpace=SRGBColorSpace;map.anisotropy=Math.min(8,gl.capabilities.getMaxAnisotropy());map.needsUpdate=true;}
+   if(map){map.colorSpace=SRGBColorSpace;map.anisotropy=Math.min(16,gl.capabilities.getMaxAnisotropy());map.needsUpdate=true;}
    // The bake is already AgX tone-mapped in Blender: do not tone-map it again.
-   const m=new MeshBasicMaterial({map,toneMapped:false});materials.push(m);o.material=m;
+   const m=new MeshBasicMaterial({map,toneMapped:false});applyBakedDetail(m,detailFor(o.name));materials.push(m);o.material=m;
    o.castShadow=false;o.receiveShadow=false;o.userData.bakedShell=true;
   });
   return {model,materials};
  },[gltf.scene,gl]);
- useEffect(()=>{invalidate();return()=>materials.forEach(m=>m.dispose());},[materials,invalidate]);
+ useEffect(()=>{invalidate();markAssetReady('baked');return()=>materials.forEach(m=>m.dispose());},[materials,invalidate]);
  return <primitive object={model}/>;
 }
