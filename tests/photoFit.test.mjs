@@ -27,3 +27,10 @@ test('Standing right in front of a frame uses the full 900×1350 upload; tiers h
  const tier=(cur,d)=>d<(cur===2?3:2.4)?2:(d<(cur>=1?8.5:6.5)?1:0);
  assert.equal(tier(0,2),2);assert.equal(tier(2,2.8),2);assert.equal(tier(2,3.2),1);assert.equal(tier(1,8),1);assert.equal(tier(0,8),0);
 });
+
+test('Heavy assets carry a content-hash version so phones never keep an old room after an update',()=>{
+ const cfg=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');
+ assert.ok(cfg.includes("define:{__ASSET_V__:JSON.stringify(ASSET_V)}")&&cfg.includes("'models/hall-baked-mobile.glb'"));
+ for(const f of ['BakedHall.tsx','ChuVanAnStatue.tsx','FoyerView.tsx','hallAudio.ts'])
+  assert.ok(readFileSync(new URL('../src/scene/'+f,import.meta.url),'utf8').includes("?v='+__ASSET_V__"),f);
+});

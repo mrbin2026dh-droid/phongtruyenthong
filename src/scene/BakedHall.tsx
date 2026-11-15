@@ -26,7 +26,7 @@ export function bakedVariant(){
  * contains material colour + light. Shown unlit, so it costs 4 draw calls and no real-time lights. */
 export default function BakedHall(){
  const file=useMemo(bakedVariant,[]);
- const gltf=useGLTF(import.meta.env.BASE_URL+'models/'+file,false,true);
+ const gltf=useGLTF(import.meta.env.BASE_URL+'models/'+file+'?v='+__ASSET_V__,false,true);
  const gl=useThree(s=>s.gl),invalidate=useThree(s=>s.invalidate);
  const {model,materials}=useMemo(()=>{
   const model=gltf.scene.clone(true),materials:MeshBasicMaterial[]=[];

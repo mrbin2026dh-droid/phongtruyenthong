@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
-import { cpSync, createReadStream,appendFileSync,mkdirSync,writeFileSync } from 'node:fs';
+import { cpSync, createReadStream,appendFileSync,mkdirSync,writeFileSync,readFileSync,existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { buildPublication, writePublication, existingPhotoFiles } from './scripts/publishData.mjs';
@@ -109,4 +110,10 @@ function localPortrait(server){
   if(req.method==='HEAD'){stream.destroy();res.end();}else stream.pipe(res);
  });
 }
-export default defineConfig({base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-admin-tools',apply:'serve',configureServer:localTools},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});
+// 16/11: phones kept an old hall-baked-mobile.glb in cache after an update (no glass wall / stairs). Same file
+// names on GitHub Pages → add a content hash of the heavy assets to their URLs, so a new upload is always fetched.
+const ASSETS=['models/hall-baked.glb','models/hall-baked-mobile.glb','models/chu-van-an-seated-web-v3.glb','textures/san-truong-qua-kinh.webp','audio/nhac-nen-piano-strings.m4a'];
+const assetHash=createHash('md5');for(const a of ASSETS){const f=fileURLToPath(new URL('./public/'+a,import.meta.url));if(existsSync(f))assetHash.update(readFileSync(f));}
+const ASSET_V=assetHash.digest('hex').slice(0,10);
+
+export default defineConfig({define:{__ASSET_V__:JSON.stringify(ASSET_V)},base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-admin-tools',apply:'serve',configureServer:localTools},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});

@@ -37,7 +37,7 @@ export default function FoyerView(){
  const [yard,setYard]=useState<Texture|null>(null);
  useEffect(()=>{
   const done=imageStarted();let alive=true;
-  new TextureLoader().load(import.meta.env.BASE_URL+YARD_URL,t=>{t.colorSpace=SRGBColorSpace;t.anisotropy=8;
+  new TextureLoader().load(import.meta.env.BASE_URL+YARD_URL+'?v='+__ASSET_V__,t=>{t.colorSpace=SRGBColorSpace;t.anisotropy=8;
    // 15/11: wide plane, the photo mirrored at its sides — oblique views through the glass never reach an edge
    t.wrapS=MirroredRepeatWrapping;t.repeat.set(YARD_W/60,1);t.offset.set(-(YARD_W/60-1)/2,0);done();if(alive){setYard(t);invalidate();}else t.dispose();},undefined,()=>done());
   return()=>{alive=false;};

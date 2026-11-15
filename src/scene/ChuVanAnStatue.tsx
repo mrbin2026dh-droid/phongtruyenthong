@@ -7,7 +7,7 @@ import {Mesh,MeshStandardMaterial} from 'three';
  * v3 = fixed-v2 compressed (EXT_meshopt_compression + KHR_mesh_quantization + EXT_texture_webp),
  * same 11 meshes/triangles/bounds. Master: 08-MO-HINH-3D/chu-van-an/web-fix-2026-10-30/. */
 export default function ChuVanAnStatue(){
- const gltf=useGLTF(import.meta.env.BASE_URL+'models/chu-van-an-seated-web-v3.glb',false,true);
+ const gltf=useGLTF(import.meta.env.BASE_URL+'models/chu-van-an-seated-web-v3.glb?v='+__ASSET_V__,false,true);
  const {model,materials}=useMemo(()=>{
   const model=gltf.scene.clone(true),materials=new Map<MeshStandardMaterial,MeshStandardMaterial>();
   model.traverse(o=>{if(o instanceof Mesh){

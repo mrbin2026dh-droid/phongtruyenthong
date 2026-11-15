@@ -4,7 +4,7 @@
 // (browsers block it anyway); music ducks while the MC speaks; the choice is remembered per browser.
 
 const KEY='museum-sound';
-const MUSIC_URL=import.meta.env.BASE_URL+'audio/nhac-nen-piano-strings.m4a';
+const MUSIC_URL=import.meta.env.BASE_URL+'audio/nhac-nen-piano-strings.m4a?v='+__ASSET_V__;
 const MUSIC_LEVEL=.34,DUCKED=.09,ROOM_LEVEL=.010;
 
 type Engine={ctx:AudioContext;music:HTMLAudioElement;musicGain:GainNode;room:GainNode;master:GainNode};

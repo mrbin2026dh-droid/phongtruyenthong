@@ -65,7 +65,7 @@ test('Web statue v3 is the compressed fixed-v2: meshopt + quantization + WebP 2K
 
 test('Runtime statue component loads v3 with meshopt enabled',()=>{
  const src=readFileSync(new URL('../src/scene/ChuVanAnStatue.tsx',import.meta.url),'utf8');
- assert.match(src,/chu-van-an-seated-web-v3\.glb',false,true\)/);
+ assert.match(src,/chu-van-an-seated-web-v3\.glb\?v='\+__ASSET_V__,false,true\)/);
 });
 
 test('Static hall boxes share materials and are batched by StaticInstancer',()=>{
@@ -79,7 +79,7 @@ test('Baked shell (GĐ3) is the default (?scene=classic opts out), has a mobile 
  const hall=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
  const baked=readFileSync(new URL('../src/scene/BakedHall.tsx',import.meta.url),'utf8');
  assert.match(baked,/export function bakedEnabled\(\)\{return param\(\)!=='classic';\}/);
- assert.match(baked,/'hall-baked-mobile\.glb'/);assert.match(baked,/useGLTF\(import\.meta\.env\.BASE_URL\+'models\/'\+file,false,true\)/);
+ assert.match(baked,/'hall-baked-mobile\.glb'/);assert.match(baked,/useGLTF\(import\.meta\.env\.BASE_URL\+'models\/'\+file\+'\?v='\+__ASSET_V__,false,true\)/);
  for(const f of ['hall-baked.glb','hall-baked-mobile.glb']){
   const b=readFileSync(new URL('../public/models/'+f,import.meta.url));assert.equal(b.toString('ascii',0,4),'glTF');
   const json=JSON.parse(b.toString('utf8',20,20+b.readUInt32LE(12)));
