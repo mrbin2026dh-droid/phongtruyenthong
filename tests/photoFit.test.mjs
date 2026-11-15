@@ -34,3 +34,17 @@ test('Heavy assets carry a content-hash version so phones never keep an old room
  for(const f of ['BakedHall.tsx','ChuVanAnStatue.tsx','FoyerView.tsx','hallAudio.ts'])
   assert.ok(readFileSync(new URL('../src/scene/'+f,import.meta.url),'utf8').includes("?v='+__ASSET_V__"),f);
 });
+
+test('Public site: welcome card only, fullscreen + landscape on the start tap, rotate hint, phone-safe music',()=>{
+ const app=readFileSync(new URL('../src/PeopleApp.tsx',import.meta.url),'utf8');
+ const welcome=readFileSync(new URL('../src/components/Welcome.tsx',import.meta.url),'utf8');
+ const imm=readFileSync(new URL('../src/data/immersive.ts',import.meta.url),'utf8');
+ const audio=readFileSync(new URL('../src/scene/hallAudio.ts',import.meta.url),'utf8');
+ const loading=readFileSync(new URL('../src/components/VisitLoading.tsx',import.meta.url),'utf8');
+ assert.ok(app.includes('const minimal=!adminAvailable;')&&app.includes('function startVisit(){void enterImmersive();primeHallSound();navigate(\'room\');}'));
+ assert.ok(welcome.includes('{!minimal&&<>')&&app.includes("{view!=='room'&&!minimal&&<footer>"));
+ assert.ok(imm.includes("requestFullscreen({navigationUI:'hide'})")&&imm.includes("o.lock('landscape')"));
+ assert.ok(loading.includes('visit-rotate-hint')&&loading.includes('xoay ngang điện thoại'));
+ assert.ok(!audio.includes('ctx.createMediaElementSource('),'music is a plain media element (silent on some phones through Web Audio)');
+ assert.ok(audio.includes('export function primeHallSound()'));
+});

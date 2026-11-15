@@ -5,3 +5,12 @@
 .visit-loading-track{width:150px;height:2px;margin-top:15px;overflow:hidden;background:#ffffff20;border-radius:3px}.visit-loading-track i{display:block;width:45%;height:100%;background:#e1c286;animation:entry-track 1.4s ease-in-out infinite}
 @keyframes entry-track{from{transform:translateX(-110%)}to{transform:translateX(330%)}}@keyframes entry-light{from{opacity:.25}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.visit-loading-light,.visit-loading-track i{animation:none}.visit-loading-track i{width:100%}}
+/* 16/11: rotate hint on the loading screen — phones held upright only */
+.visit-rotate-hint{display:none}
+@media (orientation:portrait) and (pointer:coarse){
+ .visit-rotate-hint{display:flex;align-items:center;gap:12px;max-width:300px;margin:22px auto 0;padding:12px 16px;border:1px solid #d2b37666;border-radius:14px;background:#0d222c99;font:400 13px/1.55 "Noto Sans",sans-serif;color:#f3e4c4;text-align:left}
+ .visit-rotate-hint b{color:#f0d18d;font-weight:600}
+ .visit-rotate-hint svg{flex:0 0 40px;width:40px;height:40px;color:#e1c286;animation:rotate-hint 2.4s ease-in-out infinite}
+}
+@keyframes rotate-hint{0%,25%{transform:rotate(0)}55%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media (prefers-reduced-motion:reduce){.visit-rotate-hint svg{animation:none}}

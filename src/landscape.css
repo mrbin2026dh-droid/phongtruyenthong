@@ -28,3 +28,9 @@
  .immersive-tour .hall-plan{max-height:none;width:100%;max-width:calc((100dvh - 150px) * 1.5);margin:0 auto}
  .immersive-tour .hall-zone-list button{padding-block:6px}
 }
+
+/* 16/11 (user): public site, phone sideways — the 3D room takes the whole screen (no header bar). */
+@media (max-height:500px) and (orientation:landscape){
+ .public-site header:has(+ main.museum-view){display:none}
+ .public-site .immersive-tour .guided-scene{height:100dvh}
+}

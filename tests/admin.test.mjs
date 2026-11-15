@@ -49,6 +49,6 @@ test('Admin mode wiring: login gate, wall editor, real data with empty slots, no
  const auth=readFileSync(new URL('../src/data/adminAuth.ts',import.meta.url),'utf8');
  assert.match(tour,/get\('preview'\)!=='off'&&!admin/);assert.match(tour,/key=\{'page-'\+layout\.page\}/);
  assert.match(tour,/<AdminSlotEditor /);assert.match(tour,/emptySlots=\{p\.admin\?p\.adminEmpties:undefined\}/);
- assert.match(app,/\.filter\(\(\[v\]\)=>v!=='admin'\|\|\(adminAvailable&&admin\)\)/);assert.ok(!app.includes('<SceneBoundary key={snapshot.revision}>'));
+ assert.ok(app.includes(".filter(([v])=>!minimal&&(v!=='admin'||(adminAvailable&&admin)))"),'admin tab only for the logged-in admin; the public site (16/11) has no menu');assert.ok(!app.includes('<SceneBoundary key={snapshot.revision}>'));
  assert.match(auth,/crypto\.subtle\.digest\('SHA-256'/);assert.ok(!/password\s*[:=]\s*['"][^'"]+['"]/i.test(auth),'no hard-coded password');
 });

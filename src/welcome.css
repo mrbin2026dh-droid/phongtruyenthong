@@ -49,3 +49,10 @@
  .welcome-facts{grid-template-columns:1fr;gap:12px;padding:16px 20px}.welcome-facts>div,.welcome-facts>button{border-right:0;border-bottom:1px solid #e1d7c4;padding:0 0 12px;gap:15px}.welcome-facts>*:last-child{padding-bottom:0;border-bottom:0}.welcome-facts svg{width:30px;height:30px}.welcome-sample-note{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){.welcome-start:hover{transform:none}}
+
+/* 16/11 (user): no duplicate title in the card — the welcome sentence leads, centred, in the serif face. */
+.visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.welcome-intro .welcome-lead{font:400 16px/1.8 "Noto Serif",serif;color:#efe3c8;text-align:center;margin:0 auto;max-width:380px;letter-spacing:.005em}
+.welcome-intro .welcome-ornament{margin:24px auto 26px;max-width:300px}
+.welcome-intro .welcome-start{margin:0 auto}
+@media(max-width:700px){.welcome-intro{padding:28px 22px 24px}.welcome-intro .welcome-lead{font-size:15.5px;max-width:330px}.welcome-intro .welcome-ornament{margin:20px auto 22px}}
