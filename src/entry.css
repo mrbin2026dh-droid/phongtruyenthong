@@ -14,3 +14,15 @@
 }
 @keyframes rotate-hint{0%,25%{transform:rotate(0)}55%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 @media (prefers-reduced-motion:reduce){.visit-rotate-hint svg{animation:none}}
+/* 15/11 (việc 1): real progress, and a way out when loading is slow or stuck */
+.visit-loading-bar{width:200px;height:4px}.visit-loading-bar i{animation:none;width:0;transition:width .35s ease-out}
+.visit-loading-pct{font:600 12px/1 "Noto Sans",sans-serif;color:#e1c286;font-variant-numeric:tabular-nums;margin-top:2px}
+.visit-loading-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+.visit-loading-actions button{min-height:44px;padding:10px 20px;background:#e1c286;color:#122d38;border-color:#e1c286;font:600 14px/1.2 "Noto Sans",sans-serif}
+.visit-loading-actions button:hover{background:#f0d7a3}
+.visit-loading-actions .visit-loading-alt{background:transparent;color:#f3e4c4;border-color:#d2b37699}
+.visit-loading-actions .visit-loading-alt:hover{background:#ffffff14}
+.visit-loading-note{margin:4px 0 0;max-width:300px;font:400 12px/1.6 "Noto Sans",sans-serif;color:#bdceca}
+.fallback-actions,.list-back{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.list-back{justify-content:flex-end;flex-shrink:0}
+@media(max-width:650px){.list-back{flex-direction:column;align-items:stretch}.list-back button{font-size:12px;padding:9px 12px}}

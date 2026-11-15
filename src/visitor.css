@@ -40,3 +40,5 @@
 .visitor-error{position:absolute;top:75px;left:20px;z-index:21;padding:12px;background:#fff1da;color:#76322d}
 @media(max-width:700px){.museum-view{padding:6px}.immersive-tour .guided-scene{height:calc(100dvh - 164px);min-height:420px;border-radius:8px}.visitor-controls{bottom:12px;max-width:calc(100% - 16px)}.visitor-dock{gap:2px;padding:6px;border-radius:13px}.visitor-dock>button{width:44px;min-width:44px;height:44px;min-height:44px;padding:11px}.visitor-panel{width:320px;max-height:calc(100dvh - 290px);padding:13px}.immersive-tour .location-chip{left:10px;top:10px;gap:7px}.immersive-tour .location-period{display:none}.visitor-fullscreen{right:10px;top:10px}.visitor-tooltip{display:none}.visitor-caption{max-width:320px;font-size:11px;max-height:75px}}
 @media(max-height:550px){.immersive-tour .guided-scene{min-height:300px}.visitor-panel{max-height:calc(100dvh - 170px)}}
+/* 15/11 (việc 1): lost WebGL — offer retry and the photo list instead of a dead end */
+.visitor-error{border-radius:10px;max-width:min(340px,calc(100% - 40px))}.visitor-error p{margin:0 0 10px}.visitor-error button{min-height:44px;margin:0 6px 6px 0}

@@ -105,7 +105,7 @@ test('Scene is revealed only after the room, statue and all portraits have loade
  const baked=readFileSync(new URL('../src/scene/BakedHall.tsx',import.meta.url),'utf8');
  const statue=readFileSync(new URL('../src/scene/ChuVanAnStatue.tsx',import.meta.url),'utf8');
  assert.ok(tour.includes("bakedEnabled()?['baked','statue']:['statue']"));
- assert.ok(tour.includes('if(!sceneReady||!(assetsLoaded||assetTimeout)||revealed.current)return;'),'waits for assets (30 s safety)');
+ assert.ok(tour.includes('if(!sceneReady||!(assetsLoaded||(assetTimeout&&modelsReady))||revealed.current)return;'),'waits for assets (30 s safety skips portraits only, 15/11)');
  assert.ok(photo.includes('queueMicrotask(()=>{if(!settled)release=imageStarted();});')&&photo.includes('img.onload=()=>{finished();'),'portraits counted (registered after render, 16/11)');
  {const probes=readFileSync(new URL('../src/scene/RoomProbes.tsx',import.meta.url),'utf8'),hall=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
   assert.ok(probes.includes('if(!loaded||captured.current)return;'),'probes captured once, not on every later portrait load (BGH flicker 16/11)');

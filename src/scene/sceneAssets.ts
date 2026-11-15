@@ -3,7 +3,7 @@
 // the baked room GLB, the statue GLB and every portrait image currently requested.
 
 const ready=new Set<string>();
-let images=0,version=0;
+let images=0,version=0,imagesTotal=0,imagesDone=0;
 const subs=new Set<()=>void>();
 // Notify after the current render/task: images are registered while a component renders (HallPhoto’s cache),
 // and React forbids updating other components during render.
@@ -15,13 +15,17 @@ export function isAssetReady(name:string){return ready.has(name);}
 
 /** Call when an image starts loading; call the returned function once it has loaded or failed. */
 export function imageStarted(){
- images++;notify();let done=false;
- return ()=>{if(done)return;done=true;images--;notify();};
+ images++;imagesTotal++;notify();let done=false;
+ return ()=>{if(done)return;done=true;images--;imagesDone++;notify();};
 }
 export function pendingImages(){return images;}
 
 /** All required assets for the first view are loaded. */
 export function sceneAssetsLoaded(required:string[]){return images===0&&required.every(n=>ready.has(n));}
+
+/** 15/11 (việc 1): progress for the loading screen — named assets + every image started so far.
+ * Returned as a string so useSyncExternalStore gets a stable snapshot: "readyNamed/required/imagesDone/imagesTotal". */
+export function assetProgressKey(required:string[]){return required.filter(n=>ready.has(n)).length+'/'+required.length+'/'+imagesDone+'/'+imagesTotal;}
 
 export function subscribeAssets(fn:()=>void){subs.add(fn);return()=>{subs.delete(fn);};}
 export function assetsVersion(){return version;}

@@ -10,7 +10,7 @@ const AdminSlotEditor=import.meta.env.DEV?lazy(()=>import('../components/AdminSl
 const AdminPublish=import.meta.env.DEV?lazy(()=>import('../components/AdminPublish')):null;
 import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
-import VisitLoading from '../components/VisitLoading';
+import HallLoading from './HallLoading';
 import VirtualHost from '../components/VirtualHost';
 import {hallNarration} from '../data/narration.mjs';
 import {portraitPath,adminAvailable,publishedPeople} from '../data/repository';
@@ -31,7 +31,7 @@ const QUALITY_KEY='hall-quality-choice';
 function storedChoice(){try{const v=localStorage.getItem(QUALITY_KEY);return QUALITY_CHOICES.some(c=>c.id===v)?v as string:'auto';}catch{return 'auto';}}
 function startLevel(){try{const nav=navigator as Navigator&{deviceMemory?:number};return initialLevel({coarse:matchMedia('(pointer: coarse)').matches,smallScreen:Math.min(screen.width,screen.height)<900,deviceMemory:nav.deviceMemory});}catch{return 'high';}}
 import TwinSticks from './TwinSticks';
-import {sceneAssetsLoaded,subscribeAssets} from './sceneAssets';
+import {isAssetReady,sceneAssetsLoaded,subscribeAssets} from './sceneAssets';
 import {TourIcon} from './VisitorDock';
 import type {Person} from '../data/repository';
 import '../hall.css';
@@ -119,11 +119,14 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  // 15/11: reveal the scene only when the room, the statue and all portraits are loaded (or after 30 s at worst).
  const required=useMemo(()=>bakedEnabled()?['baked','statue']:['statue'],[]);
  const assetsLoaded=useSyncExternalStore(subscribeAssets,()=>sceneAssetsLoaded(required));
+ // 15/11 (việc 1): the 30 s timeout may skip slow PORTRAITS only — never reveal a scene without the room shell or
+ // the statue (floating doors/frames). If those hang, HallLoading keeps offering “Thử lại” / “Xem danh sách ảnh”.
+ const modelsReady=useSyncExternalStore(subscribeAssets,()=>required.every(isAssetReady));
  const [assetTimeout,setAssetTimeout]=useState(false);
  useEffect(()=>{if(!sceneReady)return;const t=setTimeout(()=>setAssetTimeout(true),30000);return()=>clearTimeout(t);},[sceneReady]);
  const revealed=useRef(false),revealTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  useEffect(()=>()=>clearTimeout(revealTimer.current),[]);
- useEffect(()=>{if(!sceneReady||!(assetsLoaded||assetTimeout)||revealed.current)return;revealed.current=true;
+ useEffect(()=>{if(!sceneReady||!(assetsLoaded||(assetTimeout&&modelsReady))||revealed.current)return;revealed.current=true;
   window.dispatchEvent(new Event('museum-navigation-input'));
   // 15/11 fix: the reveal timer must survive later asset-count changes (it used to be cleared by the next effect
   // run, which then returned early — the loading screen stayed forever). Only unmount cancels it.
@@ -132,7 +135,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    // 15/11: always wait at the closed door (repeat visits used to auto-open — looked like a bug to the user)
    if(benchOn)openDoor();else setAtDoor(true);
   },Math.max(400,700-(performance.now()-openedAt.current)));
-  },[sceneReady,assetsLoaded,assetTimeout]);
+  },[sceneReady,assetsLoaded,assetTimeout,modelsReady]);
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
  const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
  // establishing shot over the schoolyard on the first arrival at the door (not for reduced motion / effects off)
@@ -232,7 +235,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    />
   </Suspense>
 
-  {!ready&&!failed&&<VisitLoading overlay/>}
+  {!ready&&!failed&&<HallLoading required={required} onList={p.onList}/>}
   {ready&&atDoor&&!panel&&(intro&&effects
    ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>
    :<button type="button" className="hall-door-prompt" onClick={openDoor} autoFocus aria-label="Chạm để mở cửa vào phòng truyền thống"><span>Chạm để mở cửa</span></button>)}
@@ -259,7 +262,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {ready&&!moving&&!manual&&!panel&&!p.paused&&!automatic&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
 
   {layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
-  {failed&&<p className="visitor-error">Mất WebGL. Mở Tra cứu để xem hồ sơ.</p>}
+  {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
   {import.meta.env.DEV&&p.admin&&ready&&<div className="hall-admin-bar" role="status"><b>Chế độ quản trị</b><span>Bấm vào ảnh để thay ảnh / sửa thông tin · Bấm ô “+ Thêm ảnh” để thêm người mới</span><span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
   {benchOn&&!benchResult&&ready&&<div className="hall-progress" role="status">{pause?'Đang tạm dừng — bấm ▶ để tiếp tục đo':'Đang đo hiệu năng… '+Math.max(0,benchStep.current)+'/'+benchRoute(layout.stops).length}</div>}
   {benchResult&&<BenchPanel result={benchResult} onClose={()=>setBenchResult(null)}/>}
