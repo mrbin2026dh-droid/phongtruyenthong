@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import { cpSync, createReadStream,appendFileSync,mkdirSync,writeFileSync,readFileSync,existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -116,4 +117,58 @@ const ASSETS=['models/hall-baked.glb','models/hall-baked-mobile.glb','models/chu
 const assetHash=createHash('md5');for(const a of ASSETS){const f=fileURLToPath(new URL('./public/'+a,import.meta.url));if(existsSync(f))assetHash.update(readFileSync(f));}
 const ASSET_V=assetHash.digest('hex').slice(0,10);
 
-export default defineConfig({define:{__ASSET_V__:JSON.stringify(ASSET_V)},base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-admin-tools',apply:'serve',configureServer:localTools},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});
+
+// PWA P1–P2 (15/11, 05-HUONG-DAN-AI/KE-HOACH-PWA.md): installable app + works offline after the first visit.
+// The service worker exists only in the production build (GitHub Pages); the admin computer runs the dev server
+// (QUAN-TRI.cmd) where vite-plugin-pwa does nothing, so admin pages are never cached.
+const pwa=VitePWA({
+ injectRegister:false,              // registered in src/main.tsx, production only
+ registerType:'prompt',             // a new version waits until every tab of the app is closed (update bar = P3)
+ includeAssets:['icons/apple-touch-icon-180.png'],   // manifest icons are added automatically
+ manifest:{
+  id:'./',start_url:'./?nguon=app',scope:'./',
+  name:'Phòng truyền thống nhà trường 3D',short_name:'Phòng truyền thống',
+  description:'Tham quan phòng truyền thống 3D: chân dung cán bộ, giáo viên, nhân viên qua các thế hệ.',
+  lang:'vi',dir:'ltr',categories:['education'],
+  display:'fullscreen',display_override:['fullscreen','standalone'],
+  orientation:'any',                 // the welcome page stays usable upright; “Bắt đầu tham quan” locks landscape
+  background_color:'#122d38',theme_color:'#0e2546',
+  icons:[
+   {src:'icons/icon-192.png',sizes:'192x192',type:'image/png',purpose:'any'},
+   {src:'icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any'},
+   {src:'icons/icon-maskable-512.png',sizes:'512x512',type:'image/png',purpose:'maskable'}
+  ],
+  screenshots:[{src:'welcome/welcome-architecture-1600.webp',sizes:'1600x900',type:'image/webp',form_factor:'wide',label:'Phòng truyền thống 3D'}]
+ },
+ workbox:{
+  cacheId:'ptt',
+  // first install: take control of the open page at once, so the 3D models loaded in the FIRST visit are cached too.
+  // Updates still wait (no skipWaiting) until all tabs are closed.
+  clientsClaim:true,
+  // app shell: code, styles, fonts (woff2 only), MC picture, icons — about 1 MB, versioned by file hash
+  globPatterns:['**/*.{js,css,html,svg,woff2}','mc/*.png'],
+  globIgnores:['**/node_modules/**'],
+  maximumFileSizeToCacheInBytes:3*1024*1024,
+  navigateFallback:'index.html',
+  navigateFallbackDenylist:[/\/__/,/\/data\//],
+  cleanupOutdatedCaches:true,
+  runtimeCaching:[
+   // published data: newest first (admin “Xuất bản”), cached copy when offline or after 3 s without network
+   {urlPattern:({url})=>url.pathname.endsWith('/data/catalog.json'),handler:'NetworkFirst',
+    options:{cacheName:'ptt-du-lieu',networkTimeoutSeconds:3,cacheableResponse:{statuses:[200]}}},
+   // teacher photos: file names carry a content hash, a changed photo is a new URL
+   {urlPattern:({url})=>url.pathname.includes('/data/photos/'),handler:'CacheFirst',
+    options:{cacheName:'ptt-anh-giao-vien',expiration:{maxEntries:400},cacheableResponse:{statuses:[200]}}},
+   // 3D models and the schoolyard texture: ?v= content hash in the URL, old versions dropped by maxEntries
+   {urlPattern:({url})=>/\/(models|textures)\//.test(url.pathname),handler:'CacheFirst',
+    options:{cacheName:'ptt-mo-hinh',expiration:{maxEntries:8},cacheableResponse:{statuses:[200]}}},
+   // music is streamed with Range requests (206, not cacheable); served from cache only once a full copy exists (P6)
+   {urlPattern:({url})=>url.pathname.includes('/audio/'),handler:'CacheFirst',
+    options:{cacheName:'ptt-am-thanh',rangeRequests:true,expiration:{maxEntries:3},cacheableResponse:{statuses:[200]}}},
+   {urlPattern:({url})=>/\/(welcome|portraits)\//.test(url.pathname),handler:'StaleWhileRevalidate',
+    options:{cacheName:'ptt-anh-trang',expiration:{maxEntries:20},cacheableResponse:{statuses:[200]}}}
+  ]
+ }
+});
+
+export default defineConfig({define:{__ASSET_V__:JSON.stringify(ASSET_V)},base:process.env.VITE_BASE_PATH || './',server:{headers:{'Cache-Control':'no-store'}},preview:{headers:{'Cache-Control':'no-store'}},plugins:[pwa,{name:'local-admin-publish',apply:'serve',configureServer:localAdmin},{name:'local-admin-tools',apply:'serve',configureServer:localTools},{name:'local-portrait-preview',configureServer:localPortrait,configurePreviewServer:localPortrait}],build:{emptyOutDir:true,target:'es2022',chunkSizeWarningLimit:1200}});

@@ -12,6 +12,13 @@ import '@fontsource/noto-serif/vietnamese-700.css';
 import './style.css';
 import './guided.css';
 import './navigation.css';
+// PWA P2 (15/11): offline cache for the public site only. The admin computer runs the dev server, so DEV never registers.
+if(import.meta.env.PROD&&'serviceWorker' in navigator){
+ // First visit: catalog.json was fetched before the worker took control — fetch it once more through the worker so the
+ // published data (not the sample data) is there when the visitor opens the app offline later.
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{void fetch(import.meta.env.BASE_URL+'data/catalog.json',{cache:'no-cache'}).catch(()=>undefined);},{once:true});
+ void import('virtual:pwa-register').then(({registerSW})=>registerSW({immediate:true})).catch(()=>undefined);
+}
 const root=document.getElementById('root')!;
 root.textContent='Đang chuẩn bị không gian tham quan…';
 Promise.all([preloadPhotos().catch(err=>console.warn('Không đọc được kho ảnh',err)),document.fonts.load('400 16px "Noto Sans"','Phòng truyền thống nhà trường'),document.fonts.load('700 16px "Noto Sans"','Các thế hệ nhà giáo'),document.fonts.load('700 16px "Noto Serif"','Phòng truyền thống')]).catch(()=>undefined).then(loadPublished).then(()=>import('./App')).then(({default:App})=>createRoot(root).render(<React.StrictMode><App/></React.StrictMode>));
