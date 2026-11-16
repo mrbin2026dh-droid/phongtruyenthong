@@ -1,17 +1,17 @@
 {
  "schemaVersion": 1,
- "publishedAt": "2026-11-15T16:38:29.387Z",
+ "publishedAt": "2026-11-16T02:21:57.452Z",
  "people": [
   {
    "id": "GV002",
-   "name": "Giáo viên mẫu 02",
+   "name": "Nguyễn Quang Nhật",
    "role": "Phó Hiệu trưởng",
    "dept": "Ngữ văn",
    "group": "management",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
+   "image": "data/photos/GV002-b63898a741.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "deputy-001",
    "workHistory": [
@@ -50,15 +50,15 @@
   },
   {
    "id": "GV001",
-   "name": "Giáo viên mẫu 01",
+   "name": "Nguyễn Văn Hiền",
    "role": "Hiệu trưởng",
    "dept": "Toán – Tin",
    "group": "management",
    "status": "Đang công tác",
    "birthYear": null,
    "description": "Hồ sơ giả lập để kiểm thử. Thay bằng dữ liệu và ảnh chân dung đã được nhà trường phê duyệt.",
-   "image": "",
-   "photoRatio": 0.75,
+   "image": "data/photos/GV001-32b7cc6ded.jpg",
+   "photoRatio": 0.6666666666666666,
    "displaySlot": "principal-001",
    "workHistory": [
     {
