@@ -4,6 +4,7 @@ import {useFrame,useThree} from '@react-three/fiber';
 import {Vector3,Quaternion,Matrix4,Euler,PerspectiveCamera} from 'three';
 import {dampValue,presentationTurnStep,routeFromPosition,roundedPath,samplePath,cornerSpeed,slideStep,regionAt} from './hallMotion.mjs';
 import {ARRIVAL_START,arrivalRoute,gateLook} from './hallArrival.mjs';
+import {MONUMENT} from './hallLayout.mjs';
 import type {Plan,TourCommand} from './GuidedScene';
 
 export type NavigationInput={forward:number;strafe:number;turn:number;look:number;zoom:number;speed:number;reset:number};
@@ -19,7 +20,11 @@ export function keyTargetIgnored(target:EventTarget|null){
 }
 
 /** Establishing shot: look at the schoolyard (through the glass behind the visitor), hold, then turn to the door. */
-const INTRO_LOOK:[number,number,number]=[.8,.9,22],INTRO_HOLD=1.2,INTRO_PAN=4.5;
+const INTRO_LOOK:[number,number,number]=[.8,.9,22],INTRO_HOLD=1.2;
+// 16/11 (statue niche H2): schoolyard → turn right to the statue in its niche, pause → on to the door.
+// One continuous turn direction (behind → right → front), so the camera never swings back.
+export const INTRO_STATUE_LOOK:[number,number,number]=[MONUMENT.x,1.45,MONUMENT.z],INTRO_TO_STATUE=2.6,INTRO_STATUE_HOLD=1.8,INTRO_TO_DOOR=2.8;
+const INTRO_PAN=INTRO_TO_STATUE+INTRO_STATUE_HOLD+INTRO_TO_DOOR;
 
 export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,atDoor=false,intro=false,pose,route}:{plan:Plan;command:TourCommand;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
  const {camera,gl,invalidate,size}=useThree();
@@ -37,9 +42,10 @@ export default function HallController({plan,command,paused,effects,input,loaded
  // 15/11: waiting at the door always shows the doors (keys/drag are locked there, see controlsLocked).
  const frameDoor=()=>{camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
  // 15/11 establishing shot: the visitor first looks out over the schoolyard, then the camera turns slowly to the door.
- const pan=useRef({active:false,t:0,start:0,from:new Quaternion(),to:new Quaternion()});
+ const pan=useRef({active:false,t:0,start:0,from:new Quaternion(),mid:new Quaternion(),to:new Quaternion()});
  const startIntro=()=>{
   frameDoor();pan.current.to.copy(camera.quaternion);
+  camera.lookAt(...INTRO_STATUE_LOOK);pan.current.mid.copy(camera.quaternion);
   camera.lookAt(...INTRO_LOOK);pan.current.from.copy(camera.quaternion);readLook();
   pan.current.active=true;pan.current.t=-INTRO_HOLD;pan.current.start=performance.now();(window as any).__museumIntro=true;invalidate();
  };
@@ -113,9 +119,10 @@ export default function HallController({plan,command,paused,effects,input,loaded
   if(pan.current.active){
    // wall clock, not frame dt: a throttled/slow tab still finishes the shot on time (15/11)
    const p=pan.current;p.t=(performance.now()-p.start)/1000-INTRO_HOLD;
-   const k=Math.max(0,Math.min(1,p.t/INTRO_PAN)),e=k*k*(3-2*k);
-   camera.quaternion.slerpQuaternions(p.from,p.to,e);invalidate();
-   if(k>=1)endIntro();
+   const t=Math.max(0,p.t),toDoor=t>INTRO_TO_STATUE+INTRO_STATUE_HOLD;
+   const k=Math.min(1,toDoor?(t-INTRO_TO_STATUE-INTRO_STATUE_HOLD)/INTRO_TO_DOOR:t/INTRO_TO_STATUE),e=k*k*(3-2*k);
+   camera.quaternion.slerpQuaternions(toDoor?p.mid:p.from,toDoor?p.to:p.mid,e);invalidate();
+   if(t>=INTRO_PAN)endIntro();
    return;
   }
   if(live.current.paused)return;

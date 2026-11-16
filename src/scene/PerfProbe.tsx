@@ -1,7 +1,7 @@
 import {useEffect,useRef} from 'react';
 import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
-import {dprFor,motionDelta,nextLevel} from './quality.mjs';
+import {dprFor,motionDelta,nextLevel,stillDpr,STILL_DELAY} from './quality.mjs';
 
 export type QualityControl={choice:string;level:string;onLevel:(level:string)=>void;record?:MutableRefObject<number[]|null>};
 
@@ -12,9 +12,15 @@ export default function PerfProbe({choice,level,onLevel,record}:QualityControl){
  const setDpr=useThree(s=>s.setDpr),invalidate=useThree(s=>s.invalidate);
  const live=useRef({choice,level,onLevel});live.current={choice,level,onLevel};
  const win=useRef({sum:0,n:0,streak:0});
- useEffect(()=>{setDpr(dprFor(level,window.devicePixelRatio||1));win.current={sum:0,n:0,streak:win.current.streak};invalidate();},[level,setDpr,invalidate]);
+ // moving: the level's resolution (smooth); standing still: one sharp frame at the screen's resolution
+ const still=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ const sharpen=()=>{still.current=true;setDpr(stillDpr(live.current.level,window.devicePixelRatio||1));invalidate();};
+ useEffect(()=>{setDpr(dprFor(level,window.devicePixelRatio||1));still.current=false;win.current={sum:0,n:0,streak:win.current.streak};invalidate();
+  clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);return()=>clearTimeout(timer.current);},[level,setDpr,invalidate]);
  useFrame((_,dt)=>{
   if(!motionDelta(dt))return;
+  if(still.current){still.current=false;setDpr(dprFor(live.current.level,window.devicePixelRatio||1));}
+  clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);
   record?.current?.push(dt);
   const l=live.current;if(l.choice!=='auto')return;
   const w=win.current;w.sum+=dt;w.n++;

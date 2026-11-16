@@ -125,10 +125,11 @@ test('Walking sticks are always offered inside the room; touching one switches t
 test('Establishing shot: look over the schoolyard, then turn to the door; skippable; off for reduced motion',()=>{
  const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
- assert.ok(ctl.includes('INTRO_LOOK:[number,number,number]=[.8,.9,22]')&&ctl.includes('camera.quaternion.slerpQuaternions(p.from,p.to,e)'));
+ assert.ok(ctl.includes('INTRO_LOOK:[number,number,number]=[.8,.9,22]')&&ctl.includes('camera.quaternion.slerpQuaternions(toDoor?p.mid:p.from,toDoor?p.to:p.mid,e)'),'yard → statue niche → door (16/11)');
+ assert.ok(ctl.includes('INTRO_STATUE_LOOK:[number,number,number]=[MONUMENT.x,1.45,MONUMENT.z]')&&ctl.includes('const INTRO_PAN=INTRO_TO_STATUE+INTRO_STATUE_HOLD+INTRO_TO_DOOR;'));
  assert.ok(ctl.includes("window.dispatchEvent(new Event('museum-intro-done'))")&&ctl.includes("addEventListener('museum-intro-skip',skip)"));
  assert.ok(tour.includes('useState(()=>!reducedMotion())')&&tour.includes('intro={atDoor&&intro&&effects}'));
- assert.ok(ctl.includes('p.t=(performance.now()-p.start)/1000-INTRO_HOLD')&&ctl.includes('setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000)'),'intro ends on time even in a throttled tab');
+ assert.ok(ctl.includes('p.t=(performance.now()-p.start)/1000-INTRO_HOLD')&&ctl.includes('setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000)')&&ctl.includes('if(t>=INTRO_PAN)endIntro();'),'intro ends on time even in a throttled tab');
 });
 
 test('Loading screen cannot get stuck: the reveal timer survives later asset changes; asset events never fire during render',()=>{

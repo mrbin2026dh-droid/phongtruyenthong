@@ -16,6 +16,16 @@ export function dprFor(levelId,deviceDpr=1){
  return Math.max(.75,Math.min(level.dpr,deviceDpr));
 }
 
+/** 16/11 (teacher photos soft on phones): while the camera stands still the scene renders on demand, so one
+ * frame at the screen's own resolution costs nothing ongoing — the photos get the full sharpness of the display.
+ * Phones run at 1.15× while moving although their screens are 2.5–3×. Capped at 2.5× (1.75× on “Tiết kiệm”). */
+export function stillDpr(levelId,deviceDpr=1){
+ if(deviceDpr<=1)return 1;
+ return Math.max(dprFor(levelId,deviceDpr),Math.min(deviceDpr,levelId==='low'?1.75:2.5));
+}
+/** Milliseconds without camera motion before the sharp still frame is drawn. */
+export const STILL_DELAY=250;
+
 /** Start phones/tablets one step lower; desktops start high.
  * @param {{coarse?:boolean,smallScreen?:boolean,deviceMemory?:number}} [o] */
 export function initialLevel({coarse=false,smallScreen=false,deviceMemory=undefined}={}){

@@ -3,7 +3,13 @@ import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
 export const HALL={width:24,depth:16,height:4.2,capacity:127,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
-export const MONUMENT={x:0,z:4.0,width:1.1,depth:1.1,pedestalHeight:.85,clearance:1.05};
+// 16/11 (user, H2): the statue leaves the hall axis — from the entrance it hid the Hiệu trưởng portrait completely
+// (statue ≈10° wide vs the 3.7° frame, measured) and turned its back on Ban Giám hiệu — and stands in a recessed niche
+// in the foyer's right wall, facing the visitors' path to the door (statue faces −x). Exported to Blender (hall-layout.json).
+export const MONUMENT={x:4.92,z:11.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestalHeight:.88,clearance:1.05,
+ niche:{wallX:4.54,width:1.8,height:2.8,depth:.7}};
+/** Where the visitor stands to look at the statue in its niche (foyer, 2.6 m away). */
+export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[2.3,1.6,11.1],target:[4.92,1.45,11.1],dwell:9000};
 export const CABINETS=[
  {id:'memory-0',x:4.7,title:'Tư liệu và kỷ vật',description:'Không gian lưu giữ tư liệu, hình ảnh và kỷ vật về hành trình xây dựng nhà trường.'},
  {id:'memory-1',x:7.1,title:'Dấu ấn nhà trường',description:'Vị trí dành cho các dấu mốc của nhà trường; hiện đang dùng hiện vật mẫu, chờ tư liệu được phê duyệt.'},
@@ -43,7 +49,7 @@ export function layoutHall(people,sort='service',page=0){
  ring.sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||(a.wall==='right'?b.eye[2]-a.eye[2]:a.wall==='back'?b.eye[0]-a.eye[0]:a.wall==='left'?a.eye[2]-b.eye[2]:a.eye[0]-b.eye[0]));
  const seen={};
  for(const stop of ring){seen[stop.group]=(seen[stop.group]||0)+1;const zone=EXHIBIT_ZONES.find(z=>z.id===stop.group);stop.title=stop.group==='principal'?'Ban Giám hiệu':zone.name+' · '+seen[stop.group];}
- const finalStops=[...stops,...CABINETS.map(c=>({...c,group:'memory',wall:'front',eye:[c.x,1.7,4.0],target:[c.x,1.65,7.45],dwell:9000})),...ring,
+ const finalStops=[...stops,{...STATUE_STOP},...CABINETS.map(c=>({...c,group:'memory',wall:'front',eye:[c.x,1.7,4.0],target:[c.x,1.65,7.45],dwell:9000})),...ring,
   {id:'finish',title:'Kết thúc vòng tham quan',group:'',eye:[0,1.7,9.1],target:[0,1.65,-7.8],dwell:0}];
  const signs=[{id:'principal-sign',text:'BAN GIÁM HIỆU',x:0,z:-7.65,yaw:0,width:4.6,y:3.08},
  {id:'teacher-back-right',text:'CÁC THẾ HỆ NHÀ GIÁO',x:7.0,z:-7.79,yaw:0,width:5.6,y:3.32},

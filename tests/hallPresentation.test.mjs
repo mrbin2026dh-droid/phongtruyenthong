@@ -5,9 +5,9 @@ import {layoutHall,fitHallStops,createHallPlan,segmentWalkable,isWalkable} from 
 import {routeFromPosition,roundedPath,samplePath,presentationTurnStep} from '../src/scene/hallMotion.mjs';
 import {nextPresentationStop,presentationDwell} from '../src/scene/hallPresentation.mjs';
 
-test('Finite clockwise tour starts with overview and three cases, covers every portrait once, then stops',()=>{
+test('Finite clockwise tour starts with overview, the statue niche and three cases, covers every portrait once, then stops',()=>{
  const l=layoutHall([]),ids=l.stops.map(s=>s.id);
- assert.deepEqual(ids.slice(0,4),['entrance','memory-0','memory-1','memory-2']);
+ assert.deepEqual(ids.slice(0,5),['entrance','statue','memory-0','memory-1','memory-2']);
  assert.equal(ids.at(-1),'finish');assert.equal(new Set(ids).size,ids.length);
  const shown=l.stops.flatMap(s=>s.slotIds||[]);
  assert.equal(shown.length,127);assert.equal(new Set(shown).size,127);

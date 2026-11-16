@@ -273,14 +273,25 @@ function WallSign({sign:s}:{sign:any}){
  </group>;
 }
 function ZoneNames({layout}:{layout:any}){return <>{layout.signs.map((s:any)=><WallSign key={s.id} sign={s}/>)}</>;}
-function MonumentReservation({baked=false}:{baked?:boolean}){return <group position={[MONUMENT.x,0,MONUMENT.z]}>
- {!baked&&<><Box p={[0,.08,0]} s={[1.34,.16,1.34]} color="#493328"/>
- <Box p={[0,.49,0]} s={[MONUMENT.width,.66,MONUMENT.depth]} color="#233e44"/>
- <Box p={[0,.85,0]} s={[1.2,.06,1.2]} color="#bda36b" metal={.4}/></>}
- <group position={[0,.5,.561]}><Inscription text="CHU VĂN AN" width={.95} height={.16} light/></group>
- <group position={[0,.31,.562]}><Inscription text="TƯỢNG PHÁC THẢO THEO ẢNH MẪU" width={1.02} height={.10} light/></group>
- <Suspense fallback={null}><ChuVanAnStatue/></Suspense>
- </group>;}
+/** 16/11 (user, H2): the statue stands in a recessed niche in the foyer's right wall, facing the path to the door.
+ * The niche, pedestal and their light are baked (hall-baked.glb); the statue and the pedestal inscription stay live.
+ * A live warm key + soft fill light the bronze (the baked shell does not light live meshes). */
+function MonumentReservation({baked=false}:{baked?:boolean}){
+ const M=MONUMENT,front=M.depth/2+.003;
+ const key=useMemo(()=>{const t=new Object3D();t.position.set(M.x,1.45,M.z);return t;},[]);
+ return <>
+ <group position={[M.x,0,M.z]} rotation={[0,M.yaw,0]}>
+  {!baked&&<><Box p={[0,.05,0]} s={[M.width+.2,.1,M.depth+.1]} color="#161514"/>
+   <Box p={[0,(.1+M.pedestalHeight)/2,0]} s={[M.width,M.pedestalHeight-.1,M.depth]} color="#161514"/></>}
+  <group position={[0,.56,front]}><Inscription text="CHU VĂN AN" width={.8} height={.15} light/></group>
+  <group position={[0,.38,front]}><Inscription text="TƯỢNG PHÁC THẢO THEO ẢNH MẪU" width={.86} height={.085} light/></group>
+  {/* ChuVanAnStatue places itself 0.89 m up = on the 0.88 m pedestal */}
+  <Suspense fallback={null}><ChuVanAnStatue/></Suspense>
+ </group>
+ <primitive object={key}/>
+ <spotLight position={[2.4,3.85,9.9]} target={key} color="#ffe2b8" intensity={9} distance={7} angle={.42} penumbra={.8} decay={2}/>
+ <pointLight position={[3.6,1.6,10.3]} color="#ffeedd" intensity={.6} distance={3} decay={2}/>
+ </>;}
 
 function MemoryCabinets({baked=false}:{baked?:boolean}){const n=CABINET_NICHE,mid=(n.bottom+n.top)/2,h=n.top-n.bottom;return <>{CABINETS.map((c:any,i:number)=><group key={c.id} position={[c.x,0,n.wallZ]} rotation={[0,Math.PI,0]}>
  {/* Actual recessed niche: wall is segmented around this opening. Baked scene: shell comes from hall-baked.glb. */}
