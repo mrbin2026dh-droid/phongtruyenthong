@@ -9,6 +9,7 @@ Website công khai **chỉ để xem**. Mọi thay đổi ảnh và thông tin �
    - **Bấm vào ảnh một người** → thay ảnh (“Chọn ảnh từ máy”), sửa họ tên, tổ/bộ phận, năm công tác… → **Lưu lên tường**.
    - **Bấm ô “+ Thêm ảnh”** → nhập người mới cho đúng ô đó → **Lưu lên tường**.
    - **Gỡ người:** mở ảnh → **Gỡ khỏi tường…** → **Gỡ hẳn**. Ô sẽ trống lại.
+   - **Đổi chỗ ảnh:** mở ảnh một người → **Đổi chỗ…** → thanh quản trị chuyển màu xanh → bấm vào **ảnh người khác cùng khu** (hai người đổi chỗ cho nhau) hoặc vào ô **“+ Thêm ảnh”** (chuyển sang ô trống đó). Hủy: nút **Hủy đổi chỗ**, phím Esc, hoặc bấm lại chính ảnh đó. Chỉ đổi trong cùng khu (GV với GV, NV với NV, PHT với PHT). Bảng Xuất bản có dòng “ảnh đổi chỗ trên tường”.
    - Thanh “Chế độ quản trị” cho biết số chỗ đã dùng: HT, PHT, GV (tối đa 112), NV.
 4. **Xuất bản:** bấm **“Xuất bản lên website”** → đọc bảng tóm tắt (thêm/sửa/gỡ bao nhiêu) → đánh dấu ô **xác nhận đã có sự đồng ý** → **“Lưu và đưa lên GitHub”**. Khoảng 1–2 phút sau website công khai được cập nhật.
 5. **Xong:** bấm **Đăng xuất**, đóng cửa sổ đen.

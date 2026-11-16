@@ -7,7 +7,7 @@ export type Person={displaySlot?:string;id:string;name:string;role:string;dept:s
 export type Period=typeof seed.periods[number];
 export type CatalogSnapshot={schemaVersion:number;revision:number;people:Person[];storageError:string};
 export type PersonInput=Omit<Person,'id'|'startYear'|'endYear'>;
-type Store={getSnapshot:()=>CatalogSnapshot;subscribe:(listener:()=>void)=>()=>void;savePerson:(input:PersonInput&{displaySlot?:string},options?:{id?:string;allowSameName?:boolean})=>Person;removePerson:(id:string)=>Person;restoreBackup:(text:string,options:{expectedRevision:number})=>CatalogSnapshot};
+type Store={getSnapshot:()=>CatalogSnapshot;subscribe:(listener:()=>void)=>()=>void;savePerson:(input:PersonInput&{displaySlot?:string},options?:{id?:string;allowSameName?:boolean})=>Person;removePerson:(id:string)=>Person;moveToSlot:(id:string,slotId:string)=>Person|null;restoreBackup:(text:string,options:{expectedRevision:number})=>CatalogSnapshot};
 export type {Store};
 let storage:Storage|null=null;
 try{storage=window.localStorage;}catch{/* Reads still show the seed; writes must report failure. */}

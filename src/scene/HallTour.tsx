@@ -13,7 +13,7 @@ import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
 import VirtualHost from '../components/VirtualHost';
 import {hallNarration} from '../data/narration.mjs';
-import {portraitPath,adminAvailable,publishedPeople} from '../data/repository';
+import {portraitPath,adminAvailable,publishedPeople,catalog} from '../data/repository';
 import {neutralInput} from './VisitorController';
 import type {VisitorPose,RouteState} from './HallController';
 import YouAreHere from './YouAreHere';
@@ -39,7 +39,7 @@ import '../hall.css';
 const Scene=lazy(()=>import('./HallScene'));
 
 type Props={people:Person[];sort:string;onSelect:(id:string)=>void;onModule:(n:number)=>void;onList:()=>void;onNarrate:(text:string)=>void;onSilence:()=>void;caption:string;speaking:boolean;paused:boolean};
-type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string};
+type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void};
 
 export default function HallTour(p:Props){
  const [page,setPage]=useState(0),[demo,setDemo]=useState<Person|null>(null);
@@ -51,14 +51,26 @@ export default function HallTour(p:Props){
  const preview=useMemo(()=>hallPreview(p.people,enabled),[p.people,enabled]);
  const [login,setLogin]=useState(false),[editor,setEditor]=useState<{slot:{slotId:string;group:string};person?:Person}|null>(null),[adminMessage,setAdminMessage]=useState('');
  const layout=useMemo(()=>layoutHall(preview.people,p.sort,page),[preview,p.sort,page]);
+ // 16/11 (user): “Đổi chỗ” — pick a portrait in its editor, then tap another portrait of the same zone (swap)
+ // or an empty “+ Thêm ảnh” position (move). Saved in the local working copy like every other edit, until “Xuất bản”.
+ const [mover,setMover]=useState<{id:string;name:string;slotId:string}|null>(null);
+ useEffect(()=>{if(!mover)return;const esc=(e:KeyboardEvent)=>{if(e.key==='Escape')setMover(null);};document.addEventListener('keydown',esc);return()=>document.removeEventListener('keydown',esc);},[mover]);
+ function moveTo(slotId:string){
+  if(!mover)return;
+  if(slotId===mover.slotId){setMover(null);setAdminMessage('Đã hủy đổi chỗ.');return;}
+  try{const other=catalog.moveToSlot(mover.id,slotId);
+   setAdminMessage((other?'Đã đổi chỗ '+mover.name+' ↔ '+other.name:'Đã chuyển '+mover.name+' sang ô '+slotId)+' · chưa xuất bản');setMover(null);}
+  catch(err){setAdminMessage(err instanceof Error?err.message:'Không đổi chỗ được.');}
+ }
  const select=(id:string)=>{
+  if(admin&&mover){const slot=layout.slots.find((s:any)=>s.person.id===id);if(slot)moveTo(slot.slotId);return;}
   if(admin){const slot=layout.slots.find((s:any)=>s.person.id===id);if(slot){setEditor({slot:{slotId:slot.slotId,group:slot.group},person:slot.person});return;}}
   const sample=preview.added.find((v:Person)=>v.id===id);if(sample)setDemo(sample as Person);else p.onSelect(id);};
  const empties=useMemo(()=>admin?exhibitSlots().filter((d:any)=>!layout.slots.some((s:any)=>s.slotId===d.slotId)):[],[admin,layout]);
  // QA hook (dev + ?stats=1 only): open the wall editor for a slot without a 3D click.
  useEffect(()=>{if(!import.meta.env.DEV||!statsEnabled())return;(window as any).__adminOpenSlot=(id:string)=>onEmpty(id);return()=>{delete (window as any).__adminOpenSlot;};});
  // A slot that is already taken opens that person's editor (never a second person in one frame).
- const onEmpty=(slotId:string)=>{const taken=layout.slots.find((s:any)=>s.slotId===slotId);if(taken){setEditor({slot:{slotId,group:taken.group},person:taken.person});return;}const d=exhibitSlots().find((x:any)=>x.slotId===slotId);if(d)setEditor({slot:{slotId,group:d.group}});};
+ const onEmpty=(slotId:string)=>{if(mover){moveTo(slotId);return;}const taken=layout.slots.find((s:any)=>s.slotId===slotId);if(taken){setEditor({slot:{slotId,group:taken.group},person:taken.person});return;}const d=exhibitSlots().find((x:any)=>x.slotId===slotId);if(d)setEditor({slot:{slotId,group:d.group}});};
  const counts=useMemo(()=>{const c=(g:string)=>layout.slots.filter((s:any)=>s.group===g).length,t=(g:string)=>exhibitSlots().filter((s:any)=>s.group===g).length;
   return 'HT '+c('principal')+'/'+t('principal')+' · PHT '+c('deputy')+'/'+t('deputy')+' · GV '+c('teacher')+'/'+t('teacher')+' · NV '+c('staff')+'/'+t('staff');},[layout]);
 
@@ -76,13 +88,16 @@ export default function HallTour(p:Props){
    onAdminLogin={()=>setLogin(true)}
    adminMessage={adminMessage}
    adminCounts={counts}
+   adminMoving={mover?.name}
+   onCancelMove={()=>{setMover(null);setAdminMessage('Đã hủy đổi chỗ.');}}
    layout={layout}
    onPage={setPage}
    mockCount={preview.added.length}
   />
   {AdminLogin&&login&&<Suspense fallback={null}><AdminLogin onClose={()=>setLogin(false)}/></Suspense>}
   {AdminPublish&&publish&&<Suspense fallback={null}><AdminPublish people={p.people} onClose={()=>setPublish(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
-  {AdminSlotEditor&&editor&&<Suspense fallback={null}><AdminSlotEditor key={editor.slot.slotId+(editor.person?.id||'')} slot={editor.slot} person={editor.person} onClose={()=>setEditor(null)} onSaved={msg=>{setEditor(null);setAdminMessage(msg);}}/></Suspense>}
+  {AdminSlotEditor&&editor&&<Suspense fallback={null}><AdminSlotEditor key={editor.slot.slotId+(editor.person?.id||'')} slot={editor.slot} person={editor.person} onClose={()=>setEditor(null)} onSaved={msg=>{setEditor(null);setAdminMessage(msg);}}
+   onMove={editor.person?()=>{const e=editor;setEditor(null);setAdminMessage('');setMover({id:e.person!.id,name:e.person!.name,slotId:e.slot.slotId});}:undefined}/></Suspense>}
   {demo&&<Dialog title="Hồ sơ minh họa bố cục" onClose={()=>setDemo(null)}><div className="profile"><div><img src={portraitPath(demo)} alt="Chân dung minh họa lặp để xem bố cục"/></div><div><p className="eyebrow">{demo.id}</p><h3>{demo.name}</h3><p>{demo.description}</p><p>Vị trí: {demo.displaySlot}</p><p>Ảnh chỉ dùng thử; không phải chân dung hiệu trưởng hay giáo viên thật được xác nhận.</p><button onClick={()=>setDemo(null)}>Đóng hồ sơ minh họa</button></div></div></Dialog>}
  </>;
 }
@@ -305,7 +320,9 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
 
   {layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
-  {import.meta.env.DEV&&p.admin&&ready&&<div className="hall-admin-bar" role="status"><b>Chế độ quản trị</b><span>Bấm vào ảnh để thay ảnh / sửa thông tin · Bấm ô “+ Thêm ảnh” để thêm người mới</span><span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
+  {import.meta.env.DEV&&p.admin&&ready&&<div className={'hall-admin-bar'+(p.adminMoving?' is-moving':'')} role="status"><b>Chế độ quản trị</b>{p.adminMoving
+   ?<><span className="hall-admin-move">Đang đổi chỗ: <b>{p.adminMoving}</b> — bấm vào ảnh khác cùng khu để đổi chỗ, hoặc ô “+ Thêm ảnh” để chuyển sang.</span><button onClick={()=>p.onCancelMove?.()}>Hủy đổi chỗ</button></>
+   :<span>Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
   {benchOn&&!benchResult&&ready&&<div className="hall-progress" role="status">{pause?'Đang tạm dừng — bấm ▶ để tiếp tục đo':'Đang đo hiệu năng… '+Math.max(0,benchStep.current)+'/'+benchRoute(layout.stops).length}</div>}
   {benchResult&&<BenchPanel result={benchResult} onClose={()=>setBenchResult(null)}/>}
  </section></div>;

@@ -1,4 +1,4 @@
-import {attachExhibitSlots,exhibitSlots} from './exhibitSlots.mjs';
+import {attachExhibitSlots,exhibitSlots,exhibitZone} from './exhibitSlots.mjs';
 import {isPhotoRef,isPublishedPhoto} from './photoRef.mjs';
 // One canonical profile per person. Original periods remain archived in legacy-seed.json.
 export const GROUPS=[
@@ -66,6 +66,18 @@ export function parseCatalogBackup(text,year=new Date().getFullYear()){
  });
  return attachExhibitSlots(people);
 }
+/** 16/11 (user): admin moves a portrait to another position of the same zone. Target taken → the two swap places;
+ * target empty → the person simply moves (their old position becomes empty). Nothing else on the wall moves. */
+export function moveToSlot(people,id,slotId){
+ const person=people.find(p=>p.id===id);if(!person)throw new Error('Không tìm thấy hồ sơ cần đổi chỗ.');
+ const target=exhibitSlots().find(s=>s.slotId===slotId);if(!target)throw new Error('Vị trí không hợp lệ.');
+ if(target.group!==exhibitZone(person))throw new Error('Chỉ đổi chỗ trong cùng khu (giáo viên với giáo viên, nhân viên với nhân viên).');
+ if(person.displaySlot===slotId)return {people,other:null};
+ const other=people.find(p=>p.id!==id&&p.displaySlot===slotId)||null;
+ const from=person.displaySlot;
+ const next=people.map(p=>p.id===id?{...p,displaySlot:slotId}:other&&p.id===other.id?{...p,displaySlot:from}:p);
+ return {people:attachExhibitSlots(next),other};
+}
 /** @param {any} seed @param {{storage?:{getItem:(key:string)=>string|null,setItem:(key:string,value:string)=>void}|null,year?:number,published?:any[]|null}} options
  * published: people from public/data/catalog.json (cách 1). When present they replace the sample seed. */
 export function createCatalogStore(seed,{storage=null,year=new Date().getFullYear(),published=null}={}){
@@ -101,6 +113,7 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
    if(expectedRevision!==snapshot.revision)throw new Error('Dữ liệu đã đổi sau khi xem trước. Hãy chọn lại bản sao.');
    const people=parseCatalogBackup(text,year);publish(people);return snapshot;
   },
+  moveToSlot:(id,slotId)=>{const r=moveToSlot(snapshot.people,id,slotId);if(r.people!==snapshot.people)publish(r.people);return r.other;},
   /** Remove one person (admin “Gỡ khỏi tường”). Their wall slot becomes free; other slots do not move. */
   removePerson:id=>{
    const old=snapshot.people.find(p=>p.id===id);if(!old)throw new Error('Không tìm thấy hồ sơ cần gỡ.');

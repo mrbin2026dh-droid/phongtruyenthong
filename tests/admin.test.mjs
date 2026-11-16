@@ -52,3 +52,28 @@ test('Admin mode wiring: login gate, wall editor, real data with empty slots, no
  assert.ok(app.includes(".filter(([v])=>!minimal&&(v!=='admin'||(adminAvailable&&admin)))"),'admin tab only for the logged-in admin; the public site (16/11) has no menu');assert.ok(!app.includes('<SceneBoundary key={snapshot.revision}>'));
  assert.match(auth,/crypto\.subtle\.digest\('SHA-256'/);assert.ok(!/password\s*[:=]\s*['"][^'"]+['"]/i.test(auth),'no hard-coded password');
 });
+
+test('16/11 (user): admin moves a portrait — swap with another of the same zone, move to an empty slot, never across zones',async()=>{
+ const {summarize}=await import('../src/data/publishSummary.mjs');
+ const store=createCatalogStore(seed,{storage:memory()}),people=()=>store.getSnapshot().people,at=id=>people().find(p=>p.id===id).displaySlot;
+ const teachers=people().filter(p=>exhibitSlots().find(s=>s.slotId===p.displaySlot)?.group==='teacher');
+ assert.ok(teachers.length>=2);
+ const [a,b]=teachers,before=people().map(p=>({...p})),slotA=a.displaySlot,slotB=b.displaySlot;
+ // swap
+ const other=store.moveToSlot(a.id,slotB);
+ assert.equal(other.id,b.id);assert.equal(at(a.id),slotB);assert.equal(at(b.id),slotA);
+ assert.equal(new Set(people().map(p=>p.displaySlot)).size,people().length,'no two people in one frame');
+ for(const p of people())if(p.id!==a.id&&p.id!==b.id)assert.equal(p.displaySlot,before.find(o=>o.id===p.id).displaySlot,'nobody else moves');
+ const sum=summarize(before,people());assert.deepEqual(sum.moved.sort(),[a.id,b.id].sort());assert.equal(sum.info.length,0,'a move is not an info edit');assert.ok(sum.changed);
+ // move to an empty teacher slot
+ const used=new Set(people().map(p=>p.displaySlot)),empty=exhibitSlots().find(s=>s.group==='teacher'&&!used.has(s.slotId));
+ assert.equal(store.moveToSlot(a.id,empty.slotId),null);assert.equal(at(a.id),empty.slotId);assert.ok(!people().some(p=>p.displaySlot===slotB),'old frame is empty now');
+ // across zones / unknown slot → refused, nothing changes
+ const staffSlot=exhibitSlots().find(s=>s.group==='staff').slotId,snap=JSON.stringify(people());
+ assert.throws(()=>store.moveToSlot(a.id,staffSlot),/cùng khu/);assert.throws(()=>store.moveToSlot(a.id,'XX-99'),/không hợp lệ/);
+ assert.equal(JSON.stringify(people()),snap);
+ // the move survives a reload of the working copy
+ const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8'),editor=readFileSync(new URL('../src/components/AdminSlotEditor.tsx',import.meta.url),'utf8');
+ assert.ok(editor.includes('>Đổi chỗ…</button>')&&tour.includes('if(admin&&mover){')&&tour.includes('if(mover){moveTo(slotId);return;}'),'editor button → tap a portrait or an empty slot');
+ assert.ok(tour.includes('Hủy đổi chỗ'),'can be cancelled (also Esc / tapping the same portrait)');
+});

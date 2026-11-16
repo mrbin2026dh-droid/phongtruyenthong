@@ -14,7 +14,7 @@ const year=()=>new Date().getFullYear();
 
 /** On-wall editor: replace photo / edit info of the person in a slot, add a new person to an empty slot,
  * or remove them from the wall. Photos go to IndexedDB, info to the catalog (same data as list/profile). */
-export default function AdminSlotEditor({slot,person,onClose,onSaved}:{slot:{slotId:string;group:string};person?:Person;onClose:()=>void;onSaved:(msg:string)=>void}){
+export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{slot:{slotId:string;group:string};person?:Person;onClose:()=>void;onSaved:(msg:string)=>void;onMove?:()=>void}){
  const defaults=slotDefaults(slot.group)!;
  const single=person?person.workHistory.length===1:true;
  const [name,setName]=useState(person?.name||''),[role,setRole]=useState(person?.role||defaults.role),[dept,setDept]=useState(person?.dept||'');
@@ -95,6 +95,7 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved}:{slot:{slo
    <div className="admin-actions">
     <button type="submit" className="gold" disabled={busy}>{busy?'Đang lưu…':'Lưu lên tường'}</button>
     <button type="button" onClick={onClose} disabled={busy}>Hủy</button>
+    {person&&onMove&&slot.group!=='principal'&&<button type="button" onClick={onMove} disabled={busy} title="Chọn một ảnh khác cùng khu để đổi chỗ, hoặc một ô trống để chuyển sang">Đổi chỗ…</button>}
     {person&&!confirmRemove&&<button type="button" className="danger" onClick={()=>setConfirmRemove(true)} disabled={busy}>Gỡ khỏi tường…</button>}
     {person&&confirmRemove&&<span className="admin-confirm">Gỡ {person.name} và xóa hồ sơ này? <button type="button" className="danger" onClick={()=>void remove()} disabled={busy}>Gỡ hẳn</button><button type="button" onClick={()=>setConfirmRemove(false)}>Không</button></span>}
    </div>

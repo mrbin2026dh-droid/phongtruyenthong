@@ -39,6 +39,7 @@ export default function AdminPublish({people,onClose,onDone}:{people:Person[];on
      <li><b>{sum.added.length}</b> người mới{sum.added.length?': '+ids(sum.added):''}</li>
      <li><b>{sum.photo.length}</b> ảnh thay đổi</li>
      <li><b>{sum.info.length}</b> hồ sơ sửa thông tin</li>
+     <li><b>{sum.moved.length}</b> ảnh đổi chỗ trên tường</li>
      <li><b>{sum.removed.length}</b> người gỡ khỏi tường{sum.removed.length?': '+ids(sum.removed):''}</li>
      <li>Tổng sau khi xuất bản: <b>{sum.total}</b> hồ sơ, <b>{real}</b> có ảnh</li>
     </ul>
