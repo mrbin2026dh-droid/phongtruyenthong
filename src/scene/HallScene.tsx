@@ -17,6 +17,7 @@ import type {VisitorPose,RouteState} from './HallController';
 import {StopMarkers,RouteDots} from './Wayfinding';
 import PerfProbe from './PerfProbe';
 import EntranceDoors from './EntranceDoors';
+import GildedSign,{type SignSpec} from './GildedSign';
 import FoyerView from './FoyerView';
 import RoomProbes from './RoomProbes';
 import PostFX from './PostFX';
@@ -110,9 +111,9 @@ function Box({p,s,color,metal=0}:{p:number[];s:number[];color:string;metal?:numb
   return <mesh userData={{staticBox:true}} receiveShadow castShadow={color!=='#dbd3c2'&&s[1]>.1&&p[1]<4.1&&Math.max(s[0],s[2])<4} position={p as [number,number,number]} geometry={cube} scale={s as [number,number,number]} material={boxMaterial(color,metal,WOOD.includes(color)?woodGrain:undefined)}/>;
 }
 
-function Inscription({text,width=5,height=.38,light=false,centered=false,fontReference}:{text:string;width?:number;height?:number;light?:boolean;centered?:boolean;fontReference?:string}){
+function Inscription({text,width=5,height=.38,light=false,centered=false,fontReference,hires=false}:{text:string;width?:number;height?:number;light?:boolean;centered?:boolean;fontReference?:string;hires?:boolean}){
  const map=useMemo(()=>{
-  const c=document.createElement('canvas');c.width=width>10?4096:2048;c.height=Math.round(c.width*height/width);const ctx=c.getContext('2d')!;
+  const c=document.createElement('canvas');c.width=width>10||hires?4096:2048;c.height=Math.round(c.width*height/width);const ctx=c.getContext('2d')!;
   ctx.clearRect(0,0,c.width,c.height);ctx.font=`${light?700:600} ${Math.round(c.height*(light?.51:.54))}px "${light?'Noto Serif':'Noto Sans'}"`;
   ctx.textAlign='center';ctx.textBaseline='middle';
   if(light){const gold=ctx.createLinearGradient(0,0,0,c.height*.7);gold.addColorStop(0,'#fff1c8');gold.addColorStop(.5,'#e5c786');gold.addColorStop(1,'#ba9659');ctx.fillStyle=gold;ctx.shadowColor='#061e2580';ctx.shadowBlur=3;ctx.shadowOffsetY=2;}else ctx.fillStyle='#233e44';
@@ -127,7 +128,7 @@ function Inscription({text,width=5,height=.38,light=false,centered=false,fontRef
   if(!centered&&light){const y=c.height*.84;ctx.fillRect(c.width*.34,y,c.width*.13,1.5);ctx.fillRect(c.width*.53,y,c.width*.13,1.5);ctx.save();ctx.translate(c.width*.5,y);ctx.rotate(Math.PI/4);ctx.fillRect(-3,-3,6,6);ctx.restore();}
   else if(!centered)ctx.fillRect(c.width*.44,c.height*.92,c.width*.12,Math.max(2,c.height*.018));
   const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
- },[text,width,height,light,centered,fontReference]);
+ },[text,width,height,light,centered,fontReference,hires]);
  const dispose=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  useEffect(()=>{clearTimeout(dispose.current);return()=>{dispose.current=setTimeout(()=>map.dispose(),0);};},[map]);
  return <mesh><planeGeometry args={[width,height]}/><meshBasicMaterial map={map} transparent toneMapped={false} depthWrite={false}/></mesh>;
@@ -308,6 +309,29 @@ function StatueStory(){
   <mesh position={[0,0,.056]}><planeGeometry args={[W,H]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>
  </group>;
 }
+/** Statue-room portal sign (user, 16/11). The portal head ends at 2.94 m, the foyer ceiling is 3.95 m. */
+export const STATUE_SIGN_SPEC:SignSpec={frame:{w:2.9,h:.46,d:.035},face:{w:2.78,h:.38},rule:.46,lines:[
+ {text:'PHÒNG TRƯNG BÀY TƯỢNG PHÁC THẢO',size:.19,cy:.27,spacing:6},{text:'THẦY GIÁO CHU VĂN AN',size:.34,cy:.70,spacing:8}]};
+/** Clean teal fabric for the statue backdrop: the bake's light falloff (bright wash at the top centre, darker lower
+ * corners, a little warmer on the rim-light side) painted smoothly, with a regular fine weave instead of noise. */
+function TealBackdrop(){
+ const R=STATUE_ROOM,M=MONUMENT,W=2.5,map=useMemo(()=>{
+  const N=2048,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!;
+  const v=g.createLinearGradient(0,0,0,N);v.addColorStop(0,'rgb(52,104,94)');v.addColorStop(.45,'rgb(33,81,70)');v.addColorStop(1,'rgb(19,55,47)');
+  g.fillStyle=v;g.fillRect(0,0,N,N);
+  const wash=g.createRadialGradient(N*.5,0,0,N*.5,0,N*.55);wash.addColorStop(0,'rgba(128,172,160,.75)');wash.addColorStop(.5,'rgba(80,130,118,.25)');wash.addColorStop(1,'rgba(80,130,118,0)');
+  g.fillStyle=wash;g.fillRect(0,0,N,N);
+  const rim=g.createRadialGradient(N*.95,N*.7,0,N*.95,N*.7,N*.5);rim.addColorStop(0,'rgba(120,150,130,.22)');rim.addColorStop(1,'rgba(120,150,130,0)');
+  g.fillStyle=rim;g.fillRect(0,0,N,N);
+  const corner=g.createRadialGradient(0,N,0,0,N,N*.6);corner.addColorStop(0,'rgba(5,20,18,.35)');corner.addColorStop(1,'rgba(5,20,18,0)');
+  g.fillStyle=corner;g.fillRect(0,0,N,N);
+  // woven felt: regular 2 px warp/weft, very low contrast (reads as fabric up close, flat from afar)
+  for(let i=0;i<N;i+=2){g.fillStyle=i%4?'rgba(0,0,0,.05)':'rgba(255,255,255,.025)';g.fillRect(0,i,N,1);g.fillStyle=i%4?'rgba(255,255,255,.02)':'rgba(0,0,0,.03)';g.fillRect(i,0,1,N);}
+  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=16;return t;
+ },[]);
+ useEffect(()=>()=>map.dispose(),[map]);
+ return <mesh position={[R.x1-.068,1.62,M.z]} rotation={[0,-Math.PI/2,0]}><planeGeometry args={[W,W]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>;
+}
 function MonumentReservation({baked=false}:{baked?:boolean}){
  const M=MONUMENT,front=M.depth/2+.003,R=STATUE_ROOM;
  const key=useMemo(()=>{const t=new Object3D();t.position.set(M.x,1.45,M.z);return t;},[]);
@@ -320,9 +344,13 @@ function MonumentReservation({baked=false}:{baked?:boolean}){
   {/* ChuVanAnStatue places itself 0.89 m up = on the 0.88 m pedestal */}
   <Suspense fallback={null}><ChuVanAnStatue/></Suspense>
  </group>
- {/* gilded title on the baked teal panel of the back wall (panel face at x1 − 0.06; text 1.2 cm in front) */}
- <group position={[R.x1-.072,2.62,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered/></group>
- <group position={[R.x1-.072,2.36,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="NGƯỜI THẦY CỦA MUÔN ĐỜI" width={1.5} height={.13} light centered/></group>
+ {/* 16/11 (user: is the teal sharp?): the baked teal carried ~5 % lightmap/webp grain — a clean live fabric layer
+   (8 mm in front of the baked panel face at x1 − 0.06) replaces it; gilded titles 1 cm in front, drawn at 4096 px, no glow */}
+ <TealBackdrop/>
+ <group position={[R.x1-.078,2.62,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires/></group>
+ <group position={[R.x1-.078,2.36,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="NGƯỜI THẦY CỦA MUÔN ĐỜI" width={1.5} height={.13} light centered hires/></group>
+ {/* 16/11 (user): sign above the portal, same style as the school sign over the main door */}
+ <GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.32,M.z]} rotation={-Math.PI/2}/>
  <StatueStory/>
  <primitive object={key}/>
  <spotLight position={STATUE_KEY} target={key} color="#ffe2b8" intensity={7} distance={6} angle={.5} penumbra={.8} decay={2}/>

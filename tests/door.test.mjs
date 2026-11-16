@@ -91,7 +91,9 @@ test('Foyer: school sign above the door; the visit starts at the H2 view — doo
  assert.ok(frame.w>4.42&&frame.w<2*2.21+.6,'sign spans the door portal, centred (x = 0)');
  assert.ok(!/FacadePlaque|plaqueTexture|UBND XÃ/.test(doors),'the plaque right of the door is gone');
  assert.ok(doors.includes("'PHÒNG TRUYỀN THỐNG','TRƯỜNG THCS CHU VĂN AN – ĐĂK HÀ – QUẢNG NGÃI'"),'sign text (user, 16/11)');
- assert.ok(doors.includes('700 ${s}px "Noto Serif"')&&doors.includes("#17383e"),'motto style: gilded serif on deep teal');
+ const sign=readFileSync(new URL('../src/scene/GildedSign.tsx',import.meta.url),'utf8');
+ assert.ok(doors.includes('<GildedSign spec={DOOR_SIGN_SPEC} position={[0,DOOR_SIGN.y,FACADE_Z]}/>'),'door sign uses the shared gilded sign');
+ assert.ok(sign.includes('700 ${s}px "Noto Serif"')&&sign.includes("#17383e")&&sign.includes('const W=4096'),'motto style: gilded serif on deep teal, 4096 px');
  assert.ok(isWalkable(ARRIVAL_START)&&ARRIVAL_START[0]<-3,'waits on the left side of the foyer');
  const bearing=(aspect,p)=>{const t=gateLook(aspect),yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);let b=Math.atan2(p[2]-ARRIVAL_START[2],p[0]-ARRIVAL_START[0])-yaw;return Math.atan2(Math.sin(b),Math.cos(b));};
  const half=(a,v)=>Math.atan(Math.tan(v/2*Math.PI/180)*a);
@@ -160,4 +162,16 @@ test('16/11 (user): the visit always opens in manual mode — no auto/explore ch
  assert.ok(!tour.includes('setChooseMode(true)'),'never re-shown (gate, re-entry)');
  assert.ok(tour.includes("const entered=arriving&&id==='entrance'")&&tour.includes('if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}'),'arriving through the door turns Tự bước on');
  assert.ok(tour.includes("'Trình diễn tự động',automatic||moving"),'▶ keeps the automatic presentation');
+});
+
+test('16/11 (user): statue room — sign over the portal, clean teal backdrop, crisp gilded titles',async()=>{
+ const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
+ const {STATUE_ROOM:R}=await import('../src/scene/hallLayout.mjs');
+ assert.ok(scene.includes("{text:'PHÒNG TRƯNG BÀY TƯỢNG PHÁC THẢO'")&&scene.includes("{text:'THẦY GIÁO CHU VĂN AN'"),'sign text');
+ const y=3.32,h=.46;assert.ok(y-h/2>R.opening.height+.14+.1&&y+h/2<3.95-.2,'between the portal head (2.94 m) and the foyer ceiling');
+ assert.ok(scene.includes('<GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.32,M.z]} rotation={-Math.PI/2}/>'),'on the foyer face of the wall, facing the foyer');
+ // layers in front of the baked teal face (x1 − 0.06): fabric 8 mm, titles 18 mm — never coplanar
+ assert.ok(scene.includes('<mesh position={[R.x1-.068,1.62,M.z]}')&&scene.includes('<group position={[R.x1-.078,2.62,M.z]}'));
+ assert.ok(!/TealBackdrop[\s\S]{0,1500}rand\(\)/.test(scene),'no random noise in the backdrop (regular weave only)');
+ assert.ok(scene.includes('text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires'),'title drawn at 4096 px, no glow');
 });

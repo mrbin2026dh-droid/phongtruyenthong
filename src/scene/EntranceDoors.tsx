@@ -1,10 +1,11 @@
 import {useEffect,useMemo,useRef} from 'react';
 import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
-import {BoxGeometry,CanvasTexture,Frustum,Group,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
+import {BoxGeometry,CanvasTexture,Frustum,Group,Matrix4,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
 import {DOOR_JAMB,doorOffset,doorStep} from './doorMotion.mjs';
 import {FACADE_Z,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
 import {Html} from '@react-three/drei';
+import GildedSign,{type SignSpec} from './GildedSign';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
 export type DoorState={target:number;value:number};
@@ -16,28 +17,9 @@ export const DOOR_SIGN_LINES=['PHÒNG TRUYỀN THỐNG','TRƯỜNG THCS CHU VĂN
 const cube=new BoxGeometry(1,1,1);
 const rand=(()=>{let s=20261115;return ()=>{s=(s*16807)%2147483647;return s/2147483647;};})();
 
-/** Sign face: teal ground, thin gold double rule, two gilded lines. ~880 px per metre. */
-function signTexture(){
- const {w,h}=DOOR_SIGN.face,W=4096,H=Math.round(W*h/w),c=document.createElement('canvas');c.width=W;c.height=H;
- const g=c.getContext('2d')!;
- g.fillStyle='#17383e';g.fillRect(0,0,W,H);
- for(let i=0;i<9000;i++){g.fillStyle=`rgba(255,255,255,${.01+rand()*.025})`;g.fillRect(rand()*W,rand()*H,1+rand()*2,1);}
- const gold=g.createLinearGradient(0,0,0,H);gold.addColorStop(0,'#fff1c8');gold.addColorStop(.5,'#e5c786');gold.addColorStop(1,'#ba9659');
- g.strokeStyle='#bda36b';g.lineWidth=7;g.strokeRect(22,22,W-44,H-44);g.lineWidth=2.5;g.strokeRect(40,40,W-80,H-80);
- g.textAlign='center';g.textBaseline='alphabetic';
- const line=(text:string,size:number,cy:number,spacing:number)=>{
-  let s=size;const font=()=>`700 ${s}px "Noto Serif"`;g.font=font();try{(g as any).letterSpacing=spacing+'px';}catch{/* older canvas */}
-  while(g.measureText(text).width>W-260&&s>20){s--;g.font=font();}
-  const m=g.measureText(text),y=cy+(m.actualBoundingBoxAscent-m.actualBoundingBoxDescent)/2;
-  g.fillStyle='rgba(4,24,28,.65)';g.fillText(text,W/2+2,y+3);g.fillStyle=gold;g.fillText(text,W/2,y);
-  try{(g as any).letterSpacing='0px';}catch{/* older canvas */}
- };
- const [l1,l2]=DOOR_SIGN_LINES;
- line(l1,Math.round(H*.40),H*.36,10);
- const y=H*.6;g.fillStyle='#bda36b';g.fillRect(W*.30,y-1.5,W*.17,3);g.fillRect(W*.53,y-1.5,W*.17,3);g.save();g.translate(W/2,y);g.rotate(Math.PI/4);g.fillRect(-8,-8,16,16);g.restore();
- line(l2,Math.round(H*.205),H*.79,6);
- const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=16;return t;
-}
+/** Spec for the shared gilded sign: big title line, a gold rule, the school line below. */
+const DOOR_SIGN_SPEC:SignSpec={frame:DOOR_SIGN.frame,face:DOOR_SIGN.face,rule:.6,lines:[
+ {text:DOOR_SIGN_LINES[0],size:.40,cy:.36,spacing:10},{text:DOOR_SIGN_LINES[1],size:.205,cy:.79,spacing:6}]};
 
 /** Walnut grain for the door leaves (vertical), drawn once. */
 function grainTexture(){
@@ -90,19 +72,6 @@ function Leaf({side,m}:{side:number;m:ReturnType<typeof leafMaterials>}){
  </>;
 }
 
-/** Sign above the door: walnut frame 4 cm off the stone (above the 3.465 m portal soffit, below the 3.95 m ceiling),
- * gold lip, teal face — every layer ≥ 1 cm apart (no z-fighting with the baked facade). */
-function DoorSign({face}:{face:MeshBasicMaterial}){
- const wood=useMemo(()=>new MeshStandardMaterial({color:'#4f362a',roughness:.5}),[]),gold=useMemo(()=>new MeshStandardMaterial({color:'#bda36b',roughness:.35,metalness:.5}),[]);
- useEffect(()=>()=>{wood.dispose();gold.dispose();},[wood,gold]);
- const {y,frame,face:f}=DOOR_SIGN,z0=FACADE_Z+.005;
- return <group position={[0,y,0]}>
-  <mesh geometry={cube} material={wood} scale={[frame.w,frame.h,frame.d]} position={[0,0,z0+frame.d/2]}/>
-  <mesh geometry={cube} material={gold} scale={[f.w+.03,f.h+.03,.01]} position={[0,0,z0+frame.d+.005]}/>
-  <mesh material={face} position={[0,0,z0+frame.d+.02]}><planeGeometry args={[f.w,f.h]}/></mesh>
- </group>;
-}
-
 /** Two-leaf sliding entrance door + the school sign above it. Closed while the visitor waits in the foyer;
  * opens on a tap. Doors and sign are not part of the baked shell, so they stay sharp and can move. */
 export default function EntranceDoors({door,waiting=false,onOpen}:{door?:MutableRefObject<DoorState>;waiting?:boolean;onOpen?:()=>void}){
@@ -113,11 +82,10 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
  useEffect(()=>{const t0=performance.now();const id=setInterval(()=>{const d=door?.current;if(d&&d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();},400);return()=>clearInterval(id);},[door,invalidate]);
  useEffect(()=>{gl.localClippingEnabled=true;},[gl]);
  const parts=useMemo(()=>{
-  const grain=grainTexture(),fabric=fabricTexture(),sign=signTexture();
-  const face=new MeshBasicMaterial({map:sign,color:'#f4eee2',toneMapped:false});
-  return {grain,fabric,sign,face,left:{g:leafGroup(-1),m:leafMaterials(-1,grain,fabric)},right:{g:leafGroup(1),m:leafMaterials(1,grain,fabric)}};
+  const grain=grainTexture(),fabric=fabricTexture();
+  return {grain,fabric,left:{g:leafGroup(-1),m:leafMaterials(-1,grain,fabric)},right:{g:leafGroup(1),m:leafMaterials(1,grain,fabric)}};
  },[]);
- useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric,parts.sign])t.dispose();parts.face.dispose();for(const s of [parts.left,parts.right])for(const mat of Object.values(s.m))mat.dispose();},[parts]);
+ useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric])t.dispose();for(const s of [parts.left,parts.right])for(const mat of Object.values(s.m))mat.dispose();},[parts]);
  // Dev-only evidence for the 15/11 "blank screen at the door" report: if the door is ever out of view
  // while the visitor waits, log the camera state and ask the controller to re-frame the door.
  const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...DOOR_CENTER),[]),mat=useMemo(()=>new Matrix4(),[]);
@@ -144,7 +112,7 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
   }
  });
  return <>
-  <DoorSign face={parts.face}/>
+  <GildedSign spec={DOOR_SIGN_SPEC} position={[0,DOOR_SIGN.y,FACADE_Z]}/>
   {/* 16/11 (user): only the door opens the door — tap a leaf or the label attached to it (not the whole screen). */}
   <group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}
    onPointerOver={()=>{if(waiting)document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}>
