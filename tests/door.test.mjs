@@ -75,7 +75,7 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(tour.includes('controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}'),'16/11: foyer walkable — locked only during the opening shot and the door turn');
- assert.ok(tour.includes('!doorOpening&&!arriving&&!moving&&'),'mode chooser waits until the visitor has arrived');
+ assert.ok(!tour.includes('className="hall-intro"'),'16/11: no mode chooser at all');
  assert.ok(ctl.includes('if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}'),'gate pose re-asserted');assert.ok(ctl.includes("addEventListener('museum-door-reframe',fn)"),'dev reframe hook');
  assert.ok(ctl.includes('Number.isFinite(camera.position.x+camera.position.y+camera.position.z'),'NaN safety net');
  assert.ok(!doors.includes('11.11'),'temporary end wall removed (the baked foyer has its own end wall)');
@@ -134,7 +134,10 @@ test('Scene is revealed only after the room, statue and all portraits have loade
 test('Walking sticks are always offered inside the room; touching one switches to walking mode (image 3)',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const sticks=readFileSync(new URL('../src/scene/TwinSticks.tsx',import.meta.url),'utf8');
- assert.ok(tour.includes('{ready&&!(atDoor&&intro&&effects)&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}'),'also in the foyer (16/11); hidden during a portrait close-up');
+ assert.ok(tour.includes('{ready&&!p.paused&&<TwinSticks input={input} onEngage={engageStick}/>}'),'16/11 (user): always on screen — foyer, door, walking, presentation');
+ assert.ok(tour.includes("const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};"),'touch: skip the opening shot / take over; ignored while the door opens');
+ const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
+ assert.ok(ctl.includes('const k=live.current.controlsLocked?0:1;')&&ctl.includes('const f=k*n.forward+'),'sticks inert while controls are locked');
  assert.ok(!tour.includes('{manual&&!moving&&!p.paused&&!panel&&<TwinSticks'),'no longer hidden behind the Tự bước button');
  assert.ok(sticks.includes('onEngage?.();'));
 });

@@ -162,11 +162,13 @@ export default function HallController({plan,command,paused,effects,input,loaded
    }
    active=true;
   }else{
-   const f=n.forward+(keys.current.has('w')||keys.current.has('arrowup')?1:0)-(keys.current.has('s')||keys.current.has('arrowdown')?1:0);
-   const s=n.strafe+(keys.current.has('d')?1:0)-(keys.current.has('a')?1:0);
-   const turn=n.turn+(keys.current.has('arrowleft')?1:0)-(keys.current.has('arrowright')?1:0);
+   // 16/11: the sticks are always on screen — while controls are locked (door turn, opening shot) they are inert
+   const k=live.current.controlsLocked?0:1;
+   const f=k*n.forward+(keys.current.has('w')||keys.current.has('arrowup')?1:0)-(keys.current.has('s')||keys.current.has('arrowdown')?1:0);
+   const s=k*n.strafe+(keys.current.has('d')?1:0)-(keys.current.has('a')?1:0);
+   const turn=k*n.turn+(keys.current.has('arrowleft')?1:0)-(keys.current.has('arrowright')?1:0);
    v.targetYaw+=turn*.85*dt;
-   v.targetPitch=Math.max(-.60,Math.min(.60,v.targetPitch+n.look*.65*dt));
+   v.targetPitch=Math.max(-.60,Math.min(.60,v.targetPitch+k*n.look*.65*dt));
    if(n.reset!==v.reset){v.reset=n.reset;const node=plan.nodes[m.to]||plan.nodes.entrance;const q=new Quaternion().setFromRotationMatrix(new Matrix4().lookAt(camera.position,new Vector3(...node.target as [number,number,number]),new Vector3(0,1,0)));const e=new Euler().setFromQuaternion(q,'YXZ');v.targetYaw=v.yaw+Math.atan2(Math.sin(e.y-v.yaw),Math.cos(e.y-v.yaw));v.targetPitch=e.x;v.targetFov=size.width/size.height<1.1?78:62;}
    v.yaw=dampValue(v.yaw,v.targetYaw,10,dt);v.pitch=dampValue(v.pitch,v.targetPitch,10,dt);
    camera.quaternion.setFromEuler(new Euler(v.pitch,v.yaw,0,'YXZ'));
