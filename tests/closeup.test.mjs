@@ -29,10 +29,10 @@ test('Trước / Sau order stays in the zone, top row before bottom row of each 
  assert.ok(teachers[0].y>teachers[1].y&&teachers[0].column===teachers[1].column);
  assert.equal(leaders.length,3);assert.equal(closeupOrder(slots,'staff').length,12);
 });
-test('Frames: teacher/staff dark walnut with a gold lip, Ban Giám hiệu brass; close-up only on phones',()=>{
+test('Frames: teacher/staff dark walnut with a gold lip, Ban Giám hiệu profiled gilt; close-up only on phones',()=>{
  const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8'),tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  assert.ok(scene.includes("export const FRAME_COLORS={walnut:'#2a1f18',lip:'#d9b468'};"));
- assert.ok(scene.includes('<Frames slots={p.layout.slots.filter(isLeaderSlot)} material={brass}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/>'));
+ assert.ok(scene.includes('<LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/>'));
  assert.ok(tour.includes("if(phone&&!p.admin){")&&tour.includes('onSelect={selectPortrait}'),'admin and computers open the profile/editor directly');
  assert.ok(tour.includes("matchMedia('(pointer:coarse)')"));
  assert.ok(tour.includes('[closeup.from,closeup.slotId]')&&tour.includes('from:c?.slotId'),'previous close-up stays in the plan: Trước/Sau slides along the wall');
@@ -44,4 +44,20 @@ test('Gold lip never shares a face with the frame bars or the photo (no z-fighti
  assert.ok(LIP_Z0>BAR&&PHOTO_Z<BAR,'lip sits in front of the bars, photo behind them');
  assert.ok(scene.includes('iw=fw-2*b-2*I,ih=fh-2*b-2*I'),'lip inner edge 1 mm inside the opening, not on the bar edge');
  assert.ok(!scene.includes('local.makeScale(w,h,.024);local.setPosition(x,y,.012)'),'old lip spanning the bar depth is gone');
+});
+
+test('Ban Giám hiệu frame follows the referenced design (05-HUONG-DAN-AI/THIET-KE-KHU-BGH.md)',()=>{
+ const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
+ const profile=JSON.parse(scene.match(/LEADER_PROFILE:\[number,number,number\]\[\]=(\[\[.*?\]\]);/)[1].replace(/([\[,])\./g,'$10.'));
+ assert.equal(profile.length,3,'one frame, three stepped bands');
+ for(let i=1;i<profile.length;i++)assert.ok(profile[i][0]>profile[i-1][1],'bands never share a face (no z-fighting)');
+ assert.ok(Math.abs(profile.at(-1)[1]-.07)<1e-9,'7 cm moulding for a 1 m portrait (2–4 in guidance)');
+ assert.ok(profile[2][2]>profile[0][2]&&profile[0][2]>profile[1][2],'outer rim proud, cove lowest: catches light like a real profile');
+ assert.ok(scene.includes('PICTURE_LIGHT={length:.66,above:.16}'),'picture light 2/3 of the frame width, 16 cm above');
+ assert.ok(scene.includes('PLAQUE={width:.60,height:.13,gap:.07}')&&scene.includes("x.fillStyle='#2a1f18'"),'brass plaque, dark engraved text');
+ assert.ok(!scene.includes("key={'portrait-side'+sign}")&&!scene.includes('s={[slot.width+.22,slot.height+.47,.07]}'),'no second brass frame, no oversized backing board');
+ assert.ok(scene.includes("LEADER_GOLD='#c9a560'"),'one gold tone');
+ assert.ok(scene.includes('blending={AdditiveBlending}')&&scene.includes("x.globalCompositeOperation='destination-in'"),'warm light pool, every edge faded to zero');
+ assert.ok(scene.includes('<mesh position={[0,ly-LIGHT_POOL.height/2,LEADER_BACK+.002]}>'),'pool starts at the lamp and only falls downwards (no halo above the lamp / behind the title)');
+ const pool=scene.match(/LIGHT_POOL=\{width:([\d.]+),height:([\d.]+),opacity:([\d.]+)\}/);assert.ok(pool&&+pool[3]<=.4,'accent kept moderate (measured ≈3.7:1 over the fabric)');
 });

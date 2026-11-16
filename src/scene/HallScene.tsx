@@ -1,8 +1,9 @@
 import {Suspense,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {Canvas,useFrame,useThree} from '@react-three/fiber';
-import {BoxGeometry,InstancedMesh,Matrix4,MeshStandardMaterial,SRGBColorSpace,CanvasTexture,ACESFilmicToneMapping,Object3D,Group,Vector3} from 'three';
+import {AdditiveBlending,BoxGeometry,InstancedMesh,Matrix4,MeshStandardMaterial,SRGBColorSpace,CanvasTexture,ACESFilmicToneMapping,Object3D,Group,Vector3} from 'three';
 
 import {Texture,GalleryEnvironment} from './BlenderMuseum';
+import {workHistoryText} from '../data/catalog.mjs';
 import HallController from './HallController';
 import HallPhoto,{type PhotoTier} from './HallPhoto';
 import ChuVanAnStatue from './ChuVanAnStatue';
@@ -35,6 +36,72 @@ const walnut=new MeshStandardMaterial({color:FRAME_COLORS.walnut,metalness:.08,r
 const goldLip=new MeshStandardMaterial({color:FRAME_COLORS.lip,metalness:.55,roughness:.32});
 export const FRAME_LIP=.006,FRAME_LIP_INSET=.001,FRAME_LIP_DEPTH=.003;
 export const isLeaderSlot=(s:{group:string})=>s.group==='principal'||s.group==='deputy';
+
+// 16/11 — Ban Giám hiệu redesigned from references (05-HUONG-DAN-AI/THIET-KE-KHU-BGH.md): ONE gilt frame per portrait
+// (NPG: an over-broad frame upstages the portrait), 7 cm moulding for a 1 m picture (2–4″ guidance for large art), built
+// as three stepped bands so it catches light like a real profile; a walnut sight edge ties it to the teacher frames
+// (same two materials, roles swapped: walnut-on-oak there, gold-on-green here — walnut alone vanishes on the green, 1.3:1).
+export const LEADER_GOLD='#c9a560',LEADER_GOLD_DEEP='#9a7a40';
+const leaderGold=new MeshStandardMaterial({color:LEADER_GOLD,metalness:.6,roughness:.34});
+const leaderCove=new MeshStandardMaterial({color:LEADER_GOLD_DEEP,metalness:.55,roughness:.45});
+/** bands measured outward from the photo opening: [from, to, front z]; .5 mm gaps so no two faces are ever coplanar */
+export const LEADER_PROFILE:[number,number,number][]=[[0,.012,.036],[.0125,.058,.030],[.0585,.070,.044]];
+export const LEADER_BACK=-.094,LEADER_MOULDING=.07,PICTURE_LIGHT={length:.66,above:.16},PLAQUE={width:.60,height:.13,gap:.07};
+const leaderOpening=(s:any)=>[(s.width||1)/2-FRAME_BAR,(s.height||1.5)/2-FRAME_BAR];
+function LeaderFrames({slots}:{slots:any[]}){
+ const refs=[useRef<InstancedMesh>(null),useRef<InstancedMesh>(null),useRef<InstancedMesh>(null)];
+ useLayoutEffect(()=>{const m=new Matrix4(),local=new Matrix4(),base=new Matrix4();
+  LEADER_PROFILE.forEach(([from,to,z],band)=>{const mesh=refs[band].current;if(!mesh)return;let n=0;
+   const depth=z-LEADER_BACK,zc=(z+LEADER_BACK)/2,w=to-from,mid=(from+to)/2;
+   for(const s of slots){base.makeRotationY(s.yaw);base.setPosition(s.x,s.y,s.z);const [ew,eh]=leaderOpening(s);
+    for(const [x,y,sx,sy] of [[-(ew+mid),0,w,2*(eh+to)],[ew+mid,0,w,2*(eh+to)],[0,eh+mid,2*(ew+from),w],[0,-(eh+mid),2*(ew+from),w]]){
+     local.makeScale(sx,sy,depth);local.setPosition(x,y,zc);m.multiplyMatrices(base,local);mesh.setMatrixAt(n++,m);}
+   }mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();});
+ },[slots]);
+ const count=Math.max(1,slots.length*4);
+ return <>{[walnut,leaderCove,leaderGold].map((mat,i)=><instancedMesh key={i} ref={refs[i]} args={[cube,mat,count]} count={slots.length*4} frustumCulled={false}/>)}</>;
+}
+/** soft drop shadow on the fabric so the frame floats a little off the wall */
+const softShadow=(()=>{let t:CanvasTexture|null=null;return ()=>{if(t)return t;const c=document.createElement('canvas');c.width=128;c.height=192;const x=c.getContext('2d')!;
+ x.filter='blur(10px)';x.fillStyle='rgba(0,0,0,1)';x.fillRect(22,26,84,140);t=new CanvasTexture(c);return t;};})();
+/** warm pool of light cast by the picture light on the fabric (the baked fabric does not react to live lights).
+ * 16/11 review of the user's screenshot: the first oval also rose ABOVE the lamp (a halo, and behind the title) —
+ * a picture light only throws light downwards. Now the pool starts at the lamp and fades down and sideways; every edge
+ * fades to zero. Measured peak ≈ 3.7:1 over the fabric (museum accent ≥ 3:1, < 10:1 dramatic) and the photos stay the
+ * brightest thing with no clipped whites, so the strength is kept. */
+const lightPool=(()=>{let t:CanvasTexture|null=null;return ()=>{if(t)return t;const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d')!;
+ // brightest at the top edge, gone by about the middle of the frame (a real picture light falls off fast)
+ const g=x.createRadialGradient(128,6,0,128,6,170);g.addColorStop(0,'rgba(255,214,150,1)');g.addColorStop(.4,'rgba(255,200,130,.42)');g.addColorStop(1,'rgba(255,190,120,0)');
+ x.fillStyle=g;x.fillRect(0,0,256,256);
+ x.globalCompositeOperation='destination-in';   // soft start at the lamp, soft sides: no visible edge anywhere
+ const v=x.createLinearGradient(0,0,0,256);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.06,'rgba(0,0,0,1)');v.addColorStop(1,'rgba(0,0,0,1)');x.fillStyle=v;x.fillRect(0,0,256,256);
+ const h=x.createLinearGradient(0,0,256,0);h.addColorStop(0,'rgba(0,0,0,0)');h.addColorStop(.3,'rgba(0,0,0,1)');h.addColorStop(.7,'rgba(0,0,0,1)');h.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=h;x.fillRect(0,0,256,256);
+ t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;};})();
+/** pool plane: top edge at the lamp, reaching down over the upper part of the frame */
+export const LIGHT_POOL={width:1.6,height:1.4,opacity:.34};
+function LeaderDressing({slot}:{slot:any}){
+ const [ew,eh]=leaderOpening(slot),top=eh+LEADER_MOULDING,L=PICTURE_LIGHT,ly=top+L.above,P=PLAQUE,py=-(top+P.gap+P.height/2);
+ const tilt=Math.atan2(.042,.26);
+ const plaque=useMemo(()=>{const c=document.createElement('canvas');c.width=1200;c.height=260;const x=c.getContext('2d')!;x.textAlign='center';x.fillStyle='#2a1f18';
+  x.font='700 76px "Noto Serif"';x.fillText(slot.person.name,600,108,1120);x.font='500 44px "Noto Sans"';
+  x.fillText([slot.person.role,workHistoryText(slot.person)].filter(Boolean).join(' · '),600,196,1120);
+  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;},[slot.person]);
+ useEffect(()=>()=>plaque.dispose(),[plaque]);
+ return <>
+  <mesh position={[0,-.02,LEADER_BACK+.001]}><planeGeometry args={[2*(ew+LEADER_MOULDING)+.16,2*top+.2]}/><meshBasicMaterial map={softShadow()} transparent opacity={.45} depthWrite={false} color="#000"/></mesh>
+  <mesh position={[0,ly-LIGHT_POOL.height/2,LEADER_BACK+.002]}><planeGeometry args={[LIGHT_POOL.width,LIGHT_POOL.height]}/><meshBasicMaterial map={lightPool()} transparent opacity={LIGHT_POOL.opacity} blending={AdditiveBlending} depthWrite={false} toneMapped={false}/></mesh>
+  {/* picture light: 2/3 of the frame width, 16 cm above it (picture-light sizing guidance) */}
+  <mesh position={[0,ly,.17]} rotation={[0,0,Math.PI/2]} material={leaderGold}><cylinderGeometry args={[.017,.017,L.length,24]}/></mesh>
+  <mesh position={[0,ly-.013,.17]} rotation={[Math.PI/2,0,0]}><planeGeometry args={[L.length-.04,.012]}/><meshBasicMaterial color="#fff1cf" toneMapped={false}/></mesh>
+  {[-.22,.22].map(x=><group key={x}>
+   <mesh position={[x,ly-.021,.04]} rotation={[-tilt,0,0]} material={leaderGold}><boxGeometry args={[.008,.008,.265]}/></mesh>
+   <mesh position={[x,ly-.042,LEADER_BACK+.005]} material={leaderGold}><boxGeometry args={[.026,.045,.01]}/></mesh>
+  </group>)}
+  {/* brushed-brass name plaque, engraved dark text (6.9:1), name in mixed case — museum label practice */}
+  <mesh position={[0,py,LEADER_BACK+.008]} material={leaderGold}><boxGeometry args={[P.width,P.height,.014]}/></mesh>
+  <mesh position={[0,py,LEADER_BACK+.0156]}><planeGeometry args={[P.width-.03,P.height-.02]}/><meshBasicMaterial map={plaque} transparent toneMapped={false}/></mesh>
+ </>;
+}
 const woodGrain=(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const data=ctx.createImageData(256,256);for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=185+18*Math.sin(x*.19+Math.sin(y*.016)*2)+7*Math.sin(x*.91+y*.018);const i=(y*256+x)*4;data.data[i]=data.data[i+1]=data.data[i+2]=n;data.data[i+3]=255;}ctx.putImageData(data,0,0);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
 
 const WOOD=['#493328','#69513b','#5e3e2c','#80633d','#4f362a','#644631','#563b2c'];
@@ -180,20 +247,11 @@ function Photo({slot,onSelect}:{slot:any;onSelect:(id:string)=>void}){
  // teachers: far → near (6.5 m, back at 8.5) → close, full upload resolution (2.4 m, back at 3.0)
  useFrame(()=>{if(principal)return;const next=photoTier(tier,Math.hypot(camera.position.x-slot.x,camera.position.z-slot.z));if(next!==tier)setTier(next);});
  return <group position={[slot.x,slot.y,slot.z]} rotation={[0,slot.yaw,0]} onClick={e=>{e.stopPropagation();if(e.delta<6)onSelect(slot.person.id);}}>
-  {principal&&<>
-   <Box p={[0,-.06,-.06]} s={[slot.width+.22,slot.height+.47,.07]} color="#563b2c"/>
-   <mesh position={[0,0,.008]}><planeGeometry args={[slot.width-.025,slot.height-.025]}/><meshStandardMaterial color="#eee5d4" roughness={.9}/></mesh>
-   {[-1,1].flatMap(sign=>[
-    <Box key={'portrait-side'+sign} p={[sign*(slot.width/2+.035),0,.018]} s={[.025,slot.height+.12,.055]} color="#bda36b" metal={.5}/>,
-    <Box key={'portrait-edge'+sign} p={[0,sign*(slot.height/2+.045),.018]} s={[slot.width+.095,.025,.055]} color="#bda36b" metal={.5}/>
-   ])}
-   <Box p={[0,slot.height/2+.19,.09]} s={[.40,.035,.14]} color="#a88a55" metal={.5}/>
-   <mesh position={[0,slot.height/2+.166,.10]} rotation={[Math.PI/2,0,0]}><planeGeometry args={[.31,.07]}/><meshBasicMaterial color="#fff0cc"/></mesh>
-  </>}
+  {principal&&<LeaderDressing slot={slot}/>}
   {/* 15/11: Ban Giám hiệu photo fills the whole brass opening (no cream margin). It sits just behind the
       front face of the 2.8 cm frame bars (z .03 < .0345) so the bars neatly cover its 4–5 mm overlap. */}
   <mesh position={[0,0,principal ? .016 : .015]}><planeGeometry args={photoSize(slot.width||.55,slot.height||.735)}/><HallPhoto person={slot.person} tier={tier}/></mesh>
-  <mesh position={[0,-(slot.height/2+.12),principal ? .065 : .04]}><planeGeometry args={[principal ? slot.width+.10 : .69,principal ? .19 : .14375]}/><Texture person={slot.person} label/></mesh>
+  {!principal&&<mesh position={[0,-(slot.height/2+.12),.04]}><planeGeometry args={[.69,.14375]}/><Texture person={slot.person} label/></mesh>}
  </group>;
 }
 
@@ -269,7 +327,7 @@ export default function HallScene(p:Props){
   <pointLight position={[0,3.6,-6.3]} intensity={16} distance={9} color="#ffe8bc" decay={2}/>
   <pointLight position={[-8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/><pointLight position={[8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/>
 
-  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><Frames slots={p.layout.slots.filter(isLeaderSlot)} material={brass}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/>
+  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/>
   {p.layout.slots.map((slot:any)=><Photo key={slot.person.id} slot={slot} onSelect={id=>{if(!p.moving&&!p.paused)p.onSelect(id);}}/>)}
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}
