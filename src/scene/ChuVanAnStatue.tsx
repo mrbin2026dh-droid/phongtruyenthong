@@ -1,13 +1,15 @@
 import {useEffect,useMemo} from 'react';
 import {useGLTF} from '@react-three/drei';
 import {markAssetReady} from './sceneAssets';
-import {useFrame} from '@react-three/fiber';
+import {useFrame,useThree} from '@react-three/fiber';
 import {Mesh,MeshStandardMaterial} from 'three';
 /** Seated study repaired in Blender from the user's package; not an authenticated scan.
  * v3 = fixed-v2 compressed (EXT_meshopt_compression + KHR_mesh_quantization + EXT_texture_webp),
  * same 11 meshes/triangles/bounds. Master: 08-MO-HINH-3D/chu-van-an/web-fix-2026-10-30/. */
 export default function ChuVanAnStatue(){
  const gltf=useGLTF(import.meta.env.BASE_URL+'models/chu-van-an-seated-web-v3.glb?v='+__ASSET_V__,false,true);
+ // 16/11 (user: statue looks blurry): the bronze atlas is viewed at grazing angles in the niche — full anisotropic filtering.
+ const maxAniso=useThree(s=>s.gl.capabilities.getMaxAnisotropy());
  const {model,materials}=useMemo(()=>{
   const model=gltf.scene.clone(true),materials=new Map<MeshStandardMaterial,MeshStandardMaterial>();
   model.traverse(o=>{if(o instanceof Mesh){
@@ -15,11 +17,11 @@ export default function ChuVanAnStatue(){
    // The hall's 32 m / 1024 shadow map cannot resolve the statue's fine surface.
    // Keep its cast shadow on the pedestal/floor, avoid coarse self-shadow acne.
    o.receiveShadow=false;
-   const copy=(m:MeshStandardMaterial)=>{if(!materials.has(m)){const clone=m.clone();clone.envMapIntensity=.85;materials.set(m,clone);}return materials.get(m)!;};
+   const copy=(m:MeshStandardMaterial)=>{if(!materials.has(m)){const clone=m.clone();clone.envMapIntensity=.85;if(clone.map){clone.map.anisotropy=maxAniso;clone.map.needsUpdate=true;}materials.set(m,clone);}return materials.get(m)!;};
    o.material=Array.isArray(o.material)?o.material.map(copy):copy(o.material);
   }});
   return {model,materials:[...materials.values()]};
- },[gltf.scene]);
+ },[gltf.scene,maxAniso]);
  useFrame(({scene})=>{
   // Explicit per-material environment: retain the room's reflection layout while
   // matching bronze studio brightness without increasing every wall/frame light.

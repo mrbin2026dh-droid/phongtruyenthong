@@ -21,7 +21,7 @@ test('Visitor waits for the doors unless reduced motion, bench or effects off',(
  assert.equal(entryDelayMs({reducedMotion:true}),0);assert.equal(entryDelayMs({bench:true}),0);assert.equal(entryDelayMs({effects:false}),0);
 });
 
-test('Entry waits for a tap ON THE DOOR; the plaque names the school; Về cổng vào closes the doors',()=>{
+test('Entry waits for a tap ON THE DOOR; the sign above it names the school; Về cổng vào closes the doors',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<13.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
@@ -32,7 +32,7 @@ test('Entry waits for a tap ON THE DOOR; the plaque names the school; Về cổn
  has(doors,"<group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}");
  has(doors,'<Html position={DOOR_CENTER as [number,number,number]} center');has(doors,'className="door-open-label" onClick={onOpen}');
  has(tour,"current==='gate'&&!atDoor){door.current.target=0;");
- has(doors,"['UBND XÃ ĐĂK HÀ','TRƯỜNG THCS CHU VĂN AN','PHÒNG TRUYỀN THỐNG']");
+ has(doors,"export const DOOR_SIGN_LINES=['PHÒNG TRUYỀN THỐNG',");
  has(doors,'gl.localClippingEnabled=true');has(doors,'new Plane(new Vector3(-side,0,0),DOOR_JAMB)');
  assert.ok(!doors.includes('position={[doorOffset'),'leaf position is driven by useFrame only');
 });
@@ -82,12 +82,16 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  assert.ok(doors.includes('d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();'),'refresh frames while waiting');
 });
 
-test('Foyer: plaque on the facade; the visit starts at the H2 view — door left, statue niche ahead, glass right (16/11)',async()=>{
- const {gateLook,arrivalFov,PLAQUE,ARRIVAL_START,DOOR_CENTER}=await import('../src/scene/hallArrival.mjs');
+test('Foyer: school sign above the door; the visit starts at the H2 view — door left, statue niche ahead, glass right (16/11)',async()=>{
+ const {gateLook,arrivalFov,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER}=await import('../src/scene/hallArrival.mjs');
  const {MONUMENT,isWalkable}=await import('../src/scene/hallLayout.mjs');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
- assert.ok(PLAQUE.x-PLAQUE.w/2>2.21+.05&&PLAQUE.x+PLAQUE.w/2<4.54-.05,'plaque fits on the right facade panel (x 2.21–4.54)');
- assert.ok(!/plaqueHalf|repeat\.set\(\.5,1\)/.test(doors),'no split plaque on the sliding leaves');
+ const {y,frame}=DOOR_SIGN;
+ assert.ok(y-frame.h/2>3.465+.01&&y+frame.h/2<3.95-.02,'16/11 (H3): sign fits between the portal soffit and the ceiling');
+ assert.ok(frame.w>4.42&&frame.w<2*2.21+.6,'sign spans the door portal, centred (x = 0)');
+ assert.ok(!/FacadePlaque|plaqueTexture|UBND XÃ/.test(doors),'the plaque right of the door is gone');
+ assert.ok(doors.includes("'PHÒNG TRUYỀN THỐNG','TRƯỜNG THCS CHU VĂN AN – ĐĂK HÀ – QUẢNG NGÃI'"),'sign text (user, 16/11)');
+ assert.ok(doors.includes('700 ${s}px "Noto Serif"')&&doors.includes("#17383e"),'motto style: gilded serif on deep teal');
  assert.ok(isWalkable(ARRIVAL_START)&&ARRIVAL_START[0]<-3,'waits on the left side of the foyer');
  const bearing=(aspect,p)=>{const t=gateLook(aspect),yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);let b=Math.atan2(p[2]-ARRIVAL_START[2],p[0]-ARRIVAL_START[0])-yaw;return Math.atan2(Math.sin(b),Math.cos(b));};
  const half=(a,v)=>Math.atan(Math.tan(v/2*Math.PI/180)*a);
@@ -148,4 +152,12 @@ test('Loading screen cannot get stuck: the reveal timer survives later asset cha
  assert.ok(tour.includes('revealTimer.current=setTimeout(()=>{')&&!tour.includes('return()=>clearTimeout(timer);},[sceneReady,assetsLoaded,assetTimeout]);'));
  assert.ok(tour.includes('useEffect(()=>()=>clearTimeout(revealTimer.current),[]);'),'only unmount cancels it');
  assert.ok(assets.includes('queueMicrotask('),'subscribers are notified after render');
+});
+
+test('16/11 (user): the visit always opens in manual mode — no auto/explore chooser; ▶ still starts the presentation',()=>{
+ const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ assert.ok(!tour.includes('className="hall-intro"'),'no “Trình diễn tự động / Tự khám phá” chooser');
+ assert.ok(!tour.includes('setChooseMode(true)'),'never re-shown (gate, re-entry)');
+ assert.ok(tour.includes("const entered=arriving&&id==='entrance'")&&tour.includes('if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}'),'arriving through the door turns Tự bước on');
+ assert.ok(tour.includes("'Trình diễn tự động',automatic||moving"),'▶ keeps the automatic presentation');
 });

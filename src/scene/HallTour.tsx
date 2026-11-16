@@ -102,7 +102,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    .map((s:any)=>{const n=closeupStop({...s},s.person.name);return n?{...n,wall:s.wall}:null;}).filter(Boolean);},[closeup,layout]);
  const plan:any=useMemo(()=>createHallPlan([...fitHallStops(layout.stops,aspect,phone),...closeupNodes]),[layout,aspect,phone,closeupNodes]);
  const [command,setCommand]=useState<{serial:number;from:string;to:string;manual?:boolean;instant?:boolean}>({serial:0,from:'entrance',to:'entrance'}),[current,setCurrent]=useState('entrance'),[moving,setMoving]=useState(false),[pause,setPause]=useState(false),[manual,setManual]=useState(false),[panel,setPanel]=useState<'map'|'more'|null>(null),[ready,setReady]=useState(false),[failed,setFailed]=useState(false),[effects,setEffects]=useState(true),[voice,setVoice]=useState(false);
- const [automatic,setAutomatic]=useState(false),[complete,setComplete]=useState(false),[chooseMode,setChooseMode]=useState(true);
+ const [automatic,setAutomatic]=useState(false),[complete,setComplete]=useState(false),[chooseMode,setChooseMode]=useState(false);
  const pose=useRef<VisitorPose>({x:0,z:9.1,yaw:0}),route=useRef<RouteState>(null);
  // GĐ4: quality choice (persisted per browser) and the level currently applied.
  const [qualityChoice,setQualityChoice]=useState(storedChoice),[qualityLevel,setQualityLevel]=useState(()=>{const c=storedChoice();return c==='auto'?startLevel():c;});
@@ -155,7 +155,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   setIntro(false);
   // 15/11: the tap that opens the door also starts the music (browsers only allow sound after a gesture).
   startHallSound();
-  setAtDoor(false);setArriving(true);setChooseMode(true);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
+  setAtDoor(false);setArriving(true);setChooseMode(false);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
   const wait=entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects});
   if(!wait){door.current={target:1,value:1};setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance',instant:benchOn}));return;}
   // Doors slide open first; the visitor glides in once the opening is wide enough.
@@ -254,7 +254,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     door={door}
     emptySlots={p.admin?p.adminEmpties:undefined}
     onEmpty={p.admin?p.onEmpty:undefined}
-    onArrive={id=>{setCurrent(id);setMoving(false);setArriving(false);}}
+    onArrive={id=>{const entered=arriving&&id==='entrance';setCurrent(id);setMoving(false);setArriving(false);
+     // 16/11 (user): “luôn luôn” the manual visit — after the door the visitor walks freely (Tự bước on, no mode chooser);
+     // the ▶ button still starts the automatic presentation.
+     if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}}}
     onMotion={setMoving}
     onSelect={selectPortrait}
     onGo={go}
@@ -268,7 +271,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>
    :null)}
   {ready&&arriving&&(moving||doorOpening)&&<button className="hall-skip-entry" onClick={skipEntry}>Bỏ qua đoạn vào cửa</button>}
-  {ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&!closeup&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
+  {/* 16/11: no “Trình diễn tự động / Tự khám phá” chooser any more — the visit opens in manual mode. */}
   {ready&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&!chooseMode&&active?.group==='memory'&&<div className="hall-memory-note"><strong>{active.title}</strong><p>{active.description}</p><small>Hiện vật minh họa · Chờ tư liệu chính thức</small></div>}
   {automatic&&!panel&&<div className="hall-progress">{pause?'Đang tạm dừng':'Trình diễn tự động'} · Điểm {Math.max(1,layout.stops.findIndex((s:any)=>s.id===(moving?command.to:current))+1)}/{layout.stops.length}</div>}
   {complete&&!panel&&<div className="hall-progress" role="status">Đã hoàn thành một vòng tham quan</div>}
