@@ -3,6 +3,9 @@ import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
 export const HALL={width:24,depth:16,height:4.2,capacity:127,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
+/** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
+ * pier caps (x 3.02) and to the corners (x 12). Exported to Blender (slats + wall washers). */
+export const BACK_BAY={x:7.5,width:7.2};
 // 16/11 (user, H2): the statue leaves the hall axis — from the entrance it hid the Hiệu trưởng portrait completely
 // (statue ≈10° wide vs the 3.7° frame, measured) and turned its back on Ban Giám hiệu — and stands in a recessed niche
 // in the foyer's right wall, facing the visitors' path to the door (statue faces −x). Exported to Blender (hall-layout.json).
@@ -58,8 +61,8 @@ export function layoutHall(people,sort='service',page=0){
   {...STATUE_STOP},
   {id:'finish',title:'Kết thúc vòng tham quan',group:'',eye:[0,1.7,9.1],target:[0,1.65,-7.8],dwell:0}];
  const signs=[{id:'principal-sign',text:'BAN GIÁM HIỆU',x:0,z:-7.65,yaw:0,width:4.6,y:3.08},
- {id:'teacher-back-right',text:'CÁC THẾ HỆ NHÀ GIÁO',x:7.0,z:-7.79,yaw:0,width:5.6,y:3.32},
- {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-7.0,z:-7.79,yaw:0,width:5.6,y:3.32},
+ {id:'teacher-back-right',text:'CÁC THẾ HỆ NHÀ GIÁO',x:BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
+ {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-left',text:TEACHER_MOTTO,x:-11.79,z:0,yaw:Math.PI/2,width:13.4,y:3.48,motto:true},
  {id:'teacher-right',text:'TẤT CẢ VÌ HỌC SINH THÂN YÊU',x:11.79,z:0,yaw:-Math.PI/2,width:13.4,y:3.48,motto:true,fontReference:TEACHER_MOTTO},
  {id:'staff-sign',text:'ĐỘI NGŨ NHÂN VIÊN',x:11.79,z:4.5,yaw:-Math.PI/2,width:3.6,y:3.13,labelHeight:.14},

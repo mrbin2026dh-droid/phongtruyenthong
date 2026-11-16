@@ -46,3 +46,15 @@ test('HT ở giữa, hai PHT đối xứng cùng hàng; cập nhật ảnh khôn
  const saved=store.getSnapshot().people.find(v=>v.id===p.id);
  assert.equal(saved.image,image);assert.equal(saved.displaySlot,p.displaySlot);assert.equal(saved.id,p.id);
 });
+
+test('16/11 (user): back-wall teacher bays sit evenly between the Ban Giám hiệu cabinet and the corners',async()=>{
+ const {BACK_BAY}=await import('../src/scene/hallLayout.mjs');
+ const {exhibitSlots:slots}=await import('../src/data/exhibitSlots.mjs');
+ const PIER_CAP=2.81+.21,CORNER=12,inner=BACK_BAY.x-BACK_BAY.width/2,outer=BACK_BAY.x+BACK_BAY.width/2;
+ const gapCabinet=inner-PIER_CAP,gapCorner=CORNER-outer;
+ assert.ok(Math.abs(gapCabinet-gapCorner)<.06&&gapCabinet>.8,'≈0.9 m on both sides (was 0.48 m vs 1.4 m)');
+ const back=slots().filter(s=>s.group==='teacher'&&s.wall==='back');
+ for(const s of back)assert.ok(Math.abs(s.x)-s.width/2>inner+.1&&Math.abs(s.x)+s.width/2<outer-.1,'every frame on the oak slats: '+s.slotId);
+ const right=back.filter(s=>s.x>0).map(s=>s.x),left=back.filter(s=>s.x<0).map(s=>-s.x);
+ assert.ok(Math.abs((Math.min(...right)+Math.max(...right))/2-BACK_BAY.x)<.01&&Math.abs((Math.min(...left)+Math.max(...left))/2-BACK_BAY.x)<.01,'columns centred on their bay, mirror-symmetric');
+});

@@ -12,6 +12,8 @@ export function exhibitZone(p){
  if(roles.some(r=>/^hieu truong(?:\s|$)/.test(r)))return 'principal';
  return roles.some(r=>/^pho hieu truong(?:\s|$)/.test(r))?'deputy':'management-other';
 }
+/** Outward shift of the back-wall teacher bays (16/11); their centre moves from x ±7.0 to ±7.5. */
+export const BACK_BAY_SHIFT=.5;
 export function exhibitSlots(){
  const out=[];let column=0;
  // 4×6 (2:3) portraits: photo .49×.735 m inside a .55×.80 m frame; rows lowered 3 cm to keep the top row below wall signs.
@@ -53,6 +55,9 @@ export function exhibitSlots(){
  }
  // Existing back-wall teacher columns shift .15 m towards the centre to sit evenly after the new ones (.9 m pitch).
  for(const s of out)if(s.group==='teacher'&&s.wall==='back'&&Math.abs(s.x)>=5.79)s.x=Math.sign(s.x)*Math.round((Math.abs(s.x)-.15)*1000)/1000;
+ // 16/11 (user: the two back-wall teacher bays crowded the Ban Giám hiệu cabinet — 0.48 m to its pier caps but 1.4 m to
+ // the corners): both bays move 0.5 m outwards → ≈0.9 m clear on each side (BACK_BAY in hallLayout, slats in Blender).
+ for(const s of out)if(s.group==='teacher'&&s.wall==='back')s.x=Math.sign(s.x)*Math.round((Math.abs(s.x)+BACK_BAY_SHIFT)*1000)/1000;
  return out;
 }
 /** Existing valid assignments win; new IDs fill only unused slots in their zone. */
