@@ -64,3 +64,9 @@
 
 /* the dock is hidden during a close-up (× returns); the close-up bar takes its place at the bottom */
 .hall-closeup-on .visitor-controls{display:none}
+/* 16/11: the visitor now waits facing the statue straight on — keep the “Chạm để mở cửa” pill off the statue and the
+   pedestal inscription: landscape → right side, mid-height (plain wall between the niche and the glass);
+   portrait → top (over the niche's walnut head). Same selector list as the base rule so hover/focus keep it there. */
+.hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{justify-content:flex-end;align-items:center;padding:0 5% 0 0}
+@media (orientation:portrait){.hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{justify-content:center;align-items:flex-start;padding:64px 0 0}}
+@media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-scene .hall-door-prompt{padding:0 4% 0 0}}

@@ -21,10 +21,10 @@ test('Visitor waits for the doors unless reduced motion, bench or effects off',(
  assert.equal(entryDelayMs({reducedMotion:true}),0);assert.equal(entryDelayMs({bench:true}),0);assert.equal(entryDelayMs({effects:false}),0);
 });
 
-test('Entry waits at the closed door for a tap; the plaque names the school; Về cổng vào closes the doors',()=>{
+test('Entry waits facing the statue for a tap; the plaque names the school; Về cổng vào closes the doors',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
- assert.ok(ARRIVAL_START[2]>11.8&&ARRIVAL_START[2]<13.3,'stands in the foyer, about 4 m from the door, 1.5 m clear of the end wall (13.86)');
+ assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<13.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
  const has=(src,s)=>assert.ok(src.includes(s),'missing: '+s);
  has(tour,'if(benchOn)openDoor();else setAtDoor(true);');assert.ok(!tour.includes('seen)openDoor'),'no auto-open on repeat visits');
  has(tour,'className="hall-door-prompt" onClick={openDoor}');
@@ -79,15 +79,18 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  assert.ok(doors.includes('d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();'),'refresh frames while waiting');
 });
 
-test('Foyer: the plaque hangs on the stone facade right of the door (not on the leaves), framed in view while waiting',async()=>{
- const {gateLook,PLAQUE,FACADE_Z,ARRIVAL_START}=await import('../src/scene/hallArrival.mjs');
+test('Foyer: the plaque hangs on the stone facade right of the door; the visit starts facing the statue straight on (16/11)',async()=>{
+ const {gateLook,PLAQUE,ARRIVAL_START,STATUE_LOOK}=await import('../src/scene/hallArrival.mjs');
+ const {MONUMENT,STATUE_STOP}=await import('../src/scene/hallLayout.mjs');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(PLAQUE.x-PLAQUE.w/2>2.21+.05&&PLAQUE.x+PLAQUE.w/2<4.54-.05,'plaque fits on the right facade panel (x 2.21–4.54)');
  assert.ok(!/plaqueHalf|repeat\.set\(\.5,1\)/.test(doors),'no split plaque on the sliding leaves');
- // Horizontal half-angle from the start point to the plaque edges must fit the view for wide and portrait screens.
- const fits=(aspect,vfov)=>{const t=gateLook(aspect),yaw=Math.atan2(t[0]-ARRIVAL_START[0],ARRIVAL_START[2]-t[2]);const half=Math.atan(Math.tan(vfov/2*Math.PI/180)*aspect);
-  return [PLAQUE.x-PLAQUE.w/2,PLAQUE.x+PLAQUE.w/2].every(x=>Math.abs(Math.atan2(x,ARRIVAL_START[2]-FACADE_Z)-yaw)<half);};
- assert.ok(fits(1.6,62),'16:10 desktop');assert.ok(fits(2.2,62),'phone landscape');assert.ok(fits(.57,78),'phone portrait');
+ assert.equal(STATUE_LOOK[0],MONUMENT.x);assert.equal(STATUE_LOOK[2],MONUMENT.z);assert.equal(ARRIVAL_START[2],MONUMENT.z,'on the statue axis');
+ assert.deepEqual([ARRIVAL_START[0],ARRIVAL_START[2]],[STATUE_STOP.eye[0],STATUE_STOP.eye[2]],'same spot as the statue stop');
+ for(const aspect of [.5,.75,1.6,2.5]){const t=gateLook(aspect);const yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);assert.ok(Math.abs(yaw)<1e-9,'looks straight at the statue on every screen ('+aspect+')');}
+ const d=Math.hypot(MONUMENT.x-ARRIVAL_START[0],MONUMENT.z-ARRIVAL_START[2]),hfov=(a,v)=>2*Math.atan(Math.tan(v/2*Math.PI/180)*a);
+ assert.ok(2*Math.atan(.5/d)<hfov(.57,78),'the statue (≈1 m wide) fits a portrait phone');
+ assert.ok(doors.includes('probe=useMemo(()=>new Vector3(...STATUE_LOOK),[])'),'dev guard watches the statue, not the plaque');
 });
 
 test('Root cause of the blank door screen: the full-scene tap overlay stays transparent on hover/focus',()=>{
@@ -125,11 +128,10 @@ test('Walking sticks are always offered inside the room; touching one switches t
 test('Establishing shot: look over the schoolyard, then turn to the door; skippable; off for reduced motion',()=>{
  const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
- assert.ok(ctl.includes('INTRO_LOOK:[number,number,number]=[.8,.9,22]')&&ctl.includes('camera.quaternion.slerpQuaternions(toDoor?p.mid:p.from,toDoor?p.to:p.mid,e)'),'yard → statue niche → door (16/11)');
- assert.ok(ctl.includes('INTRO_STATUE_LOOK:[number,number,number]=[MONUMENT.x,1.45,MONUMENT.z]')&&ctl.includes('const INTRO_PAN=INTRO_TO_STATUE+INTRO_STATUE_HOLD+INTRO_TO_DOOR;'));
+ assert.ok(ctl.includes('INTRO_LOOK:[number,number,number]=[.8,.9,22]')&&ctl.includes('camera.quaternion.slerpQuaternions(p.from,p.to,e)')&&ctl.includes('const INTRO_PAN=3.6;'),'yard → statue straight on (16/11)');
  assert.ok(ctl.includes("window.dispatchEvent(new Event('museum-intro-done'))")&&ctl.includes("addEventListener('museum-intro-skip',skip)"));
  assert.ok(tour.includes('useState(()=>!reducedMotion())')&&tour.includes('intro={atDoor&&intro&&effects}'));
- assert.ok(ctl.includes('p.t=(performance.now()-p.start)/1000-INTRO_HOLD')&&ctl.includes('setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000)')&&ctl.includes('if(t>=INTRO_PAN)endIntro();'),'intro ends on time even in a throttled tab');
+ assert.ok(ctl.includes('p.t=(performance.now()-p.start)/1000-p.hold')&&ctl.includes('if(t>=p.dur){if(p.intro)endIntro();')&&ctl.includes('setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000)'),'intro ends on time even in a throttled tab');
 });
 
 test('Loading screen cannot get stuck: the reveal timer survives later asset changes; asset events never fire during render',()=>{

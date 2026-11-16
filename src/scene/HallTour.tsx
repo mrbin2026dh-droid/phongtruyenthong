@@ -22,7 +22,7 @@ import type {BenchResult} from './BenchPanel';
 import {QUALITY_CHOICES,QUALITY_LEVELS,initialLevel,benchRoute,benchSummary} from './quality.mjs';
 import {bakedEnabled,bakedVariant} from './BakedHall';
 import type {DoorState} from './EntranceDoors';
-import {entryDelayMs,DOOR_SECONDS} from './doorMotion.mjs';
+import {entryDelayMs,DOOR_SECONDS,FACE_DOOR_MS} from './doorMotion.mjs';
 import {startHallSound,stopHallSound,resumeHallSound,duckHallMusic,doorSound,soundEnabled,setSoundEnabled,subscribeSound} from './hallAudio';
 const DOOR_KEY='museum-door-opened';
 import {statsEnabled} from './SceneStats';
@@ -154,18 +154,23 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  function openDoor(){
   setIntro(false);
   // 15/11: the tap that opens the door also starts the music (browsers only allow sound after a gesture).
-  startHallSound();if(entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects}))doorSound(DOOR_SECONDS);
+  startHallSound();
   setAtDoor(false);setArriving(true);setChooseMode(true);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
   const wait=entryDelayMs({reducedMotion:reducedMotion(),bench:benchOn,effects});
   if(!wait){door.current={target:1,value:1};setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance',instant:benchOn}));return;}
   // Doors slide open first; the visitor glides in once the opening is wide enough.
-  door.current.target=1;setDoorOpening(true);window.dispatchEvent(new Event('museum-navigation-input'));
+  // 16/11: the visitor waits facing the statue — turn to the door first (FACE_DOOR_MS), then the leaves slide open
+  // (with their sound) in full view, then the visitor walks in.
+  setDoorOpening(true);window.dispatchEvent(new Event('museum-face-door'));
   clearTimeout(walkTimer.current);
-  walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},wait);
+  walkTimer.current=setTimeout(()=>{
+   door.current.target=1;doorSound(DOOR_SECONDS);window.dispatchEvent(new Event('museum-navigation-input'));
+   walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},wait);
+  },FACE_DOOR_MS);
  }
  // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
  useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
- const skipEntry=()=>{door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
+ const skipEntry=()=>{clearTimeout(walkTimer.current);door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
  const active=layout.stops.find((s:any)=>s.id===current);
  const openCloseup=(slotId:string)=>{if(!ready||atDoor||p.paused||moving)return;
   setCloseup(c=>({slotId,back:c?.back??(current.startsWith('closeup:')?'entrance':current),from:c?.slotId}));
@@ -222,7 +227,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   <div className="hall-version-bar">
    <div className="location-chip">
     <span className="location-dot"/>
-    <span role="status">{failed?'Mất WebGL':!ready?'Đang tải…':atDoor?'Cửa vào phòng truyền thống':pause?'Đang tạm dừng':moving?'Đang đến: '+plan.nodes[command.to]?.title:(closeup?'Xem cận chân dung':active?.title)||'Phòng trưng bày chung'}</span>
+    <span role="status">{failed?'Mất WebGL':!ready?'Đang tải…':atDoor?'Sảnh · Tượng nhà giáo Chu Văn An':pause?'Đang tạm dừng':moving?'Đang đến: '+plan.nodes[command.to]?.title:(closeup?'Xem cận chân dung':active?.title)||'Phòng trưng bày chung'}</span>
     {p.mockCount>0&&<span className="location-period">Ảnh minh họa</span>}
    </div>
   </div>

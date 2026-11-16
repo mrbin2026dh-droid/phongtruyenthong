@@ -49,7 +49,9 @@ export function layoutHall(people,sort='service',page=0){
  ring.sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||(a.wall==='right'?b.eye[2]-a.eye[2]:a.wall==='back'?b.eye[0]-a.eye[0]:a.wall==='left'?a.eye[2]-b.eye[2]:a.eye[0]-b.eye[0]));
  const seen={};
  for(const stop of ring){seen[stop.group]=(seen[stop.group]||0)+1;const zone=EXHIBIT_ZONES.find(z=>z.id===stop.group);stop.title=stop.group==='principal'?'Ban Giám hiệu':zone.name+' · '+seen[stop.group];}
- const finalStops=[...stops,{...STATUE_STOP},...CABINETS.map(c=>({...c,group:'memory',wall:'front',eye:[c.x,1.7,4.0],target:[c.x,1.65,7.45],dwell:9000})),...ring,
+ const finalStops=[...stops,...CABINETS.map(c=>({...c,group:'memory',wall:'front',eye:[c.x,1.7,4.0],target:[c.x,1.65,7.45],dwell:9000})),...ring,
+  // 16/11: the visit opens facing the statue, so the tour ends with it — a closing tribute before leaving
+  {...STATUE_STOP},
   {id:'finish',title:'Kết thúc vòng tham quan',group:'',eye:[0,1.7,9.1],target:[0,1.65,-7.8],dwell:0}];
  const signs=[{id:'principal-sign',text:'BAN GIÁM HIỆU',x:0,z:-7.65,yaw:0,width:4.6,y:3.08},
  {id:'teacher-back-right',text:'CÁC THẾ HỆ NHÀ GIÁO',x:7.0,z:-7.79,yaw:0,width:5.6,y:3.32},
@@ -100,7 +102,19 @@ export function isWalkable([x,y,z]){
  if(x>3.35&&x<10.85&&z>6.65)return false; // cabinet cases and standing clearance
  return !BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72);
 }
+/** 16/11: a leg through the doorway must cross both thresholds (z 7.45 and 8.9) at least 0.4 m inside the 1.8 m
+ * half-opening — a diagonal from a hall corner straight to the foyer statue used to graze the jamb, and the rounded
+ * path then clipped it. */
+export const DOOR_CROSS_HALF=1.4;
+function crossesDoorSafely(a,b){
+ for(const zt of [7.45,8.9]){
+  if((a[2]-zt)*(b[2]-zt)>=0)continue;
+  const x=a[0]+(b[0]-a[0])*(zt-a[2])/(b[2]-a[2]);if(Math.abs(x)>=DOOR_CROSS_HALF)return false;
+ }
+ return true;
+}
 export function segmentWalkable(a,b){
+ if(!crossesDoorSafely(a,b))return false;
  const steps=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[2]-a[2])/.06));
  for(let i=0;i<=steps;i++)if(!isWalkable(a.map((v,k)=>v+(b[k]-v)*i/steps)))return false;
  return true;

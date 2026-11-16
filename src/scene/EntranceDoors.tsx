@@ -3,7 +3,7 @@ import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {BoxGeometry,CanvasTexture,CylinderGeometry,Frustum,Group,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
 import {DOOR_JAMB,doorOffset,doorStep} from './doorMotion.mjs';
-import {FACADE_Z,PLAQUE} from './hallArrival.mjs';
+import {FACADE_Z,PLAQUE,ARRIVAL_START,STATUE_LOOK} from './hallArrival.mjs';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
 export type DoorState={target:number;value:number};
@@ -121,7 +121,7 @@ export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}
  useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric,parts.plaque])t.dispose();parts.face.dispose();for(const s of [parts.left,parts.right])for(const mat of Object.values(s.m))mat.dispose();},[parts]);
  // Dev-only evidence for the 15/11 "blank screen at the door" report: if the plaque is ever out of view
  // while the visitor waits, log the camera state and ask the controller to re-frame the door.
- const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(PLAQUE.x,PLAQUE.y,FACADE_Z),[]),mat=useMemo(()=>new Matrix4(),[]);
+ const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...STATUE_LOOK),[]),mat=useMemo(()=>new Matrix4(),[]);
  useFrame(({camera,invalidate},dt)=>{
   const d=door?.current;const value=d?d.value:1;
   if(d&&d.value!==d.target){const was=d.value;d.value=doorStep(d.value,d.target,dt);invalidate();
@@ -130,7 +130,8 @@ export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}
   parts.left.g.position.x=doorOffset(-1,value);parts.right.g.position.x=doorOffset(1,value);
   // Fully open leaves are entirely inside the wall: skip drawing them.
   parts.left.g.visible=parts.right.g.visible=value<.999;
-  const waiting=Boolean(d&&d.target===0&&d.value===0&&camera.position.z>11.5);
+  // 16/11: the visitor waits facing the statue (H2): watch that it stays in view
+  const waiting=Boolean(d&&d.target===0&&d.value===0&&Math.hypot(camera.position.x-ARRIVAL_START[0],camera.position.z-ARRIVAL_START[2])<.3);
   if(!waiting)waitStart.current=0;else if(!waitStart.current)waitStart.current=performance.now();
   // Check only after 1.5 s of waiting, with fresh matrices (the first frames still carry the previous pose: false alarms).
   // (the establishing shot looks away from the door on purpose: no check while it runs)

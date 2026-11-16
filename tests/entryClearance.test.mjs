@@ -28,3 +28,7 @@ test('Statue niche: reachable foyer stop, visitors kept off the pedestal, statue
  const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
  assert.ok(scene.includes('<group position={[M.x,0,M.z]} rotation={[0,M.yaw,0]}>')&&scene.includes('<spotLight position={[2.4,3.85,9.9]} target={key}'),'live statue placed in the niche with its own key light');
 });
+test('Legs through the doorway cross both thresholds well inside the opening (no grazing the jamb)',()=>{
+ assert.equal(segmentWalkable([-4.5,1.7,5.06],[2.3,1.6,11.1]),false,'hall corner → statue diagonal grazed the jamb (16/11)');
+ assert.equal(segmentWalkable([0,1.7,6.5],[0,1.7,9.1]),true,'straight through the middle is fine');
+});

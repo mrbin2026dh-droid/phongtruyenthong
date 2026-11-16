@@ -3,8 +3,8 @@ import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {Vector3,Quaternion,Matrix4,Euler,PerspectiveCamera} from 'three';
 import {dampValue,presentationTurnStep,routeFromPosition,roundedPath,samplePath,cornerSpeed,slideStep,regionAt} from './hallMotion.mjs';
-import {ARRIVAL_START,arrivalRoute,gateLook} from './hallArrival.mjs';
-import {MONUMENT} from './hallLayout.mjs';
+import {ARRIVAL_START,FACADE_Z,arrivalRoute,gateLook} from './hallArrival.mjs';
+import {FACE_DOOR_MS} from './doorMotion.mjs';
 import type {Plan,TourCommand} from './GuidedScene';
 
 export type NavigationInput={forward:number;strafe:number;turn:number;look:number;zoom:number;speed:number;reset:number};
@@ -21,10 +21,9 @@ export function keyTargetIgnored(target:EventTarget|null){
 
 /** Establishing shot: look at the schoolyard (through the glass behind the visitor), hold, then turn to the door. */
 const INTRO_LOOK:[number,number,number]=[.8,.9,22],INTRO_HOLD=1.2;
-// 16/11 (statue niche H2): schoolyard → turn right to the statue in its niche, pause → on to the door.
-// One continuous turn direction (behind → right → front), so the camera never swings back.
-export const INTRO_STATUE_LOOK:[number,number,number]=[MONUMENT.x,1.45,MONUMENT.z],INTRO_TO_STATUE=2.6,INTRO_STATUE_HOLD=1.8,INTRO_TO_DOOR=2.8;
-const INTRO_PAN=INTRO_TO_STATUE+INTRO_STATUE_HOLD+INTRO_TO_DOOR;
+// 16/11 (user): the visit starts facing the statue straight on — the shot looks over the schoolyard, then turns
+// slowly to the statue and stays there (the door is reached by tapping “mở cửa”).
+const INTRO_PAN=3.6;
 
 export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,atDoor=false,intro=false,pose,route}:{plan:Plan;command:TourCommand;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
  const {camera,gl,invalidate,size}=useThree();
@@ -42,17 +41,22 @@ export default function HallController({plan,command,paused,effects,input,loaded
  // 15/11: waiting at the door always shows the doors (keys/drag are locked there, see controlsLocked).
  const frameDoor=()=>{camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
  // 15/11 establishing shot: the visitor first looks out over the schoolyard, then the camera turns slowly to the door.
- const pan=useRef({active:false,t:0,start:0,from:new Quaternion(),mid:new Quaternion(),to:new Quaternion()});
+ const pan=useRef({active:false,t:0,start:0,hold:INTRO_HOLD,dur:INTRO_PAN,intro:true,from:new Quaternion(),to:new Quaternion()});
  const startIntro=()=>{
   frameDoor();pan.current.to.copy(camera.quaternion);
-  camera.lookAt(...INTRO_STATUE_LOOK);pan.current.mid.copy(camera.quaternion);
   camera.lookAt(...INTRO_LOOK);pan.current.from.copy(camera.quaternion);readLook();
+  Object.assign(pan.current,{hold:INTRO_HOLD,dur:INTRO_PAN,intro:true});
   pan.current.active=true;pan.current.t=-INTRO_HOLD;pan.current.start=performance.now();(window as any).__museumIntro=true;invalidate();
  };
+ // 16/11: tapping “mở cửa” while facing the statue — turn smoothly to the door before the leaves slide open.
+ const faceDoor=()=>{if(pan.current.active&&pan.current.intro)endIntro();
+  pan.current.from.copy(camera.quaternion);camera.lookAt(0,1.75,FACADE_Z);pan.current.to.copy(camera.quaternion);camera.quaternion.copy(pan.current.from);
+  Object.assign(pan.current,{hold:0,dur:FACE_DOOR_MS/1000*.95,intro:false,active:true,t:0,start:performance.now()});invalidate();};
  const endIntro=()=>{if(!pan.current.active)return;pan.current.active=false;(window as any).__museumIntro=false;camera.quaternion.copy(pan.current.to);readLook();invalidate();window.dispatchEvent(new Event('museum-intro-done'));};
  useEffect(()=>{if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}},[atDoor,intro,size.width>=size.height]);
  // safety net: the shot always ends even if no frame is drawn (background tab, very slow phone)
  useEffect(()=>{if(!(atDoor&&intro))return;const id=setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000);return()=>clearTimeout(id);},[atDoor,intro]);
+ useEffect(()=>{const fn=()=>faceDoor();window.addEventListener('museum-face-door',fn);return()=>window.removeEventListener('museum-face-door',fn);});
  useEffect(()=>{const skip=()=>endIntro();window.addEventListener('museum-intro-skip',skip);return()=>window.removeEventListener('museum-intro-skip',skip);});
  // Dev safety net (EntranceDoors): the door left the view while waiting → frame it again.
  useEffect(()=>{const fn=()=>{if(live.current.controlsLocked&&!motion.current.running&&!pan.current.active)frameDoor();};window.addEventListener('museum-door-reframe',fn);return()=>window.removeEventListener('museum-door-reframe',fn);});
@@ -118,11 +122,10 @@ export default function HallController({plan,command,paused,effects,input,loaded
   }
   if(pan.current.active){
    // wall clock, not frame dt: a throttled/slow tab still finishes the shot on time (15/11)
-   const p=pan.current;p.t=(performance.now()-p.start)/1000-INTRO_HOLD;
-   const t=Math.max(0,p.t),toDoor=t>INTRO_TO_STATUE+INTRO_STATUE_HOLD;
-   const k=Math.min(1,toDoor?(t-INTRO_TO_STATUE-INTRO_STATUE_HOLD)/INTRO_TO_DOOR:t/INTRO_TO_STATUE),e=k*k*(3-2*k);
-   camera.quaternion.slerpQuaternions(toDoor?p.mid:p.from,toDoor?p.to:p.mid,e);invalidate();
-   if(t>=INTRO_PAN)endIntro();
+   const p=pan.current;p.t=(performance.now()-p.start)/1000-p.hold;
+   const t=Math.max(0,p.t),k=Math.min(1,t/p.dur),e=k*k*(3-2*k);
+   camera.quaternion.slerpQuaternions(p.from,p.to,e);invalidate();
+   if(t>=p.dur){if(p.intro)endIntro();else{p.active=false;readLook();}}
    return;
   }
   if(live.current.paused)return;

@@ -32,7 +32,7 @@ test('Mọi điểm dừng của127ảnh nối được, đường tự đi và 
 });
 test('Home reaches the real gate from every exhibit without crossing the monument or walls',()=>{
  const l=layoutHall(people(127)),plan=createHallPlan(l.stops);
- assert.deepEqual(plan.nodes.gate.eye,[0,1.7,12.3]);
+ assert.deepEqual(plan.nodes.gate.eye,[2.3,1.7,11.1],'16/11: “Về cổng vào” returns to the spot facing the statue');
  for(const stop of l.stops){
   const route=routeFromPosition(plan,stop.eye,'gate'),path=roundedPath(route.points,1);
   assert.equal(route.destination.id,'gate');

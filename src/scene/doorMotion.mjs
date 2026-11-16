@@ -5,6 +5,8 @@ export const DOOR_LEAF=2.02;        // leaf width; the two leaves meet at x = 0
 export const DOOR_JAMB=2.03;        // inner face of the wooden jamb
 export const DOOR_SLIDE=2.08;       // travel: inner edge ends 5 cm beyond the jamb (fully hidden)
 export const DOOR_SECONDS=1.4;      // full opening time
+/** 16/11: turn from the statue to the door before the leaves open (ms). */
+export const FACE_DOOR_MS=1100;
 
 const ease=t=>{const v=Math.max(0,Math.min(1,t));return v*v*(3-2*v);};
 
