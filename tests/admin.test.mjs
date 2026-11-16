@@ -77,3 +77,10 @@ test('16/11 (user): admin moves a portrait — swap with another of the same zon
  assert.ok(editor.includes('>Đổi chỗ…</button>')&&tour.includes('if(admin&&mover){')&&tour.includes('if(mover){moveTo(slotId);return;}'),'editor button → tap a portrait or an empty slot');
  assert.ok(tour.includes('Hủy đổi chỗ'),'can be cancelled (also Esc / tapping the same portrait)');
 });
+
+test('16/11 (user): the admin bar sits at the top of the 3D view — never over the sticks or the dock',()=>{
+ const css=readFileSync(new URL('../src/people.css',import.meta.url),'utf8');
+ const rule=css.slice(css.indexOf('.hall-admin-bar{'),css.indexOf('}',css.indexOf('.hall-admin-bar{')));
+ assert.ok(rule.includes('top:58px')&&rule.includes('bottom:auto')&&rule.includes('right:118px'),'top, clear of the MC/music buttons');
+ assert.ok(!/\.hall-admin-bar\{[^}]*bottom:\d/.test(css),'no bottom placement left (phones included)');
+});
