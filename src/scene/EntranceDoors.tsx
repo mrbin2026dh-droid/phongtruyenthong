@@ -3,7 +3,8 @@ import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {BoxGeometry,CanvasTexture,CylinderGeometry,Frustum,Group,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
 import {DOOR_JAMB,doorOffset,doorStep} from './doorMotion.mjs';
-import {FACADE_Z,PLAQUE,ARRIVAL_START,STATUE_LOOK} from './hallArrival.mjs';
+import {FACADE_Z,PLAQUE,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
+import {Html} from '@react-three/drei';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
 export type DoorState={target:number;value:number};
@@ -107,8 +108,9 @@ function FacadePlaque({face}:{face:MeshBasicMaterial}){
 
 /** Two-leaf sliding entrance door + the school plaque. Closed while the visitor waits in the foyer;
  * opens on a tap. Doors and plaque are not part of the baked shell, so they stay sharp and can move. */
-export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}){
+export default function EntranceDoors({door,waiting=false,onOpen}:{door?:MutableRefObject<DoorState>;waiting?:boolean;onOpen?:()=>void}){
  const gl=useThree(s=>s.gl),invalidate=useThree(s=>s.invalidate);
+ useEffect(()=>{if(!waiting)document.body.style.cursor='';},[waiting]);
  // While the visitor waits at the closed door nothing moves, so the demand frameloop would stop drawing:
  // keep a few refresh frames so late textures (baked room, plaque font) always appear.
  useEffect(()=>{const t0=performance.now();const id=setInterval(()=>{const d=door?.current;if(d&&d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();},400);return()=>clearInterval(id);},[door,invalidate]);
@@ -121,7 +123,7 @@ export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}
  useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric,parts.plaque])t.dispose();parts.face.dispose();for(const s of [parts.left,parts.right])for(const mat of Object.values(s.m))mat.dispose();},[parts]);
  // Dev-only evidence for the 15/11 "blank screen at the door" report: if the plaque is ever out of view
  // while the visitor waits, log the camera state and ask the controller to re-frame the door.
- const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...STATUE_LOOK),[]),mat=useMemo(()=>new Matrix4(),[]);
+ const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...DOOR_CENTER),[]),mat=useMemo(()=>new Matrix4(),[]);
  useFrame(({camera,invalidate},dt)=>{
   const d=door?.current;const value=d?d.value:1;
   if(d&&d.value!==d.target){const was=d.value;d.value=doorStep(d.value,d.target,dt);invalidate();
@@ -130,7 +132,7 @@ export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}
   parts.left.g.position.x=doorOffset(-1,value);parts.right.g.position.x=doorOffset(1,value);
   // Fully open leaves are entirely inside the wall: skip drawing them.
   parts.left.g.visible=parts.right.g.visible=value<.999;
-  // 16/11: the visitor waits facing the statue (H2): watch that it stays in view
+  // 16/11: the visitor waits at the H2 pose: watch that the door (the only thing that opens it) stays in view
   const waiting=Boolean(d&&d.target===0&&d.value===0&&Math.hypot(camera.position.x-ARRIVAL_START[0],camera.position.z-ARRIVAL_START[2])<.3);
   if(!waiting)waitStart.current=0;else if(!waitStart.current)waitStart.current=performance.now();
   // Check only after 1.5 s of waiting, with fresh matrices (the first frames still carry the previous pose: false alarms).
@@ -146,6 +148,13 @@ export default function EntranceDoors({door}:{door?:MutableRefObject<DoorState>}
  });
  return <>
   <FacadePlaque face={parts.face}/>
-  {([[-1,parts.left],[1,parts.right]] as const).map(([side,s])=><primitive key={side} object={s.g}><Leaf side={side} m={s.m}/></primitive>)}
+  {/* 16/11 (user): only the door opens the door — tap a leaf or the label attached to it (not the whole screen). */}
+  <group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}
+   onPointerOver={()=>{if(waiting)document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}>
+   {([[-1,parts.left],[1,parts.right]] as const).map(([side,s])=><primitive key={side} object={s.g}><Leaf side={side} m={s.m}/></primitive>)}
+  </group>
+  {waiting&&onOpen&&<Html position={DOOR_CENTER as [number,number,number]} center zIndexRange={[12,0]}>
+   <button type="button" className="door-open-label" onClick={onOpen} aria-label="Chạm vào cửa để mở cửa vào phòng truyền thống">Chạm để mở cửa</button>
+  </Html>}
  </>;
 }

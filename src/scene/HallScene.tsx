@@ -24,7 +24,7 @@ import EmptySlots from './EmptySlots';
 import type {DoorState} from './EntranceDoors';
 import type {QualityControl} from './PerfProbe';
 
-type Props={layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
+type Props={layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
 
 const cube=new BoxGeometry(1,1,1);
 // Portrait frames (15/11): satin brass, less mirror-like, so every frame reads the same tone from any angle.
@@ -350,7 +350,7 @@ export default function HallScene(p:Props){
   {/* 15/11 Bước 1: real-room reflection probes + post-processing (quality-gated) */}
   {baked&&<RoomProbes level={p.quality?.level||'high'}/>}
   {baked&&p.quality&&p.quality.level!=='low'&&<PostFX level={p.quality.level}/>}
-  <EntranceDoors door={p.door}/>
+  <EntranceDoors door={p.door} waiting={Boolean(p.atDoor&&!p.intro)} onOpen={p.onOpenDoor}/>
   {baked&&<FoyerView/>}
  </Canvas>;
 }

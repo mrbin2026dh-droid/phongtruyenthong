@@ -246,6 +246,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     controlsLocked={automatic||atDoor}
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
+    onOpenDoor={openDoor}
     input={input}
     pose={pose}
     route={route}
@@ -265,7 +266,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {!ready&&!failed&&<HallLoading required={required} onList={p.onList}/>}
   {ready&&atDoor&&!panel&&(intro&&effects
    ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>
-   :<button type="button" className="hall-door-prompt" onClick={openDoor} autoFocus aria-label="Chạm để mở cửa vào phòng truyền thống"><span>Chạm để mở cửa</span></button>)}
+   :null)}
   {ready&&arriving&&(moving||doorOpening)&&<button className="hall-skip-entry" onClick={skipEntry}>Bỏ qua đoạn vào cửa</button>}
   {ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&chooseMode&&!closeup&&<div className="hall-intro"><button onClick={()=>start()}>Trình diễn tự động</button><button onClick={()=>setChooseMode(false)}>Tự khám phá</button></div>}
   {ready&&!moving&&!panel&&!manual&&!p.paused&&!hostOpen&&!chooseMode&&active?.group==='memory'&&<div className="hall-memory-note"><strong>{active.title}</strong><p>{active.description}</p><small>Hiện vật minh họa · Chờ tư liệu chính thức</small></div>}

@@ -3,7 +3,7 @@ import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {Vector3,Quaternion,Matrix4,Euler,PerspectiveCamera} from 'three';
 import {dampValue,presentationTurnStep,routeFromPosition,roundedPath,samplePath,cornerSpeed,slideStep,regionAt} from './hallMotion.mjs';
-import {ARRIVAL_START,FACADE_Z,arrivalRoute,gateLook} from './hallArrival.mjs';
+import {ARRIVAL_START,FACADE_Z,arrivalFov,arrivalRoute,gateLook} from './hallArrival.mjs';
 import {FACE_DOOR_MS} from './doorMotion.mjs';
 import type {Plan,TourCommand} from './GuidedScene';
 
@@ -37,9 +37,10 @@ export default function HallController({plan,command,paused,effects,input,loaded
  const euler=useRef(new Euler());
  function readLook(){const e=new Euler().setFromQuaternion(camera.quaternion,'YXZ');view.current.yaw=view.current.targetYaw=e.y;view.current.pitch=view.current.targetPitch=e.x;}
  useEffect(()=>{if(!initialized.current){camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();initialized.current=true;invalidate();}},[camera,invalidate,plan]);
- useEffect(()=>{view.current.targetFov=size.width/size.height<1.1?78:62;invalidate();},[size,invalidate]);
+ // 16/11 H2: a little wider while waiting in the foyer (door + niche + schoolyard in one view); back to 62° once walking in
+ useEffect(()=>{const a=size.width/Math.max(1,size.height);view.current.targetFov=atDoor?arrivalFov(a):(a<1.1?78:62);invalidate();},[size,invalidate,atDoor]);
  // 15/11: waiting at the door always shows the doors (keys/drag are locked there, see controlsLocked).
- const frameDoor=()=>{camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
+ const frameDoor=()=>{const a=size.width/Math.max(1,size.height);camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(a) as [number,number,number]);readLook();view.current.fov=view.current.targetFov=arrivalFov(a);keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
  // 15/11 establishing shot: the visitor first looks out over the schoolyard, then the camera turns slowly to the door.
  const pan=useRef({active:false,t:0,start:0,hold:INTRO_HOLD,dur:INTRO_PAN,intro:true,from:new Quaternion(),to:new Quaternion()});
  const startIntro=()=>{

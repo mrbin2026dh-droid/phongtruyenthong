@@ -21,13 +21,16 @@ test('Visitor waits for the doors unless reduced motion, bench or effects off',(
  assert.equal(entryDelayMs({reducedMotion:true}),0);assert.equal(entryDelayMs({bench:true}),0);assert.equal(entryDelayMs({effects:false}),0);
 });
 
-test('Entry waits facing the statue for a tap; the plaque names the school; Về cổng vào closes the doors',()=>{
+test('Entry waits for a tap ON THE DOOR; the plaque names the school; Về cổng vào closes the doors',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<13.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
  const has=(src,s)=>assert.ok(src.includes(s),'missing: '+s);
  has(tour,'if(benchOn)openDoor();else setAtDoor(true);');assert.ok(!tour.includes('seen)openDoor'),'no auto-open on repeat visits');
- has(tour,'className="hall-door-prompt" onClick={openDoor}');
+ assert.ok(!tour.includes('className="hall-door-prompt" onClick={openDoor}'),'16/11: no full-screen tap area opens the door (tapping the statue opened it)');
+ has(tour,'onOpenDoor={openDoor}');
+ has(doors,"<group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}");
+ has(doors,'<Html position={DOOR_CENTER as [number,number,number]} center');has(doors,'className="door-open-label" onClick={onOpen}');
  has(tour,"current==='gate'&&!atDoor){door.current.target=0;");
  has(doors,"['UBND XÃ ĐĂK HÀ','TRƯỜNG THCS CHU VĂN AN','PHÒNG TRUYỀN THỐNG']");
  has(doors,'gl.localClippingEnabled=true');has(doors,'new Plane(new Vector3(-side,0,0),DOOR_JAMB)');
@@ -39,7 +42,7 @@ test('Anti-flicker: wall headings stay visible, portraits use hysteresis and kee
  const photo=readFileSync(new URL('../src/scene/HallPhoto.tsx',import.meta.url),'utf8');
  assert.ok(!/ref\.current\.visible=full/.test(hall));assert.ok(hall.includes('return d<(cur>=1?8.5:6.5)?1:0;'),'near/far hysteresis kept (16/11 tiers)');
  assert.match(photo,/if\(target\.loaded\|\|!shown\.current\.e\.loaded\)shown\.current=/);
- assert.match(hall,/<EntranceDoors door=\{p\.door\}\/>/);
+ assert.ok(hall.includes('<EntranceDoors door={p.door} waiting={Boolean(p.atDoor&&!p.intro)} onOpen={p.onOpenDoor}/>'));
  assert.ok(!/rotation=\{\[0,side\*1\.50,0\]\}/.test(hall),'static open leaves removed');
 });
 
@@ -79,18 +82,23 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  assert.ok(doors.includes('d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();'),'refresh frames while waiting');
 });
 
-test('Foyer: the plaque hangs on the stone facade right of the door; the visit starts facing the statue straight on (16/11)',async()=>{
- const {gateLook,PLAQUE,ARRIVAL_START,STATUE_LOOK}=await import('../src/scene/hallArrival.mjs');
- const {MONUMENT,STATUE_STOP}=await import('../src/scene/hallLayout.mjs');
+test('Foyer: plaque on the facade; the visit starts at the H2 view — door left, statue niche ahead, glass right (16/11)',async()=>{
+ const {gateLook,arrivalFov,PLAQUE,ARRIVAL_START,DOOR_CENTER}=await import('../src/scene/hallArrival.mjs');
+ const {MONUMENT,isWalkable}=await import('../src/scene/hallLayout.mjs');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(PLAQUE.x-PLAQUE.w/2>2.21+.05&&PLAQUE.x+PLAQUE.w/2<4.54-.05,'plaque fits on the right facade panel (x 2.21–4.54)');
  assert.ok(!/plaqueHalf|repeat\.set\(\.5,1\)/.test(doors),'no split plaque on the sliding leaves');
- assert.equal(STATUE_LOOK[0],MONUMENT.x);assert.equal(STATUE_LOOK[2],MONUMENT.z);assert.equal(ARRIVAL_START[2],MONUMENT.z,'on the statue axis');
- assert.deepEqual([ARRIVAL_START[0],ARRIVAL_START[2]],[STATUE_STOP.eye[0],STATUE_STOP.eye[2]],'same spot as the statue stop');
- for(const aspect of [.5,.75,1.6,2.5]){const t=gateLook(aspect);const yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);assert.ok(Math.abs(yaw)<1e-9,'looks straight at the statue on every screen ('+aspect+')');}
- const d=Math.hypot(MONUMENT.x-ARRIVAL_START[0],MONUMENT.z-ARRIVAL_START[2]),hfov=(a,v)=>2*Math.atan(Math.tan(v/2*Math.PI/180)*a);
- assert.ok(2*Math.atan(.5/d)<hfov(.57,78),'the statue (≈1 m wide) fits a portrait phone');
- assert.ok(doors.includes('probe=useMemo(()=>new Vector3(...STATUE_LOOK),[])'),'dev guard watches the statue, not the plaque');
+ assert.ok(isWalkable(ARRIVAL_START)&&ARRIVAL_START[0]<-3,'waits on the left side of the foyer');
+ const bearing=(aspect,p)=>{const t=gateLook(aspect),yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);let b=Math.atan2(p[2]-ARRIVAL_START[2],p[0]-ARRIVAL_START[0])-yaw;return Math.atan2(Math.sin(b),Math.cos(b));};
+ const half=(a,v)=>Math.atan(Math.tan(v/2*Math.PI/180)*a);
+ const niche=[MONUMENT.niche.wallX,1.4,MONUMENT.z],glass=[4.54,1.5,13.6];
+ assert.equal(arrivalFov(1.6),70,'H2 was solved at 70° (rms 12 px)');assert.equal(arrivalFov(.57),78);
+ for(const [a,v] of [[1.19,70],[1.6,70],[2.2,70],[2.5,70]]){
+  for(const [n,p] of [['door',DOOR_CENTER],['niche',niche],['glass corner',glass]])assert.ok(Math.abs(bearing(a,p))<half(a,v),n+' in view at '+a);
+  assert.ok(bearing(a,DOOR_CENTER)<0&&bearing(a,glass)>bearing(a,niche),'door left, niche, glass right');
+ }
+ for(const a of [.46,.57])assert.ok(Math.abs(bearing(a,DOOR_CENTER))<half(a,arrivalFov(a))*.7,'portrait phone: the door and its label sit well inside the frame');
+ assert.ok(doors.includes('probe=useMemo(()=>new Vector3(...DOOR_CENTER),[])'),'dev guard watches the door');
 });
 
 test('Root cause of the blank door screen: the full-scene tap overlay stays transparent on hover/focus',()=>{

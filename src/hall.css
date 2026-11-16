@@ -70,3 +70,7 @@
 .hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{justify-content:flex-end;align-items:center;padding:0 5% 0 0}
 @media (orientation:portrait){.hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{justify-content:center;align-items:flex-start;padding:64px 0 0}}
 @media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-scene .hall-door-prompt{padding:0 4% 0 0}}
+/* 16/11: “Chạm để mở cửa” is attached to the door leaves in 3D (drei Html), not a full-screen tap area */
+.door-open-label{padding:10px 22px;min-height:44px;border-radius:999px;background:#0e2a32e0;color:#f8e9c6;font-size:15px;letter-spacing:.02em;border:1px solid #d9b56fbb;box-shadow:0 4px 18px #0006;white-space:nowrap;cursor:pointer;animation:door-hint 2.4s ease-in-out infinite}
+.door-open-label:hover,.door-open-label:focus-visible{background:#163a45;outline:2px solid #f3d38c;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.door-open-label{animation:none}}
