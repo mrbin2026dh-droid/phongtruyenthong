@@ -71,7 +71,9 @@ export default function HallController({plan,command,paused,effects,input,loaded
    if(routeRef.current)routeRef.current.current=null;
    live.current.onMotion(false);invalidate();return;
   }
-  const route=command.from==='arrival'?arrivalRoute(plan.nodes.entrance):routeFromPosition(plan,camera.position.toArray(),command.to);
+  // 16/11: the visitor may have walked around the foyer before opening the door — walk in from where they stand
+  const here=camera.position.toArray(),atStart=Math.hypot(here[0]-ARRIVAL_START[0],here[2]-ARRIVAL_START[2])<.3;
+  const route=command.from==='arrival'&&atStart?arrivalRoute(plan.nodes.entrance):routeFromPosition(plan,here,command.from==='arrival'?'entrance':command.to);
   const path=roundedPath(route.points,plan.count),m=motion.current;
   m.to=command.to;m.goal=route.destination.target;m.path=path;m.distance=0;m.speed=0;m.settling=false;m.running=false;
   const origin=plan.nodes[command.from] as typeof route.destination;

@@ -5,7 +5,10 @@ const length=(a,b)=>Math.hypot(...a.map((v,k)=>b[k]-v));
 export function dampValue(value,target,lambda,dt){return target+(value-target)*Math.exp(-lambda*Math.max(0,dt));}
 export function presentationTurnStep(angle,dt){return Math.min(.85*Math.max(0,dt),Math.max(0,angle)*(1-Math.exp(-3.5*Math.max(0,dt))));}
 export function regionAt(point,count){return 0;}
-export function positionAllowed(point){return isWalkable(point);}
+/** 16/11 (user): visitors walk freely in the foyer before the door opens — the closed leaves block the doorway
+ * (EntranceDoors keeps this in sync with the door). Only manual steps are gated; planned routes run after it opens. */
+export const DOOR_GATE={closed:false};
+export function positionAllowed(point){return isWalkable(point)&&!(DOOR_GATE.closed&&point[2]<=8.9);}
 export function slideStep(position,delta,count,loadedRooms){
  // Substeps prevent tunnelling during a low frame rate or long key hold.
  let p=position.slice();const steps=Math.max(1,Math.ceil(Math.hypot(delta[0],delta[2])/.06));

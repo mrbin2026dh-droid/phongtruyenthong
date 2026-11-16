@@ -26,10 +26,10 @@ test('Entry waits for a tap ON THE DOOR; the sign above it names the school; V�
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<13.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
  const has=(src,s)=>assert.ok(src.includes(s),'missing: '+s);
- has(tour,'if(benchOn)openDoor();else setAtDoor(true);');assert.ok(!tour.includes('seen)openDoor'),'no auto-open on repeat visits');
+ has(tour,'if(benchOn)openDoor();else{setAtDoor(true);setManual(true);}');assert.ok(!tour.includes('seen)openDoor'),'no auto-open on repeat visits');
  assert.ok(!tour.includes('className="hall-door-prompt" onClick={openDoor}'),'16/11: no full-screen tap area opens the door (tapping the statue opened it)');
  has(tour,'onOpenDoor={openDoor}');
- has(doors,"<group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}");
+ has(doors,"<group onClick={e=>{if(!waiting||!onOpen||e.delta>8)return;e.stopPropagation();onOpen();}}");
  has(doors,'<Html position={DOOR_CENTER as [number,number,number]} center');has(doors,'className="door-open-label" onClick={onOpen}');
  has(tour,"current==='gate'&&!atDoor){door.current.target=0;");
  has(doors,"export const DOOR_SIGN_LINES=['PHÒNG TRUYỀN THỐNG',");
@@ -74,7 +74,7 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
- assert.ok(tour.includes('controlsLocked={automatic||atDoor}'),'keys / drag / wheel locked while at the door');
+ assert.ok(tour.includes('controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}'),'16/11: foyer walkable — locked only during the opening shot and the door turn');
  assert.ok(tour.includes('!doorOpening&&!arriving&&!moving&&'),'mode chooser waits until the visitor has arrived');
  assert.ok(ctl.includes('if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}'),'gate pose re-asserted');assert.ok(ctl.includes("addEventListener('museum-door-reframe',fn)"),'dev reframe hook');
  assert.ok(ctl.includes('Number.isFinite(camera.position.x+camera.position.y+camera.position.z'),'NaN safety net');
@@ -134,7 +134,7 @@ test('Scene is revealed only after the room, statue and all portraits have loade
 test('Walking sticks are always offered inside the room; touching one switches to walking mode (image 3)',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const sticks=readFileSync(new URL('../src/scene/TwinSticks.tsx',import.meta.url),'utf8');
- assert.ok(tour.includes('{ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}'),'also hidden during a portrait close-up (16/11)');
+ assert.ok(tour.includes('{ready&&!(atDoor&&intro&&effects)&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}'),'also in the foyer (16/11); hidden during a portrait close-up');
  assert.ok(!tour.includes('{manual&&!moving&&!p.paused&&!panel&&<TwinSticks'),'no longer hidden behind the Tự bước button');
  assert.ok(sticks.includes('onEngage?.();'));
 });
@@ -174,4 +174,21 @@ test('16/11 (user): statue room — sign over the portal, clean teal backdrop, c
  assert.ok(scene.includes('<mesh position={[R.x1-.068,1.62,M.z]}')&&scene.includes('<group position={[R.x1-.078,2.62,M.z]}'));
  assert.ok(!/TealBackdrop[\s\S]{0,1500}rand\(\)/.test(scene),'no random noise in the backdrop (regular weave only)');
  assert.ok(scene.includes('text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires'),'title drawn at 4096 px, no glow');
+});
+
+test('16/11 (user): manual walking (Tự bước) from the foyer — the closed door blocks the doorway, opens from anywhere',async()=>{
+ const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
+ const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
+ assert.ok(tour.includes('else{setAtDoor(true);setManual(true);}')&&tour.includes('setAtDoor(true);setManual(true);window'),'Tự bước on at first arrival and back at the gate');
+ assert.ok(tour.includes('controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}'),'foyer controls unlocked (except the opening shot / door turning)');
+ assert.ok(tour.includes('aria-pressed={manual} disabled={p.paused||!ready||doorOpening}'),'Tự bước button enabled in the foyer');
+ assert.ok(doors.includes('DOOR_GATE.closed=Boolean(d&&d.target===0);')&&doors.includes('e.delta>8'),'door state gates walking; a look-drag over the door does not open it');
+ assert.ok(ctl.includes("routeFromPosition(plan,here,command.from==='arrival'?'entrance':command.to)"),'walks in from wherever the visitor stands');
+ const {DOOR_GATE,slideStep}=await import('../src/scene/hallMotion.mjs');
+ DOOR_GATE.closed=true;
+ const stop=slideStep([0,1.7,9.3],[0,0,-1.5],0,[]);assert.ok(stop[2]>8.9,'closed door: cannot walk through');
+ const side=slideStep([0,1.7,11.1],[1.0,0,0],0,[]);assert.ok(side[0]>.9,'free to walk across the foyer');
+ DOOR_GATE.closed=false;
+ const through=slideStep([0,1.7,9.3],[0,0,-1.5],0,[]);assert.ok(through[2]<8.9,'open door: walk through');
 });

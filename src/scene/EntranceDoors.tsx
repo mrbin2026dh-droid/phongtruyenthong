@@ -5,6 +5,7 @@ import {BoxGeometry,CanvasTexture,Frustum,Group,Matrix4,MeshStandardMaterial,Pla
 import {DOOR_JAMB,doorOffset,doorStep} from './doorMotion.mjs';
 import {FACADE_Z,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
 import {Html} from '@react-three/drei';
+import {DOOR_GATE} from './hallMotion.mjs';
 import GildedSign,{type SignSpec} from './GildedSign';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
@@ -91,6 +92,7 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
  const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...DOOR_CENTER),[]),mat=useMemo(()=>new Matrix4(),[]);
  useFrame(({camera,invalidate},dt)=>{
   const d=door?.current;const value=d?d.value:1;
+  DOOR_GATE.closed=Boolean(d&&d.target===0);
   if(d&&d.value!==d.target){const was=d.value;d.value=doorStep(d.value,d.target,dt);invalidate();
    // fully open: the hall reflection probe re-captures (it was taken with the doors closed)
    if(was<1&&d.value>=1)window.dispatchEvent(new Event('museum-doors-open'));}
@@ -114,7 +116,7 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
  return <>
   <GildedSign spec={DOOR_SIGN_SPEC} position={[0,DOOR_SIGN.y,FACADE_Z]}/>
   {/* 16/11 (user): only the door opens the door — tap a leaf or the label attached to it (not the whole screen). */}
-  <group onClick={e=>{if(!waiting||!onOpen)return;e.stopPropagation();onOpen();}}
+  <group onClick={e=>{if(!waiting||!onOpen||e.delta>8)return;e.stopPropagation();onOpen();}}
    onPointerOver={()=>{if(waiting)document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}>
    {([[-1,parts.left],[1,parts.right]] as const).map(([side,s])=><primitive key={side} object={s.g}><Leaf side={side} m={s.m}/></primitive>)}
   </group>

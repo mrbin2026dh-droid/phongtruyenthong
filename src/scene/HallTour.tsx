@@ -143,7 +143,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   revealTimer.current=setTimeout(()=>{
    setReady(true);
    // 15/11: always wait at the closed door (repeat visits used to auto-open — looked like a bug to the user)
-   if(benchOn)openDoor();else setAtDoor(true);
+   // 16/11 (user): manual walking (Tự bước) is on from the foyer onwards, not only inside the room
+   if(benchOn)openDoor();else{setAtDoor(true);setManual(true);}
   },Math.max(400,700-(performance.now()-openedAt.current)));
   },[sceneReady,assetsLoaded,assetTimeout,modelsReady]);
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
@@ -169,7 +170,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   },FACE_DOOR_MS);
  }
  // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
- useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
+ useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);setManual(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
  const skipEntry=()=>{clearTimeout(walkTimer.current);door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
  const active=layout.stops.find((s:any)=>s.id===current);
  const openCloseup=(slotId:string)=>{if(!ready||atDoor||p.paused||moving)return;
@@ -243,7 +244,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     paused={p.paused||pause||Boolean(panel)||!ready||hostOpen}
     moving={moving}
     effects={effects}
-    controlsLocked={automatic||atDoor}
+    controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
@@ -276,7 +277,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {automatic&&!panel&&<div className="hall-progress">{pause?'Đang tạm dừng':'Trình diễn tự động'} · Điểm {Math.max(1,layout.stops.findIndex((s:any)=>s.id===(moving?command.to:current))+1)}/{layout.stops.length}</div>}
   {complete&&!panel&&<div className="hall-progress" role="status">Đã hoàn thành một vòng tham quan</div>}
   {/* 15/11: the sticks are always offered once inside, so visitors never forget they can walk on their own. */}
-  {ready&&!atDoor&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}
+  {ready&&!(atDoor&&intro&&effects)&&!doorOpening&&!arriving&&!moving&&!p.paused&&!panel&&!closeup&&<TwinSticks input={input} onEngage={enterManual}/>}
 
   {panel&&<div className="hall-panel-shade" onPointerDown={e=>{if(e.target===e.currentTarget)setPanel(null);}}><section className="hall-panel" aria-label={panel==='map'?'Sơ đồ phòng chung':'Tùy chọn tham quan'}><div className="visitor-panel-heading"><h2>{panel==='map'?'Một phòng · Năm khu':'Tùy chọn'}</h2><button ref={close} aria-label="Đóng bảng điều khiển" onClick={()=>{setPanel(null);trigger.current?.focus();}}><TourIcon name="close"/></button></div>
    {panel==='map'?<><div className="hall-plan" aria-label="Sơ đồ mặt bằng phòng 24 × 16 mét"><YouAreHere pose={pose}/><span className="hall-plan-entry">Lối vào</span><span className="hall-map-wall hall-map-left"/><span className="hall-map-wall hall-map-right"/>{layout.stops.filter((s:any,i:number,a:any[])=>s.group&&s.group!=='statue'&&!a.slice(0,i).some(v=>v.group===s.group)).map((s:any)=><button key={s.id} aria-label={'Đến '+s.title} title={s.title} className={current===s.id?'selected':''} style={{left:(s.eye[0]+12)/24*100+'%',top:(s.eye[2]+8)/16*100+'%'}} onClick={()=>go(s.id)} disabled={moving}>{({principal:'HT',deputy:'PHT',teacher:'GV',staff:'NV',memory:'KV'} as Record<string,string>)[s.group]}</button>)}</div><div className="hall-zone-list"><button disabled={moving} onClick={()=>go('statue')}><span>Tượng nhà giáo Chu Văn An</span><small>Hốc tường ở sảnh</small><TourIcon name="right"/></button><button disabled={moving} onClick={()=>go(CABINETS[0].id)}><span>Kỷ vật và thành tích nhà trường</span><small>3 tủ minh họa</small><TourIcon name="right"/></button>{layout.zones.map((z:any)=><button key={z.id} disabled={moving} onClick={()=>go((layout.stops.find((s:any)=>s.group===z.id)||layout.stops.find((s:any)=>s.id==='principal-0')).id)}><span>{z.name}</span><small>{z.people.length}/{z.capacity} vị trí</small><TourIcon name="right"/></button>)}</div></>:<div className="visitor-options"><button onClick={p.onList}><TourIcon name="search"/>Tìm hồ sơ</button><button disabled={moving} onClick={()=>go(nextPresentationStop(layout.stops,current)?.id||'entrance')}>Điểm tham quan tiếp</button><button disabled={moving} onClick={()=>start(true)}>Trình diễn từ điểm hiện tại</button><label><input type="checkbox" checked={!effects} onChange={()=>setEffects(v=>!v)}/>Giảm chuyển động</label><label>Chất lượng hình<select aria-label="Chất lượng hình" value={qualityChoice} onChange={e=>chooseQuality(e.target.value)}>{QUALITY_CHOICES.map(c=><option key={c.id} value={c.id}>{c.label}{c.id==='auto'&&qualityChoice==='auto'?' (đang: '+(QUALITY_LEVELS.find(l=>l.id===qualityLevel)?.label||'')+')':''}</option>)}</select></label><label>Tốc độ di chuyển<select aria-label="Tốc độ di chuyển" defaultValue="1" onChange={e=>{input.current.speed=Number(e.target.value);}}><option value=".75">Chậm</option><option value="1">Vừa</option></select></label><button onClick={()=>{input.current.reset++;window.dispatchEvent(new Event('museum-navigation-input'));setPanel(null);}}>Đặt lại góc nhìn</button><p className="hall-help">Kéo để nhìn quanh, cuộn hoặc chụm hai ngón để phóng to. Máy tính: W/A/S/D để đi.</p><button onClick={()=>p.onModule(2)}>Tôn vinh giáo viên · Đang xây dựng</button><button onClick={()=>p.onModule(3)}>Tôn vinh học sinh · Đang xây dựng</button>{import.meta.env.DEV&&adminAvailable&&(p.admin?<button className="admin-link" onClick={()=>{signOut();setPanel(null);}}>Đăng xuất quản trị</button>:<button className="admin-link" onClick={()=>{setPanel(null);p.onAdminLogin?.();}}>Quản trị viên: đăng nhập</button>)}</div>}
@@ -293,11 +294,11 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    {icon('Về cổng vào','home',()=>go('gate',true),!ready||atDoor)}
    <button aria-label="Sơ đồ phòng chung" title="Sơ đồ phòng chung" aria-expanded={panel==='map'} disabled={atDoor} onClick={e=>toggle('map',e)}><TourIcon name="map"/></button>
    {icon(automatic?(pause?'Tiếp tục trình diễn':'Tạm dừng trình diễn'):moving?(pause?'Tiếp tục hành trình':'Tạm dừng hành trình'):'Trình diễn tự động',automatic||moving?(pause?'play':'pause'):'play',()=>{autoPaused.current=false;if(automatic||moving)setPause(v=>!v);else start();},!ready)}
-   <button aria-label="Tự bước" title="Tự bước" aria-pressed={manual} disabled={p.paused||!ready||atDoor} onClick={()=>{setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(v=>!v);}}><TourIcon name="walk"/></button>
+   <button aria-label="Tự bước" title="Tự bước" aria-pressed={manual} disabled={p.paused||!ready||doorOpening} onClick={()=>{setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(v=>!v);}}><TourIcon name="walk"/></button>
    {icon(p.speaking?'Tắt lời dẫn':'Nghe giới thiệu','sound',audio)}
    <button aria-label="Tùy chọn" title="Tùy chọn" aria-expanded={panel==='more'} onClick={e=>toggle('more',e)}><TourIcon name="more"/></button>
   </nav></div>
-  {ready&&!moving&&!manual&&!panel&&!p.paused&&!automatic&&!closeup&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
+  {ready&&!moving&&(!manual||atDoor)&&!panel&&!p.paused&&!automatic&&!closeup&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
 
   {layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
