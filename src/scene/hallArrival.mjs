@@ -4,7 +4,6 @@
 // door on the left, the statue niche ahead, the schoolyard glazing on the right. Pose solved from that screenshot
 // (niche centre, door jamb and glass corner bearings + niche width). The door is opened only by tapping the door.
 export const ARRIVAL_START=[-3.9,1.7,10.85];
-export const STATUE_LOOK=[4.92,1.55,11.1];
 /** Door leaves' centre on the facade — the “Chạm để mở cửa” label is attached here. */
 export const DOOR_CENTER=[0,1.7,8.45];
 /** Front face of the stone facade beside the door (foyer side). */

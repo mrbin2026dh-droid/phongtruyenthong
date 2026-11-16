@@ -10,7 +10,7 @@ import ChuVanAnStatue from './ChuVanAnStatue';
 import SceneStats,{statsEnabled} from './SceneStats';
 import StaticInstancer,{boxMaterial} from './StaticInstancer';
 import BakedHall,{bakedEnabled} from './BakedHall';
-import {HALL,BENCHES,MONUMENT,CABINETS,CABINET_NICHE,cabinetWallPieces} from './hallLayout.mjs';
+import {HALL,BENCHES,MONUMENT,STATUE_ROOM,CABINETS,CABINET_NICHE,cabinetWallPieces} from './hallLayout.mjs';
 import type {MutableRefObject} from 'react';
 import type {NavigationInput} from './VisitorController';
 import type {VisitorPose,RouteState} from './HallController';
@@ -273,11 +273,43 @@ function WallSign({sign:s}:{sign:any}){
  </group>;
 }
 function ZoneNames({layout}:{layout:any}){return <>{layout.signs.map((s:any)=><WallSign key={s.id} sign={s}/>)}</>;}
-/** 16/11 (user, H2): the statue stands in a recessed niche in the foyer's right wall, facing the path to the door.
- * The niche, pedestal and their light are baked (hall-baked.glb); the statue and the pedestal inscription stay live.
- * A live warm key + soft fill light the bronze (the baked shell does not light live meshes). */
+/** 16/11 (user: “tượng quá mờ… mở rộng ra như một phòng thu nhỏ trưng bày”): the statue stands in a small exhibition
+ * room behind the foyer's right wall. Room shell, pedestal and their light are baked (hall-baked.glb); the statue,
+ * the inscriptions and the short biography stay live (sharp text). A live warm key + fill light the bronze. */
+export const STATUE_KEY:[number,number,number]=[5.45,3.05,10.25];
+/** Short, well-documented facts only (Đại Việt sử ký toàn thư; school textbooks) — no invented quotations. */
+export const STATUE_STORY=['Chu Văn An (1292 – 1370), quê làng Văn Thôn, Thanh Trì (Hà Nội).',
+ 'Nhà giáo tiêu biểu đời Trần, từng dạy ở Quốc Tử Giám.',
+ 'Dâng “Thất trảm sớ”, rồi về Chí Linh mở trường dạy học.',
+ 'Được hậu thế tôn vinh là “Vạn thế sư biểu”.'];
+function StatueStory(){
+ const W=1.25,H=.78,map=useMemo(()=>{
+  const c=document.createElement('canvas');c.width=1600;c.height=Math.round(1600*H/W);const g=c.getContext('2d')!;
+  g.fillStyle='#f1e9d9';g.fillRect(0,0,c.width,c.height);g.strokeStyle='#bda36b';g.lineWidth=5;g.strokeRect(26,26,c.width-52,c.height-52);
+  g.textAlign='center';g.fillStyle='#17383e';g.font='700 92px "Noto Serif"';g.fillText('CHU VĂN AN',c.width/2,170);
+  g.font='600 46px "Noto Sans"';g.fillStyle='#6b4f32';g.fillText('1292 – 1370',c.width/2,240);
+  g.fillStyle='#bda36b';g.fillRect(c.width*.38,280,c.width*.24,4);
+  g.textAlign='left';g.fillStyle='#2a1f18';g.font='400 44px "Noto Sans"';
+  // wrap each fact (never squeeze letters): bullet, then indented continuation lines
+  let y=370;const maxW=c.width-230;
+  for(const t of STATUE_STORY){
+   const words=t.split(' ');let line='';const lines:string[]=[];
+   for(const w of words){const next=line?line+' '+w:w;if(g.measureText(next).width>maxW&&line){lines.push(line);line=w;}else line=next;}
+   lines.push(line);
+   g.fillText('•',96,y);lines.forEach((l,i)=>g.fillText(l,136,y+i*58));y+=lines.length*58+30;
+  }
+  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
+ },[]);
+ useEffect(()=>()=>map.dispose(),[map]);
+ // on the room's left wall (z = z1, facing −z), between the portal and the statue
+ return <group position={[5.95,1.6,STATUE_ROOM.z1]} rotation={[0,Math.PI,0]}>
+  <Box p={[0,0,.02]} s={[W+.1,H+.1,.04]} color="#4f362a"/>
+  <Box p={[0,0,.045]} s={[W+.02,H+.02,.01]} color="#bda36b" metal={.4}/>
+  <mesh position={[0,0,.056]}><planeGeometry args={[W,H]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>
+ </group>;
+}
 function MonumentReservation({baked=false}:{baked?:boolean}){
- const M=MONUMENT,front=M.depth/2+.003;
+ const M=MONUMENT,front=M.depth/2+.003,R=STATUE_ROOM;
  const key=useMemo(()=>{const t=new Object3D();t.position.set(M.x,1.45,M.z);return t;},[]);
  return <>
  <group position={[M.x,0,M.z]} rotation={[0,M.yaw,0]}>
@@ -288,9 +320,13 @@ function MonumentReservation({baked=false}:{baked?:boolean}){
   {/* ChuVanAnStatue places itself 0.89 m up = on the 0.88 m pedestal */}
   <Suspense fallback={null}><ChuVanAnStatue/></Suspense>
  </group>
+ {/* gilded title on the baked teal panel of the back wall (panel face at x1 − 0.06; text 1.2 cm in front) */}
+ <group position={[R.x1-.072,2.62,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered/></group>
+ <group position={[R.x1-.072,2.36,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="NGƯỜI THẦY CỦA MUÔN ĐỜI" width={1.5} height={.13} light centered/></group>
+ <StatueStory/>
  <primitive object={key}/>
- <spotLight position={[2.4,3.85,9.9]} target={key} color="#ffe2b8" intensity={9} distance={7} angle={.42} penumbra={.8} decay={2}/>
- <pointLight position={[3.6,1.6,10.3]} color="#ffeedd" intensity={.6} distance={3} decay={2}/>
+ <spotLight position={STATUE_KEY} target={key} color="#ffe2b8" intensity={7} distance={6} angle={.5} penumbra={.8} decay={2}/>
+ <pointLight position={[5.6,1.7,11.7]} color="#ffeedd" intensity={.8} distance={3} decay={2}/>
  </>;}
 
 function MemoryCabinets({baked=false}:{baked?:boolean}){const n=CABINET_NICHE,mid=(n.bottom+n.top)/2,h=n.top-n.bottom;return <>{CABINETS.map((c:any,i:number)=><group key={c.id} position={[c.x,0,n.wallZ]} rotation={[0,Math.PI,0]}>

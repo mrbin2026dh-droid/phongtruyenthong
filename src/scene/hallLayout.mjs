@@ -6,10 +6,14 @@ export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
 // 16/11 (user, H2): the statue leaves the hall axis — from the entrance it hid the Hiệu trưởng portrait completely
 // (statue ≈10° wide vs the 3.7° frame, measured) and turned its back on Ban Giám hiệu — and stands in a recessed niche
 // in the foyer's right wall, facing the visitors' path to the door (statue faces −x). Exported to Blender (hall-layout.json).
-export const MONUMENT={x:4.92,z:11.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestalHeight:.88,clearance:1.05,
- niche:{wallX:4.54,width:1.8,height:2.8,depth:.7}};
-/** Where the visitor stands to look at the statue in its niche (foyer, 2.6 m away). */
-export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[2.3,1.6,11.1],target:[4.92,1.45,11.1],dwell:9000};
+// 16/11 (user: “tượng quá mờ — mở rộng ra như một phòng thu nhỏ trưng bày”): the niche becomes a small exhibition
+// room behind the foyer's right wall (nothing is built there: x 4.66 → 8.06, z 9.4 → 12.8). The visitor walks in
+// through a 2.2 m portal and stands 1.7 m from the statue, which then fills the view. Exported to Blender.
+export const STATUE_ROOM={x0:4.66,x1:8.06,z0:9.4,z1:12.8,height:3.2,opening:{wallX:4.54,width:2.2,height:2.8}};
+export const MONUMENT={x:7.05,z:11.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestalHeight:.88,clearance:1.05,
+ niche:{wallX:4.54,width:2.2,height:2.8,depth:STATUE_ROOM.x1-4.54},room:STATUE_ROOM};
+/** Where the visitor stands in the statue room (1.7 m from the statue: it fills the view, sharp). */
+export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[5.35,1.6,11.1],target:[7.05,1.45,11.1],dwell:9000};
 export const CABINETS=[
  {id:'memory-0',x:4.7,title:'Tư liệu và kỷ vật',description:'Không gian lưu giữ tư liệu, hình ảnh và kỷ vật về hành trình xây dựng nhà trường.'},
  {id:'memory-1',x:7.1,title:'Dấu ấn nhà trường',description:'Vị trí dành cho các dấu mốc của nhà trường; hiện đang dùng hiện vật mẫu, chờ tư liệu được phê duyệt.'},
@@ -96,7 +100,15 @@ export function closeupOrder(slots,group){
 export function isWalkable([x,y,z]){
  if(!Number.isFinite(x+y+z)||y<1.3||y>2.4)return false;
  // 15/11 (b): doorway strip, then the whole foyer floor (stay clear of the glass, stair opening and facade).
- if(z>7.45)return z>8.9?Math.abs(x)<4.1&&z<=13.3:Math.abs(x)<1.8;
+ if(z>7.45){
+  if(z<=8.9)return Math.abs(x)<1.8;
+  if(x<4.1)return x>-4.1&&z<=13.3;
+  // 16/11: the statue room — through the portal (≥ 42 cm from each jamb), then the room floor (≥ 35–40 cm off the
+  // walls), never onto the pedestal.
+  const R=STATUE_ROOM,inPortal=x<=R.x0+.3&&Math.abs(z-MONUMENT.z)<R.opening.width/2-.42;
+  const inRoom=x>R.x0+.3&&x<R.x1-.35&&z>R.z0+.4&&z<R.z1-.4;
+  return (inPortal||inRoom)&&!(Math.abs(x-MONUMENT.x)<MONUMENT.clearance&&Math.abs(z-MONUMENT.z)<MONUMENT.clearance);
+ }
  if(Math.abs(x)>11.5||Math.abs(z)>7.45)return false;
  if(Math.abs(x-MONUMENT.x)<MONUMENT.clearance&&Math.abs(z-MONUMENT.z)<MONUMENT.clearance)return false;
  if(x>3.35&&x<10.85&&z>6.65)return false; // cabinet cases and standing clearance
