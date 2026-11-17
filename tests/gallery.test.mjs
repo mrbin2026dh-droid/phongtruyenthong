@@ -56,4 +56,5 @@ test('17/11 (giật lag): the slide screen never drops the still resolution and 
  assert.ok(disp.includes('!inView(get().camera)'),'auto-advance only when the screen is in view');
  assert.ok(disp.includes('const W=phone?1600:1920'),'slides at the source size 1920×1080');
  assert.ok(disp.includes("key={m?m.uuid:'empty'}"),'17/11 white screen: a new material when the picture arrives (shader with a map)');
+ assert.ok(disp.includes('c.offset=to;if(to!==0)setIndex')&&disp.includes('useLayoutEffect(()=>{const c=car.current;if(c.anim||c.dragging)return;c.offset=0;'),'17/11 nhấp nháy: the strip re-centres in the same commit as the new pictures, never a frame of the old one');
 });

@@ -6,7 +6,7 @@
 //  • Độ nét: ảnh dựng đúng 1920×1080 (= ảnh nguồn; điện thoại 1600×900), lọc dị hướng tối đa; giữ ≤ 5 ảnh trong bộ nhớ.
 //  • Mượt (17/11): giải mã ảnh ngoài luồng chính, đưa lên card lúc rảnh; chỉ tự chuyển khi màn đang trong tầm nhìn.
 // Camera không xoay khi đang vuốt màn hình (screenGrab). Ảnh chỉ tải khi người xem ở nửa phòng phía lối vào.
-import {useEffect,useMemo,useRef,useState} from 'react';
+import {useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {CanvasTexture,SRGBColorSpace,Group,Plane,Vector3} from 'three';
 import type {WebGLRenderer} from 'three';
@@ -78,6 +78,8 @@ export default function GalleryDisplays({items,onOpen}:Props){
   return()=>{live=false;};
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[active,items,index]);
+ // same commit as the new maps → the strip re-centres in the very frame the pictures change places
+ useLayoutEffect(()=>{const c=car.current;if(c.anim||c.dragging)return;c.offset=0;if(strip.current)strip.current.position.x=0;invalidate();},[index,invalidate]);
  const slideTo=(to:number)=>{const c=car.current;c.from=c.offset;c.to=n>1?to:0;c.t0=performance.now();c.anim=true;invalidate();};
  // auto-advance (not while dragging, far away, hidden, or for a while after the visitor swiped)
  useEffect(()=>{if(n<2)return;const t=setInterval(()=>{const c=car.current;
@@ -86,7 +88,9 @@ export default function GalleryDisplays({items,onOpen}:Props){
  },[n,get]);
  useFrame(()=>{const c=car.current;
   if(c.anim){const p=Math.min(1,(performance.now()-c.t0)/SLIDE_MS);c.offset=c.from+(c.to-c.from)*ease(p);
-   if(p>=1){c.anim=false;const to=c.to;c.offset=0;if(to!==0)setIndex(i=>(((i-to)%n)+n)%n);}else invalidate();}
+   // 17/11 (nhấp nháy): keep the strip where it stopped until React has put the new pictures on the planes
+   // (layout effect below); resetting here showed the OLD picture for one frame before the jump.
+   if(p>=1){c.anim=false;const to=c.to;c.offset=to;if(to!==0)setIndex(i=>(((i-to)%n)+n)%n);}else invalidate();}
   if(strip.current)strip.current.position.x=c.offset*w;});
  // swipe / drag on the screen (window listeners: the finger may leave the screen while swiping)
  const down=(e:any)=>{if(!n)return;e.stopPropagation();const c=car.current;screenGrab.active=true;c.dragging=true;c.anim=false;
