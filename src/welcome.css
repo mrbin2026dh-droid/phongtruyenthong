@@ -56,3 +56,5 @@
 .welcome-intro .welcome-ornament{margin:24px auto 26px;max-width:300px}
 .welcome-intro .welcome-start{margin:0 auto}
 @media(max-width:700px){.welcome-intro{padding:28px 22px 24px}.welcome-intro .welcome-lead{font-size:15.5px;max-width:330px}.welcome-intro .welcome-ornament{margin:20px auto 22px}}
+/* 17/11: ảnh sân trường chụp từ trên cao — khung máy tính dẹt (≈2,3:1) → lấy phần trên nhiều hơn để thấy trọn dãy nhà chính và băng rôn */
+.welcome-campus img{object-position:center 5%}

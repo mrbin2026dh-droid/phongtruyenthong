@@ -146,7 +146,7 @@ const pwa=VitePWA({
    {src:'icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any'},
    {src:'icons/icon-maskable-512.png',sizes:'512x512',type:'image/png',purpose:'maskable'}
   ],
-  screenshots:[{src:'welcome/welcome-architecture-1600.webp',sizes:'1600x900',type:'image/webp',form_factor:'wide',label:'Phòng truyền thống 3D'}]
+  screenshots:[{src:'welcome/san-truong-1600.webp',sizes:'1600x900',type:'image/webp',form_factor:'wide',label:'Phòng truyền thống 3D'}]
  },
  workbox:{
   cacheId:'ptt',
