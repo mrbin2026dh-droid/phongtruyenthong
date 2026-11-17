@@ -8,6 +8,7 @@ import Dialog from '../components/Dialog';
 const AdminLogin=import.meta.env.DEV?lazy(()=>import('../components/AdminLogin')):null;
 const AdminSlotEditor=import.meta.env.DEV?lazy(()=>import('../components/AdminSlotEditor')):null;
 const AdminPublish=import.meta.env.DEV?lazy(()=>import('../components/AdminPublish')):null;
+const AdminArrange=import.meta.env.DEV?lazy(()=>import('../components/AdminArrange')):null;
 import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
@@ -39,7 +40,7 @@ import '../hall.css';
 const Scene=lazy(()=>import('./HallScene'));
 
 type Props={people:Person[];sort:string;onSelect:(id:string)=>void;onModule:(n:number)=>void;onList:()=>void;onNarrate:(text:string)=>void;onSilence:()=>void;caption:string;speaking:boolean;paused:boolean};
-type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void};
+type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void;onArrange?:()=>void};
 
 export default function HallTour(p:Props){
  const [page,setPage]=useState(0),[demo,setDemo]=useState<Person|null>(null);
@@ -47,7 +48,7 @@ export default function HallTour(p:Props){
  // Admin sees the real data with empty positions; visitors keep the layout preview.
  // Layout preview (DEMO fill) only while nothing has been published yet; never for the admin.
  const enabled=new URLSearchParams(window.location.search).get('preview')!=='off'&&!admin&&!publishedPeople;
- const [publish,setPublish]=useState(false);
+ const [publish,setPublish]=useState(false),[arranging,setArranging]=useState(false);
  const preview=useMemo(()=>hallPreview(p.people,enabled),[p.people,enabled]);
  const [login,setLogin]=useState(false),[editor,setEditor]=useState<{slot:{slotId:string;group:string};person?:Person}|null>(null),[adminMessage,setAdminMessage]=useState('');
  const layout=useMemo(()=>layoutHall(preview.people,p.sort,page),[preview,p.sort,page]);
@@ -80,8 +81,9 @@ export default function HallTour(p:Props){
    key={'page-'+layout.page}
    {...p}
    onSelect={select}
-   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish}
+   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish||arranging}
    onPublish={()=>setPublish(true)}
+   onArrange={()=>{setMover(null);setArranging(true);}}
    admin={admin}
    adminEmpties={empties}
    onEmpty={onEmpty}
@@ -94,6 +96,7 @@ export default function HallTour(p:Props){
    onPage={setPage}
    mockCount={preview.added.length}
   />
+  {AdminArrange&&arranging&&<Suspense fallback={null}><AdminArrange onClose={()=>setArranging(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
   {AdminLogin&&login&&<Suspense fallback={null}><AdminLogin onClose={()=>setLogin(false)}/></Suspense>}
   {AdminPublish&&publish&&<Suspense fallback={null}><AdminPublish people={p.people} onClose={()=>setPublish(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
   {AdminSlotEditor&&editor&&<Suspense fallback={null}><AdminSlotEditor key={editor.slot.slotId+(editor.person?.id||'')} slot={editor.slot} person={editor.person} onClose={()=>setEditor(null)} onSaved={msg=>{setEditor(null);setAdminMessage(msg);}}
@@ -298,7 +301,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {ready&&!p.paused&&<TwinSticks input={input} onEngage={engageStick}/>}
 
   {panel&&<div className="hall-panel-shade" onPointerDown={e=>{if(e.target===e.currentTarget)setPanel(null);}}><section className="hall-panel" aria-label={panel==='map'?'Sơ đồ phòng chung':'Tùy chọn tham quan'}><div className="visitor-panel-heading"><h2>{panel==='map'?'Một phòng · Năm khu':'Tùy chọn'}</h2><button ref={close} aria-label="Đóng bảng điều khiển" onClick={()=>{setPanel(null);trigger.current?.focus();}}><TourIcon name="close"/></button></div>
-   {panel==='map'?<><div className="hall-plan" aria-label="Sơ đồ mặt bằng phòng 24 × 16 mét"><YouAreHere pose={pose}/><span className="hall-plan-entry">Lối vào</span><span className="hall-map-wall hall-map-left"/><span className="hall-map-wall hall-map-right"/>{layout.stops.filter((s:any,i:number,a:any[])=>s.group&&s.group!=='statue'&&!a.slice(0,i).some(v=>v.group===s.group)).map((s:any)=><button key={s.id} aria-label={'Đến '+s.title} title={s.title} className={current===s.id?'selected':''} style={{left:(s.eye[0]+12)/24*100+'%',top:(s.eye[2]+8)/16*100+'%'}} onClick={()=>go(s.id)} disabled={moving}>{({principal:'HT',deputy:'PHT',teacher:'GV',staff:'NV',memory:'KV'} as Record<string,string>)[s.group]}</button>)}</div><div className="hall-zone-list"><button disabled={moving} onClick={()=>go('statue')}><span>Tượng nhà giáo Chu Văn An</span><small>Hốc tường ở sảnh</small><TourIcon name="right"/></button><button disabled={moving} onClick={()=>go(CABINETS[0].id)}><span>Kỷ vật và thành tích nhà trường</span><small>3 tủ minh họa</small><TourIcon name="right"/></button>{layout.zones.map((z:any)=><button key={z.id} disabled={moving} onClick={()=>go((layout.stops.find((s:any)=>s.group===z.id)||layout.stops.find((s:any)=>s.id==='principal-0')).id)}><span>{z.name}</span><small>{z.people.length}/{z.capacity} vị trí</small><TourIcon name="right"/></button>)}</div></>:<div className="visitor-options"><button onClick={p.onList}><TourIcon name="search"/>Tìm hồ sơ</button><button disabled={moving} onClick={()=>go(nextPresentationStop(layout.stops,current)?.id||'entrance')}>Điểm tham quan tiếp</button><button disabled={moving} onClick={()=>start(true)}>Trình diễn từ điểm hiện tại</button><label><input type="checkbox" checked={!effects} onChange={()=>setEffects(v=>!v)}/>Giảm chuyển động</label><label>Chất lượng hình<select aria-label="Chất lượng hình" value={qualityChoice} onChange={e=>chooseQuality(e.target.value)}>{QUALITY_CHOICES.map(c=><option key={c.id} value={c.id}>{c.label}{c.id==='auto'&&qualityChoice==='auto'?' (đang: '+(QUALITY_LEVELS.find(l=>l.id===qualityLevel)?.label||'')+')':''}</option>)}</select></label><label>Tốc độ di chuyển<select aria-label="Tốc độ di chuyển" defaultValue="1" onChange={e=>{input.current.speed=Number(e.target.value);}}><option value=".75">Chậm</option><option value="1">Vừa</option></select></label><button onClick={()=>{input.current.reset++;window.dispatchEvent(new Event('museum-navigation-input'));setPanel(null);}}>Đặt lại góc nhìn</button><p className="hall-help">Kéo để nhìn quanh, cuộn hoặc chụm hai ngón để phóng to. Máy tính: W/A/S/D để đi.</p><button onClick={()=>p.onModule(2)}>Tôn vinh giáo viên · Đang xây dựng</button><button onClick={()=>p.onModule(3)}>Tôn vinh học sinh · Đang xây dựng</button>{import.meta.env.DEV&&adminAvailable&&(p.admin?<button className="admin-link" onClick={()=>{signOut();setPanel(null);}}>Đăng xuất quản trị</button>:<button className="admin-link" onClick={()=>{setPanel(null);p.onAdminLogin?.();}}>Quản trị viên: đăng nhập</button>)}</div>}
+   {panel==='map'?<><div className="hall-plan" aria-label="Sơ đồ mặt bằng phòng 24 × 16 mét"><YouAreHere pose={pose}/><span className="hall-plan-entry">Lối vào</span><span className="hall-map-wall hall-map-left"/><span className="hall-map-wall hall-map-right"/>{layout.stops.filter((s:any,i:number,a:any[])=>s.group&&s.group!=='statue'&&!a.slice(0,i).some(v=>v.group===s.group)).map((s:any)=><button key={s.id} aria-label={'Đến '+s.title} title={s.title} className={current===s.id?'selected':''} style={{left:(s.eye[0]+12)/24*100+'%',top:(s.eye[2]+8)/16*100+'%'}} onClick={()=>go(s.id)} disabled={moving}>{({principal:'HT',deputy:'PHT',teacher:'GV',staff:'NV',memory:'KV'} as Record<string,string>)[s.group]}</button>)}</div><div className="hall-zone-list"><button disabled={moving} onClick={()=>go('statue')}><span>Tượng nhà giáo Chu Văn An</span><small>Phòng trưng bày nhỏ ở sảnh</small><TourIcon name="right"/></button><button disabled={moving} onClick={()=>go(CABINETS[0].id)}><span>Kỷ vật và thành tích nhà trường</span><small>3 tủ minh họa</small><TourIcon name="right"/></button>{layout.zones.map((z:any)=><button key={z.id} disabled={moving} onClick={()=>go((layout.stops.find((s:any)=>s.group===z.id)||layout.stops.find((s:any)=>s.id==='principal-0')).id)}><span>{z.name}</span><small>{z.people.length}/{z.capacity} vị trí</small><TourIcon name="right"/></button>)}</div></>:<div className="visitor-options"><button onClick={p.onList}><TourIcon name="search"/>Tìm hồ sơ</button><button disabled={moving} onClick={()=>go(nextPresentationStop(layout.stops,current)?.id||'entrance')}>Điểm tham quan tiếp</button><button disabled={moving} onClick={()=>start(true)}>Trình diễn từ điểm hiện tại</button><label><input type="checkbox" checked={!effects} onChange={()=>setEffects(v=>!v)}/>Giảm chuyển động</label><label>Chất lượng hình<select aria-label="Chất lượng hình" value={qualityChoice} onChange={e=>chooseQuality(e.target.value)}>{QUALITY_CHOICES.map(c=><option key={c.id} value={c.id}>{c.label}{c.id==='auto'&&qualityChoice==='auto'?' (đang: '+(QUALITY_LEVELS.find(l=>l.id===qualityLevel)?.label||'')+')':''}</option>)}</select></label><label>Tốc độ di chuyển<select aria-label="Tốc độ di chuyển" defaultValue="1" onChange={e=>{input.current.speed=Number(e.target.value);}}><option value=".75">Chậm</option><option value="1">Vừa</option></select></label><button onClick={()=>{input.current.reset++;window.dispatchEvent(new Event('museum-navigation-input'));setPanel(null);}}>Đặt lại góc nhìn</button><p className="hall-help">Kéo để nhìn quanh, cuộn hoặc chụm hai ngón để phóng to. Máy tính: W/A/S/D để đi.</p><button onClick={()=>p.onModule(2)}>Tôn vinh giáo viên · Đang xây dựng</button><button onClick={()=>p.onModule(3)}>Tôn vinh học sinh · Đang xây dựng</button>{import.meta.env.DEV&&adminAvailable&&(p.admin?<button className="admin-link" onClick={()=>{signOut();setPanel(null);}}>Đăng xuất quản trị</button>:<button className="admin-link" onClick={()=>{setPanel(null);p.onAdminLogin?.();}}>Quản trị viên: đăng nhập</button>)}</div>}
   </section></div>}
 
   {closeup&&closeupSlot&&!panel&&!p.paused&&<div className="hall-closeup" role="group" aria-label={'Xem cận chân dung '+closeupSlot.person.name}>
@@ -322,7 +325,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
   {import.meta.env.DEV&&p.admin&&ready&&<div className={'hall-admin-bar'+(p.adminMoving?' is-moving':'')} role="status"><b>Chế độ quản trị</b>{p.adminMoving
    ?<><span className="hall-admin-move">Đang đổi chỗ: <b>{p.adminMoving}</b> — bấm vào ảnh khác cùng khu để đổi chỗ, hoặc ô “+ Thêm ảnh” để chuyển sang.</span><button onClick={()=>p.onCancelMove?.()}>Hủy đổi chỗ</button></>
-   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
+   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button onClick={()=>p.onArrange?.()}>Sắp xếp theo tổ…</button><button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
   {benchOn&&!benchResult&&ready&&<div className="hall-progress" role="status">{pause?'Đang tạm dừng — bấm ▶ để tiếp tục đo':'Đang đo hiệu năng… '+Math.max(0,benchStep.current)+'/'+benchRoute(layout.stops).length}</div>}
   {benchResult&&<BenchPanel result={benchResult} onClose={()=>setBenchResult(null)}/>}
  </section></div>;

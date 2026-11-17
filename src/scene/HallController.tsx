@@ -57,6 +57,10 @@ export default function HallController({plan,command,paused,effects,input,loaded
  useEffect(()=>{if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}},[atDoor,intro,size.width>=size.height]);
  // safety net: the shot always ends even if no frame is drawn (background tab, very slow phone)
  useEffect(()=>{if(!(atDoor&&intro))return;const id=setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000);return()=>clearTimeout(id);},[atDoor,intro]);
+ // QA only (dev server + ?stats=1): put the camera at an exact pose to check details on the walls
+ useEffect(()=>{if(!import.meta.env.DEV||!/[?&]stats=1/.test(location.search))return;
+  (window as any).__museumCamera=(eye:number[],target:number[],fov?:number)=>{camera.position.fromArray(eye);camera.lookAt(target[0],target[1],target[2]);readLook();if(fov){view.current.fov=view.current.targetFov=fov;}invalidate();};
+  return()=>{delete (window as any).__museumCamera;};});
  useEffect(()=>{const fn=()=>faceDoor();window.addEventListener('museum-face-door',fn);return()=>window.removeEventListener('museum-face-door',fn);});
  useEffect(()=>{const skip=()=>endIntro();window.addEventListener('museum-intro-skip',skip);return()=>window.removeEventListener('museum-intro-skip',skip);});
  // Dev safety net (EntranceDoors): the door left the view while waiting → frame it again.

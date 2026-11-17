@@ -26,3 +26,13 @@
 .admin-actions .danger,.form-error .danger,.admin-confirm .danger{background:#8f2d22;color:#fff;border-color:#8f2d22}
 .admin-confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
 @media(max-width:650px){.admin-slot{grid-template-columns:1fr}.admin-slot-photo{max-width:200px}.hall-admin-bar{top:54px;right:104px;font-size:11px}.hall-admin-hint{display:none}}
+
+/* 17/11 “Sắp xếp theo tổ” dialog */
+.admin-arrange{display:grid;gap:10px;max-width:760px}
+.admin-arrange-table{width:100%;border-collapse:collapse;font-size:14px}
+.admin-arrange-table th{text-align:left;font-weight:600;color:#6b4f32;border-bottom:1px solid #d8c9a6;padding:4px 6px}
+.admin-arrange-table td{padding:4px 6px;border-bottom:1px solid #eee3cc;vertical-align:top}
+.admin-arrange-table td.num{text-align:right;font-variant-numeric:tabular-nums;width:60px}
+.admin-arrange-table input,.admin-arrange-table select{width:100%;min-height:34px;box-sizing:border-box}
+.admin-arrange-table small{display:block;color:#7a6a4d;font-size:11px;margin-top:2px}
+.admin-arrange-plan{margin:0;padding-left:18px;font-size:14px;line-height:1.6}

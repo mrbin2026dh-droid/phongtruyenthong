@@ -18,6 +18,7 @@ import {StopMarkers,RouteDots} from './Wayfinding';
 import PerfProbe from './PerfProbe';
 import EntranceDoors from './EntranceDoors';
 import GildedSign,{type SignSpec} from './GildedSign';
+import {deptPlates} from '../data/arrangeByDept.mjs';
 import FoyerView from './FoyerView';
 import RoomProbes from './RoomProbes';
 import PostFX from './PostFX';
@@ -273,6 +274,20 @@ function WallSign({sign:s}:{sign:any}){
   <group position={[0,0,s.motto?.025:0]}><Inscription text={s.text} width={s.width} height={s.motto?.35:s.labelHeight??(s.id==='principal-sign'?.38:.28)} light={s.motto||s.id==='principal-sign'} centered={s.motto} fontReference={s.fontReference}/></group>
  </group>;
 }
+/** 17/11 (user: arrange by tổ): a slim teal plate with the tổ name under each block of ≥ 2 columns of one tổ, on the plaster
+ * below the oak slats (slats end at 0.75 m; name plates at 0.83–0.97 m). Wall face is 0.14 m behind the frame plane:
+ * plate 1.4 cm off the wall, gold rules and text in front of it — never coplanar with the baked wall. */
+function DeptPlates({slots}:{slots:any[]}){
+ const plates=useMemo(()=>deptPlates(slots.filter((s:any)=>s.group==='teacher')),[slots]);
+ if(import.meta.env.DEV)(window as any).__deptPlates=plates;   // QA (admin computer only)
+ const root=useRef<Group>(null);
+ useEffect(()=>{if(import.meta.env.DEV)(window as any).__deptPlateRoot=root.current;});
+ return <group ref={root}>{plates.map(pl=><group key={pl.wall+pl.x.toFixed(2)+pl.z.toFixed(2)} position={[pl.x,.615,pl.z]} rotation={[0,pl.yaw,0]}>
+  <mesh position={[0,0,-.12]}><boxGeometry args={[pl.length,.115,.012]}/><meshStandardMaterial color="#17383e" roughness={.6}/></mesh>
+  {[-1,1].map(sy=><mesh key={sy} position={[0,sy*.047,-.1125]}><planeGeometry args={[pl.length-.03,.004]}/><meshBasicMaterial color="#c9a560" toneMapped={false}/></mesh>)}
+  <group position={[0,0,-.111]}><Inscription text={'TỔ '+String(pl.dept).toLocaleUpperCase('vi')} width={Math.max(.6,pl.length-.12)} height={.082} light centered/></group>
+ </group>)}</group>;
+}
 function ZoneNames({layout}:{layout:any}){return <>{layout.signs.map((s:any)=><WallSign key={s.id} sign={s}/>)}</>;}
 /** 16/11 (user: “tượng quá mờ… mở rộng ra như một phòng thu nhỏ trưng bày”): the statue stands in a small exhibition
  * room behind the foyer's right wall. Room shell, pedestal and their light are baked (hall-baked.glb); the statue,
@@ -402,7 +417,7 @@ export default function HallScene(p:Props){
   <pointLight position={[0,3.6,-6.3]} intensity={16} distance={9} color="#ffe8bc" decay={2}/>
   <pointLight position={[-8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/><pointLight position={[8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/>
 
-  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/>
+  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer><PrincipalLamps/><LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/><DeptPlates slots={p.layout.slots}/>
   {p.layout.slots.map((slot:any)=><Photo key={slot.person.id} slot={slot} onSelect={id=>{if(!p.moving&&!p.paused)p.onSelect(id);}}/>)}
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}

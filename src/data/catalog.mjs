@@ -113,6 +113,15 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
    if(expectedRevision!==snapshot.revision)throw new Error('Dữ liệu đã đổi sau khi xem trước. Hãy chọn lại bản sao.');
    const people=parseCatalogBackup(text,year);publish(people);return snapshot;
   },
+  /** 17/11 “Sắp xếp theo tổ”: every new position and tổ name in ONE save. Returns the previous people (for undo). */
+  arrange:(slot,rename)=>{
+   const before=snapshot.people;
+   const next=before.map(p=>slot.has(p.id)||rename.has(p.id)?validatePerson({...p,displaySlot:slot.get(p.id)??p.displaySlot,dept:rename.get(p.id)??p.dept},year):p);
+   const used=next.map(p=>p.displaySlot).filter(Boolean);if(new Set(used).size!==used.length)throw new Error('Hai người trùng một vị trí; chưa thay đổi gì.');
+   publish(attachExhibitSlots(next));return before;
+  },
+  /** Undo of arrange(): puts the previous people back as they were. */
+  restorePeople:people=>{publish(attachExhibitSlots(people.map(p=>validatePerson(p,year))));},
   moveToSlot:(id,slotId)=>{const r=moveToSlot(snapshot.people,id,slotId);if(r.people!==snapshot.people)publish(r.people);return r.other;},
   /** Remove one person (admin “Gỡ khỏi tường”). Their wall slot becomes free; other slots do not move. */
   removePerson:id=>{
