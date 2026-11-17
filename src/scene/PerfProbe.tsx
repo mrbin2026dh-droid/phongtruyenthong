@@ -17,8 +17,14 @@ export default function PerfProbe({choice,level,onLevel,record}:QualityControl){
  const sharpen=()=>{still.current=true;setDpr(stillDpr(live.current.level,window.devicePixelRatio||1));invalidate();};
  useEffect(()=>{setDpr(dprFor(level,window.devicePixelRatio||1));still.current=false;win.current={sum:0,n:0,streak:win.current.streak};invalidate();
   clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);return()=>clearTimeout(timer.current);},[level,setDpr,invalidate]);
- useFrame((_,dt)=>{
-  if(!motionDelta(dt))return;
+ // 17/11 (user: “giật lag” near the slide screen): only CAMERA motion counts. The slide screen animates on its own
+ // (frames rendered while the camera stands still): those frames must not drop the sharp still resolution (a canvas
+ // resize + blur every 7 s) nor be measured as the visitor's frame rate.
+ const lastCam=useRef<number[]>([]);
+ useFrame(({camera},dt)=>{
+  const now=[...camera.position.toArray(),...camera.quaternion.toArray(),(camera as any).fov??0],prev=lastCam.current;lastCam.current=now;
+  const cameraMoved=prev.length===now.length&&now.some((v,i)=>Math.abs(v-prev[i])>1e-5);
+  if(!cameraMoved||!motionDelta(dt))return;
   if(still.current){still.current=false;setDpr(dprFor(live.current.level,window.devicePixelRatio||1));}
   clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);
   record?.current?.push(dt);

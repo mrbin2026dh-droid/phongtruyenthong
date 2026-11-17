@@ -47,3 +47,12 @@ test('Wiring: displays in the scene, viewer on tap, admin dialog, sent with “X
  assert.ok(disp.includes('clippingPlanes={clip}')&&disp.includes("slideTo(-1)"),'touch-screen carousel: clipped strip, auto-advance');
  assert.ok(tour.includes("fit:'bare' as const"),'17/11: tri ân 20/11 picture until the school uploads its own');
 });
+
+test('17/11 (giật lag): the slide screen never drops the still resolution and only animates when looked at',()=>{
+ const src=f=>readFileSync(new URL('../src/'+f,import.meta.url),'utf8');
+ const probe=src('scene/PerfProbe.tsx');assert.ok(probe.includes('if(!cameraMoved||!motionDelta(dt))return;'),'only camera motion lowers the resolution / is measured');
+ const disp=src('scene/GalleryDisplays.tsx');
+ assert.ok(disp.includes('renderer?.initTexture(tex)')&&disp.includes('requestIdleCallback'),'GPU upload while idle');
+ assert.ok(disp.includes('!inView(get().camera)'),'auto-advance only when the screen is in view');
+ assert.ok(disp.includes('const W=phone?1600:1920'),'slides at the source size 1920×1080');
+});
