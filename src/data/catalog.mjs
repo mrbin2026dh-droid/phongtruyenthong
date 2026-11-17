@@ -58,11 +58,14 @@ export function parseCatalogBackup(text,year=new Date().getFullYear()){
  const people=data.people.map(p=>{
   if(!p||typeof p!=='object'||String(p.id).startsWith('DEMO-'))throw new Error('Không nhập hồ sơ DEMO bố cục vào dữ liệu gốc.');
   if(ids.has(p.id))throw new Error('Bản sao bị trùng mã hồ sơ.');ids.add(p.id);
-  if(p.displaySlot){if(typeof p.displaySlot!=='string'||!knownSlots.has(p.displaySlot)||slots.has(p.displaySlot))throw new Error('Vị trí trưng bày trùng hoặc không hợp lệ.');slots.add(p.displaySlot);}
+  // 17/11 (99-position layout): a position that no longer exists (old teacher-085…112, staff-…) or is taken twice must
+  // never stop the site from loading — the person simply gets a free position again (assignExhibitSlots).
+  if(p.displaySlot!==undefined&&p.displaySlot!==''&&typeof p.displaySlot!=='string')throw new Error('Vị trí trưng bày không hợp lệ.');
+  const slot=p.displaySlot&&knownSlots.has(p.displaySlot)&&!slots.has(p.displaySlot)?p.displaySlot:'';if(slot)slots.add(slot);
   if(typeof p.image!=='string'||p.image.length>2000000||(p.image&&!isPhotoRef(p.image)&&!isPublishedPhoto(p.image)&&!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p.image)))throw new Error('Ảnh trong bản sao phải là JPEG/PNG/WebP cục bộ hợp lệ.');
   if(![2/3,3/4].some(r=>Math.abs(r-p.photoRatio)<.001))throw new Error('Tỷ lệ ảnh phải là 2:3 hoặc 3:4.');
   if(!Array.isArray(p.workHistory)||p.workHistory.some(h=>!h||typeof h.id!=='string'||typeof h.role!=='string'))throw new Error('Đợt công tác không hợp lệ.');
-  return validatePerson({id:p.id,name:p.name,role:p.role,dept:p.dept,group:p.group,status:p.status,birthYear:p.birthYear,description:p.description,image:p.image,photoRatio:p.photoRatio,displaySlot:p.displaySlot,workHistory:p.workHistory.map(h=>({id:h.id,startYear:h.startYear,endYear:h.endYear,role:h.role}))},year);
+  return validatePerson({id:p.id,name:p.name,role:p.role,dept:p.dept,group:p.group,status:p.status,birthYear:p.birthYear,description:p.description,image:p.image,photoRatio:p.photoRatio,displaySlot:slot,workHistory:p.workHistory.map(h=>({id:h.id,startYear:h.startYear,endYear:h.endYear,role:h.role}))},year);
  });
  return attachExhibitSlots(people);
 }

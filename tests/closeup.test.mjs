@@ -8,14 +8,14 @@ const dist=(s)=>Math.hypot(s.eye[0]-s.target[0],s.eye[2]-s.target[2]);
 test('Phones held sideways stand 1.9 m from teacher/staff walls; computers and upright phones keep 2.8 m',()=>{
  const L=layoutHall([]),wall=L.stops.filter(s=>s.group==='teacher'||s.group==='staff');
  const phone=fitHallStops(L.stops,2.16,true).filter(s=>s.group==='teacher'||s.group==='staff');
- assert.ok(wall.length>=20&&wall.every(s=>Math.abs(dist(s)-2.8)<1e-6));
+ assert.ok(wall.length>=16&&wall.every(s=>Math.abs(dist(s)-2.8)<1e-6));
  assert.ok(phone.every(s=>Math.abs(dist(s)-PHONE_WALL_DISTANCE)<1e-6&&isWalkable(s.eye)),'every phone stop moved and walkable');
  assert.ok(fitHallStops(L.stops,2.16,false).filter(s=>s.group==='teacher').every(s=>Math.abs(dist(s)-2.8)<1e-6),'computer unchanged');
  assert.ok(fitHallStops(L.stops,.5,true).filter(s=>s.group==='teacher').every(s=>Math.abs(dist(s)-2.8)<1e-6),'upright phone unchanged');
  const plan=createHallPlan(fitHallStops(L.stops,2.16,true));
  for(const s of phone)assert.doesNotThrow(()=>findPath(plan,'entrance',s.id),s.id);
 });
-test('Every one of the 127 frames has a reachable close-up 1.1 m in front of it',()=>{
+test('Every one of the 99 frames has a reachable close-up 1.1 m in front of it',()=>{
  const L=layoutHall([]),stops=fitHallStops(L.stops,2.16,true);
  for(const slot of exhibitSlots()){
   const c=closeupStop(slot,'x');assert.ok(c,slot.slotId);
@@ -25,9 +25,9 @@ test('Every one of the 127 frames has a reachable close-up 1.1 m in front of it'
 });
 test('Trước / Sau order stays in the zone, top row before bottom row of each column',()=>{
  const slots=exhibitSlots(),teachers=closeupOrder(slots,'teacher'),leaders=closeupOrder(slots,'principal');
- assert.equal(teachers.length,112);assert.ok(teachers.every(s=>s.group==='teacher'));
+ assert.equal(teachers.length,96);assert.ok(teachers.every(s=>s.group==='teacher'));
  assert.ok(teachers[0].y>teachers[1].y&&teachers[0].column===teachers[1].column);
- assert.equal(leaders.length,3);assert.equal(closeupOrder(slots,'staff').length,12);
+ assert.equal(leaders.length,3);assert.equal(closeupOrder(slots,'staff').length,0,'17/11: no separate staff zone');
 });
 test('Frames: teacher/staff dark walnut with a gold lip, Ban Giám hiệu profiled gilt; close-up only on phones',()=>{
  const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8'),tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');

@@ -44,9 +44,9 @@ export default function AdminArrange({onClose,onDone}:{onClose:()=>void;onDone:(
       </select></td>
      </tr>)}
     </tbody></table>
-    {office>0&&<p className="form-error">Có {office} người ghi tổ “Văn phòng” đang ở khu giáo viên. Nếu họ là nhân viên, sửa nhóm của từng người trước khi sắp xếp.</p>}
+    {office>0&&<p className="fine"><b>Tổ văn phòng</b> ({office} người: toàn bộ nhân viên và người ghi tổ “Văn phòng”) luôn xếp <b>cuối dãy</b> — cuối tường phải, gần lối ra.</p>}
     <p className="fine">Bước 2 · Xem trước ({result.teachers}/{result.capacity} chỗ). Trong mỗi tổ: tổ trưởng → tổ phó → theo năm vào trường.
-     Tường đã kín nên các tổ xếp liền nhau; tổ có số người lẻ dùng chung một cột với tổ kế bên. Không xét nam/nữ.</p>
+     Giáo viên và nhân viên chung một dãy liền mạch; tổ có số người lẻ dùng chung một cột với tổ kế bên. Không xét nam/nữ.</p>
     <ul className="admin-arrange-plan">{[...bySeg.entries()].map(([seg,list])=><li key={seg}><b>{seg}:</b> {list.map(x=>x.name+' ('+x.count+')').join(' · ')}</li>)}</ul>
     {result.split.length>0&&<p className="fine">Tổ phải chia làm 2 khối vì không vừa trọn một mảng tường: <b>{result.split.join(', ')}</b> (đã chọn thứ tự cắt ít nhất).</p>}
     {result.rename.size>0&&<p className="fine">{result.rename.size} hồ sơ sẽ được ghi lại tên tổ thống nhất — bảng Xuất bản sẽ tính là “sửa thông tin”.</p>}

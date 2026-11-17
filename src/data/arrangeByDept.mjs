@@ -1,16 +1,19 @@
 // 17/11 (user: “sắp theo tổ”): arrange the teacher zone by department (tổ), pure functions (tests/arrangeByDept.test.mjs).
-// The zone is FULL (112 people, 112 positions), so nothing may stay empty: people are packed contiguously in reading order
+// When the zone is full nothing may stay empty: people are packed contiguously in reading order
 // (wall segments by visibility, columns left→right as the visitor faces the wall, top cell then bottom), and the ORDER of the
 // tổ is searched so that as few tổ as possible are cut across two walls. No gender is used (the data has none).
 import {exhibitSlots,exhibitZone} from './exhibitSlots.mjs';
 
 const strip=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
 /** Spelling-insensitive key: case, accents kept apart from dashes/spaces (“Toán - Tin” = “Toán Tin” = “Toán – Tin”). */
+/** 17/11 (user): every staff member belongs to “Tổ văn phòng”, which always closes the run (end of the right wall). */
+export const OFFICE_KEY='van phong';
+const keyOf=p=>p.group==='staff'?OFFICE_KEY:deptKey(p.dept);
 export function deptKey(dept){
  const k=strip(dept).toLowerCase().replace(/[-–—_/.,]+/g,' ').replace(/\s+/g,' ').trim();
  return ({khtn:'khoa hoc tu nhien',khxh:'khoa hoc xa hoi'})[k]||k;
 }
-const PRETTY={'khoa hoc tu nhien':'Khoa học tự nhiên','khoa hoc xa hoi':'Khoa học xã hội'};
+const PRETTY={'khoa hoc tu nhien':'Khoa học tự nhiên','khoa hoc xa hoi':'Khoa học xã hội','van phong':'Văn phòng'};
 /** Readable name for a group of spellings: the most used one, with a proper en dash and sentence-like case kept. */
 function prettyName(variants){
  const best=[...variants.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'vi'))[0][0];
@@ -21,7 +24,7 @@ function prettyName(variants){
 /** Teacher-zone departments after the safe merges (spelling only). Semantic merges (Ngoại ngữ / Tiếng Anh…) are the admin's call. */
 export function deptGroups(people){
  const groups=new Map();
- for(const p of people){if(exhibitZone(p)!=='teacher')continue;const key=deptKey(p.dept);
+ for(const p of people){if(exhibitZone(p)!=='teacher')continue;const key=keyOf(p);
   if(!groups.has(key))groups.set(key,{key,variants:new Map(),ids:[]});
   const g=groups.get(key);g.variants.set(p.dept,(g.variants.get(p.dept)||0)+1);g.ids.push(p.id);}
  return [...groups.values()].map(g=>({key:g.key,name:prettyName(g.variants),variants:[...g.variants.keys()],count:g.ids.length}))
@@ -66,22 +69,27 @@ export function orderDepts(sizes,capacities){
 /** Full arrangement. `names`: dept key → final tổ name (admin merges: several keys may map to one name).
  * Returns slot per person, the department rename per person (only where the text changes) and a readable plan. */
 export function arrangeByDept(people,names={}){
- const teachers=people.filter(p=>exhibitZone(p)==='teacher');
+ const all=people.filter(p=>exhibitZone(p)==='teacher');
  const segs=teacherSegments(),capacity=segs.reduce((n,s)=>n+s.capacity,0);
+ // 17/11: more teachers than positions (sample records still in the data) → people with a photo first
+ const teachers=all.length<=capacity?all:[...all.filter(p=>p.image),...all.filter(p=>!p.image)].slice(0,capacity);
  const defaults=new Map(deptGroups(teachers).map(g=>[g.key,g.name]));
- const nameOf=p=>names[deptKey(p.dept)]||defaults.get(deptKey(p.dept));
+ const nameOf=p=>names[keyOf(p)]||defaults.get(keyOf(p));
  const byName=new Map();for(const p of teachers){const n=nameOf(p);if(!byName.has(n))byName.set(n,[]);byName.get(n).push(p);}
  // largest first, then alphabetical: the search keeps this preference among equally good orders (deterministic)
  const groups=[...byName.entries()].map(([name,list])=>({name,list:list.sort((a,b)=>roleRank(a)-roleRank(b)||firstYear(a)-firstYear(b)||a.name.localeCompare(b.name,'vi')||String(a.id).localeCompare(String(b.id)))}))
   .sort((a,b)=>b.list.length-a.list.length||a.name.localeCompare(b.name,'vi'));
- const order=orderDepts(groups.map(g=>g.list.length),segs.map(s=>s.capacity));
+ // Tổ văn phòng (all staff + any teacher filed under “Văn phòng”) is taken out of the search and closes the run
+ const officeIdx=groups.findIndex(g=>g.list.some(p=>keyOf(p)===OFFICE_KEY)),rest=groups.map((g,i)=>i).filter(i=>i!==officeIdx);
+ const order=orderDepts(rest.map(i=>groups[i].list.length),segs.map(s=>s.capacity)).map(k=>rest[k]).concat(officeIdx>=0?[officeIdx]:[]);
  const cells=segs.flatMap(s=>s.cells.map(slotId=>({slotId,seg:s.index})));
  const slot=new Map(),rename=new Map(),plan=[];let k=0;
  for(const gi of order){const g=groups[gi],used=new Map();
   for(const p of g.list){if(k>=cells.length)break;const c=cells[k++];slot.set(p.id,c.slotId);used.set(c.seg,(used.get(c.seg)||0)+1);
    if(p.dept!==g.name)rename.set(p.id,g.name);}
   plan.push({name:g.name,count:g.list.length,parts:[...used.entries()].map(([seg,n])=>({wall:segs[seg].wall,seg,count:n}))});}
- return {slot,rename,plan,unplaced:teachers.filter(p=>!slot.has(p.id)).map(p=>p.id),split:plan.filter(p=>p.parts.length>1).map(p=>p.name),capacity,teachers:teachers.length};
+ const unplaced=all.filter(p=>!slot.has(p.id)).map(p=>p.id);for(const id of unplaced)slot.set(id,'');   // off the wall (no stale slot)
+ return {slot,rename,plan,unplaced,split:plan.filter(p=>p.parts.length>1).map(p=>p.name),capacity,teachers:all.length};
 }
 
 /** Tổ name plates for the current wall: runs of ≥2 consecutive columns whose BOTTOM cell holds the same tổ (each bottom cell

@@ -15,10 +15,14 @@ test('Backup roundtrip preserves IDs, slots, photos and work spells, commits ato
 });
 test('Invalid backup, duplicate IDs, unsafe images, overlapping history and DEMO never mutate the catalog',()=>{
  const store=createCatalogStore(seed,{storage:storage(),year:2026});const original=store.getSnapshot();
- for(const change of [p=>p.push({...p[0]}),p=>p[0].image='https://external.invalid/photo.jpg',p=>p[0].id='DEMO-FAKE',p=>p[0].workHistory.push({...p[0].workHistory[0],id:'overlap'}),p=>p[1].displaySlot=p[0].displaySlot,p=>p[0].displaySlot='UNKNOWN-SLOT']){
+ for(const change of [p=>p.push({...p[0]}),p=>p[0].image='https://external.invalid/photo.jpg',p=>p[0].id='DEMO-FAKE',p=>p[0].workHistory.push({...p[0].workHistory[0],id:'overlap'})]){
   const people=structuredClone(original.people);change(people);assert.throws(()=>store.restoreBackup(pack(people),{expectedRevision:0}));assert.equal(store.getSnapshot(),original);
  }
  for(const text of ['{','{"schemaVersion":2,"people":[]}',pack([])])assert.throws(()=>parseCatalogBackup(text,2026));
+ // 17/11 (99 positions): a stale or doubled position is not an error any more — the person is placed again, nobody lost
+ const people=structuredClone(original.people);people[1].displaySlot=people[0].displaySlot;people[2].displaySlot='teacher-112';
+ const parsed=parseCatalogBackup(pack(people),2026);assert.equal(parsed.length,people.length);
+ const used=parsed.map(p=>p.displaySlot).filter(Boolean);assert.equal(new Set(used).size,used.length,'no position twice');
 });
 test('Restore refuses a stale preview, a changed second tab or storage failure',()=>{
  const mem=storage(),first=createCatalogStore(seed,{storage:mem,year:2026}),second=createCatalogStore(seed,{storage:mem,year:2026});const text=pack(first.getSnapshot().people);

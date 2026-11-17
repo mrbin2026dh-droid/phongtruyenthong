@@ -18,9 +18,9 @@ test('17/11: tổ spellings merge safely (case, dashes, spaces, KHTN) — meanin
  assert.equal(g.find(x=>x.key===deptKey('Toán Tin')).name,'Toán – Tin','readable name with an en dash');
 });
 
-test('17/11: wall segments in visiting order fill the 112 teacher positions exactly',()=>{
+test('17/11: wall segments in visiting order — 96 positions for teachers AND staff (entrance wall unused)',()=>{
  const s=teacherSegments();
- assert.deepEqual(s.map(x=>x.wall),['back','back','left','right','front']);
+ assert.deepEqual(s.map(x=>x.wall),['back','back','left','right']);assert.deepEqual(s.map(x=>x.capacity),[16,16,32,32]);
  assert.equal(s.reduce((n,x)=>n+x.capacity,0),exhibitSlots().filter(x=>x.group==='teacher').length);
  // reading order: left → right as the visitor faces each wall; top cell before bottom cell in a column
  const back=s[0].cells.map(id=>slotById.get(id));assert.ok(back[0].x<back[2].x&&back[0].y>back[1].y);
@@ -28,14 +28,19 @@ test('17/11: wall segments in visiting order fill the 112 teacher positions exac
 });
 
 test('17/11: arrangement places every teacher once, contiguously per tổ, leaders first — deterministic',()=>{
- const r=arrangeByDept(published),teachers=published.filter(p=>exhibitZone(p)==='teacher');
- assert.equal(r.unplaced.length,0);assert.equal(r.slot.size,teachers.length);
- const slots=[...r.slot.values()];assert.equal(new Set(slots).size,slots.length,'no position used twice');
+ const r=arrangeByDept(published),all=published.filter(p=>exhibitZone(p)==='teacher');
+ // published data still holds 50 photo-less sample records: 112 teachers for 84 positions → the samples stay off the wall
+ assert.equal(r.unplaced.length,all.length-96);
+ assert.equal(r.plan.at(-1).name,'Văn phòng','Tổ văn phòng (all staff) closes the run');
+ assert.ok(all.filter(p=>p.group==='staff').every(p=>r.rename.get(p.id)==='Văn phòng'||p.dept==='Văn phòng'),'staff join Tổ văn phòng');assert.ok(r.unplaced.every(id=>!all.find(p=>p.id===id).image),'only photo-less samples are left out');
+ for(const id of r.unplaced)assert.equal(r.slot.get(id),'','no stale position kept');
+ const teachers=all.filter(p=>r.slot.get(p.id));
+ const slots=[...r.slot.values()].filter(Boolean);assert.equal(new Set(slots).size,slots.length,'no position used twice');
  for(const id of slots)assert.equal(slotById.get(id).group,'teacher','stays in the teacher zone');
  // contiguous in reading order (a tổ may be cut only where reported)
  const order=teacherSegments().flatMap(s=>s.cells),idx=new Map(order.map((id,i)=>[id,i]));
  const name=new Map(teachers.map(p=>[p.id,r.rename.get(p.id)??deptGroups(published).find(g=>g.key===deptKey(p.dept)).name]));
- const seq=[...r.slot.entries()].sort((a,b)=>idx.get(a[1])-idx.get(b[1])).map(([id])=>name.get(id));
+ const seq=[...r.slot.entries()].filter(([,s])=>s).sort((a,b)=>idx.get(a[1])-idx.get(b[1])).map(([id])=>name.get(id));
  const blocks=seq.filter((n,i)=>i===0||seq[i-1]!==n);assert.equal(blocks.length,new Set(blocks).size,'each tổ is one run in reading order');
  assert.ok(r.split.length<=1,'at most one tổ cut across walls with the current sizes');
  // tổ trưởng then tổ phó first inside their tổ
@@ -45,7 +50,8 @@ test('17/11: arrangement places every teacher once, contiguously per tổ, leade
  assert.deepEqual([...arrangeByDept(published).slot.entries()],[...r.slot.entries()],'same input → same wall');
  // admin merge: two tổ become one block with one name
  const merged=arrangeByDept(published,{[deptKey('Tiếng Anh')]:'Ngoại ngữ',[deptKey('Ngoại ngữ')]:'Ngoại ngữ'});
- assert.ok(merged.plan.some(p=>p.name==='Ngoại ngữ'&&p.count===12));
+ const both=r.plan.filter(p=>p.name==='Ngoại ngữ'||p.name==='Tiếng Anh').reduce((n,p)=>n+p.count,0);
+ assert.ok(merged.plan.some(p=>p.name==='Ngoại ngữ'&&p.count===both)&&!merged.plan.some(p=>p.name==='Tiếng Anh'),'one block, one name');
 });
 
 test('17/11: order search cuts as few tổ as possible',()=>{

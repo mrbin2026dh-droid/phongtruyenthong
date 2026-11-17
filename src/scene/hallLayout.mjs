@@ -1,7 +1,7 @@
 import {EXHIBIT_ZONES,exhibitSlots,assignExhibitSlots} from '../data/exhibitSlots.mjs';
 import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
-export const HALL={width:24,depth:16,height:4.2,capacity:127,pitch:.9};
+export const HALL={width:24,depth:16,height:4.2,capacity:99,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
 /** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
  * pier caps (x 3.02) and to the corners (x 12). Exported to Blender (slats + wall washers). */
@@ -30,7 +30,7 @@ export function cabinetWallPieces(){
  for(const c of CABINETS){const left=c.x-n.width/2;pieces.push({x:(edge+left)/2,y:(n.bottom+n.top)/2,width:left-edge,height:n.top-n.bottom});edge=c.x+n.width/2;}
  pieces.push({x:(edge+12)/2,y:(n.bottom+n.top)/2,width:12-edge,height:n.top-n.bottom});return pieces;
 }
-// Fixed wall positions: 1 principal + 2 deputies (Ban Giám hiệu), 112 teachers, 12 staff = 127.
+// Fixed wall positions (17/11): 1 principal + 2 deputies (Ban Giám hiệu) + 96 teachers & staff in one run = 99 (98 people today).
 export function wallColumns(){return exhibitSlots().filter((s,i,a)=>a.findIndex(v=>v.column===s.column)===i);}
 export function layoutHall(people,sort='service',page=0){
  const {assigned,warnings,definitions}=assignExhibitSlots(people);
@@ -65,7 +65,6 @@ export function layoutHall(people,sort='service',page=0){
  {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-left',text:TEACHER_MOTTO,x:-11.79,z:0,yaw:Math.PI/2,width:13.4,y:3.48,motto:true},
  {id:'teacher-right',text:'TẤT CẢ VÌ HỌC SINH THÂN YÊU',x:11.79,z:0,yaw:-Math.PI/2,width:13.4,y:3.48,motto:true,fontReference:TEACHER_MOTTO},
- {id:'staff-sign',text:'ĐỘI NGŨ NHÂN VIÊN',x:11.79,z:4.5,yaw:-Math.PI/2,width:3.6,y:3.13,labelHeight:.14},
  {id:'memory-sign',text:'HIỀN TÀI LÀ NGUYÊN KHÍ CỦA MỘT QUỐC GIA',x:7.1,z:7.78,yaw:Math.PI,width:7.1,y:3.44,motto:true}];
  return {slots,zones,stops:finalStops,signs,pages:1,page:0,total:people.length,displayed:slots.length,warnings,reserved:definitions.length-slots.length};
 }

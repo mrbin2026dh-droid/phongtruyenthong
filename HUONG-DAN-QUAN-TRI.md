@@ -12,11 +12,11 @@ Website công khai **chỉ để xem**. Mọi thay đổi ảnh và thông tin �
    - **Sắp xếp theo tổ (cả khu giáo viên):** thanh quản trị → **Sắp xếp theo tổ…** →
      (1) kiểm tra bảng tổ: cách viết khác nhau đã gộp sẵn; nếu hai tổ thật ra là một (Ngoại ngữ / Tiếng Anh…) chọn **Gộp vào**; sửa tên tổ nếu cần;
      (2) xem trước tổ nào ở mảng tường nào → **Sắp xếp lên tường**. Trong tổ: tổ trưởng → tổ phó → theo năm vào trường.
-     Khu GV đã kín (112/112) nên các tổ xếp liền nhau, tổ lẻ người dùng chung 1 cột với tổ kế bên; tổ không vừa một mảng sẽ chia 2 khối (hộp thoại báo rõ).
+     Khu GV (84 chỗ) đầy nên các tổ xếp liền nhau, tổ lẻ người dùng chung 1 cột với tổ kế bên; tổ không vừa một mảng sẽ chia 2 khối (hộp thoại báo rõ).
      Dưới mỗi tổ (từ 2 cột trở lên) tự có **biển tên tổ**. Không ưng: bấm **Hoàn tác** ngay trong hộp thoại. Sau đó chỉnh lẻ bằng **Đổi chỗ…**, rồi **Xuất bản**.
      Lưu ý: tên tổ được ghi thống nhất lại cho các hồ sơ (bảng Xuất bản tính là “sửa thông tin”).
    - **Đổi chỗ ảnh:** mở ảnh một người → **Đổi chỗ…** → thanh quản trị chuyển màu xanh → bấm vào **ảnh người khác cùng khu** (hai người đổi chỗ cho nhau) hoặc vào ô **“+ Thêm ảnh”** (chuyển sang ô trống đó). Hủy: nút **Hủy đổi chỗ**, phím Esc, hoặc bấm lại chính ảnh đó. Chỉ đổi trong cùng khu (GV với GV, NV với NV, PHT với PHT). Bảng Xuất bản có dòng “ảnh đổi chỗ trên tường”.
-   - Thanh “Chế độ quản trị” cho biết số chỗ đã dùng: HT, PHT, GV (tối đa 112), NV.
+   - Thanh “Chế độ quản trị” cho biết số chỗ đã dùng: HT, PHT, GV (tối đa 84), NV.
 4. **Xuất bản:** bấm **“Xuất bản lên website”** → đọc bảng tóm tắt (thêm/sửa/gỡ bao nhiêu) → đánh dấu ô **xác nhận đã có sự đồng ý** → **“Lưu và đưa lên GitHub”**. Khoảng 1–2 phút sau website công khai được cập nhật.
 5. **Xong:** bấm **Đăng xuất**, đóng cửa sổ đen.
 

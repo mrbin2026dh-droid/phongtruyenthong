@@ -10,7 +10,7 @@ test('Finite clockwise tour starts with overview and three cases, covers every p
  assert.deepEqual(ids.slice(0,4),['entrance','memory-0','memory-1','memory-2']);assert.equal(ids.at(-2),'statue','16/11: the visit opens facing the statue and closes with it');
  assert.equal(ids.at(-1),'finish');assert.equal(new Set(ids).size,ids.length);
  const shown=l.stops.flatMap(s=>s.slotIds||[]);
- assert.equal(shown.length,127);assert.equal(new Set(shown).size,127);
+ assert.equal(shown.length,99);assert.equal(new Set(shown).size,99);
  assert.deepEqual([...shown].sort(),exhibitSlots().map(s=>s.slotId).sort());
  let at='gate';const visited=[];
  for(let i=0;i<100;i++){const next=nextPresentationStop(l.stops,at);if(!next)break;visited.push(next.id);at=next.id;}
@@ -38,11 +38,11 @@ test('Camera turn is bounded, eases to rest and behaves consistently at 30/60/12
  assert.ok(presentationTurnStep(.01,.016)<presentationTurnStep(1,.016));
 });
 
-test('Memorabilia bay has no portraits and blocks walking through cases; 127 IDs and two rows remain',()=>{
- const slots=exhibitSlots();assert.equal(slots.length,127);
- assert.equal(new Set(slots.map(s=>s.slotId)).size,127);
- assert.ok(slots.every(s=>s.wall!=='front'||s.x<0));
- assert.ok(slots.filter(s=>s.group!=='principal'&&s.group!=='deputy').every(s=>s.width===.55&&s.height===.80&&[1.42,2.62].includes(s.y)));
+test('Memorabilia bay has no portraits and blocks walking through cases; 99 IDs and two rows remain (17/11)',()=>{
+ const slots=exhibitSlots();assert.equal(slots.length,99);
+ assert.equal(new Set(slots.map(s=>s.slotId)).size,99);
+ assert.ok(slots.every(s=>s.wall!=='front'),'17/11: no portraits on the entrance wall any more');
+ assert.ok(slots.filter(s=>s.group!=='principal'&&s.group!=='deputy').every(s=>s.width===.66&&s.height===.96&&[1.44,2.64].includes(s.y)));
  for(const x of [4.7,7.1,9.5]){assert.equal(isWalkable([x,1.7,7.4]),false);assert.equal(isWalkable([x,1.7,4.65]),true);}
 });
 

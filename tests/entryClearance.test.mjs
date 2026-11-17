@@ -23,7 +23,7 @@ test('Statue room (16/11): reached through the portal, visitors kept off the ped
  for(const from of ['entrance','principal-0','gate'])assert.doesNotThrow(()=>findPath(plan,from,'statue'));
  assert.ok(Math.abs(M.yaw+Math.PI/2)<1e-9,'faces −x, towards the portal');
  const o=R.opening;assert.ok(o.width>=2&&o.height>=2.6&&o.height<R.height,'portal wide and tall, under the room ceiling');
- for(const target of ['memory-0','staff-0','principal-0','statue','gate']){
+ for(const target of ['memory-0','teacher-0','principal-0','statue','gate']){
   const route=routeFromPosition(plan,[0,1.7,6.5],target),path=roundedPath(route.points,1);
   assert.ok(path.points.slice(1).every((p,i)=>segmentWalkable(path.points[i],p)),target);
  }

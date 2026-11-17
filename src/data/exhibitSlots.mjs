@@ -2,70 +2,56 @@
 export const EXHIBIT_ZONES=[
  {id:'principal',name:'Hiệu trưởng',short:'Hiệu trưởng'},
  {id:'deputy',name:'Phó Hiệu trưởng',short:'Phó hiệu trưởng'},
- {id:'teacher',name:'Các thế hệ nhà giáo',short:'Giáo viên'},
- {id:'staff',name:'Đội ngũ nhân viên',short:'Nhân viên'}
+ {id:'teacher',name:'Các thế hệ nhà giáo',short:'Giáo viên & nhân viên'}
 ];
 const key=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
 export function exhibitZone(p){
- if(p.group==='staff')return 'staff';if(p.group!=='management')return 'teacher';
+ // 17/11 (user): staff are “Tổ văn phòng” and share the teachers' continuous wall (placed last by the tổ arrangement)
+ if(p.group!=='management')return 'teacher';
  const roles=[p.role,...(p.workHistory||[]).map(h=>h.role)].map(key);
  if(roles.some(r=>/^hieu truong(?:\s|$)/.test(r)))return 'principal';
  return roles.some(r=>/^pho hieu truong(?:\s|$)/.test(r))?'deputy':'management-other';
 }
-/** Outward shift of the back-wall teacher bays (16/11); their centre moves from x ±7.0 to ±7.5. */
-export const BACK_BAY_SHIFT=.5;
+/** 17/11 (user: the school has ~98 people, staffing quota 100; teachers said the portraits are too small on phones):
+ * 99 positions — 1 Hiệu trưởng + 2 Phó Hiệu trưởng + 96 for teachers AND staff in one continuous run (user 17/11: 98 people =
+ * 3 CBQL + 90 GV + 5 NV; staff = “Tổ văn phòng”, last) — and frames 20 % larger
+ * each way (0.55×0.80 → 0.66×0.96 m: +44 % photo area). The entrance-wall bay is no longer used for portraits.
+ * Back wall: two bays of 8 columns (0.9 m pitch) centred on x ±7.5; side walls: 16 columns each, z −6.4 → 6.4 (0.853 m).
+ * Rows at 2.64 / 1.44 m: top frame ends 3.12 m (under the wall signs), the lower name plate stays above the slats' edge. */
+export const TEACHER_FRAME={width:.66,height:.96},TEACHER_ROWS=[2.64,1.44];
+export const BACK_BAY_X=7.5,BACK_COLUMNS=8,BACK_PITCH=.9,SIDE_COLUMNS=16,SIDE_SPAN=6.4;
 export function exhibitSlots(){
  const out=[];let column=0;
- // 4×6 (2:3) portraits: photo .49×.735 m inside a .55×.80 m frame; rows lowered 3 cm to keep the top row below wall signs.
- const pair=(zone,wall,x,z,yaw)=>{const c=column++;for(const y of [2.62,1.42])out.push({slotId:zone+'-'+String(out.filter(s=>s.group===zone).length+1).padStart(3,'0'),group:zone,wall,x,y,z,yaw,column:c,width:.55,height:.80});};
- // Ban Giám hiệu (13/11/2026): 1 Hiệu trưởng ở giữa, 2 Phó Hiệu trưởng hai bên, cố định.
+ const next=zone=>zone+'-'+String(out.filter(s=>s.group===zone).length+1).padStart(3,'0');
+ const pair=(zone,wall,x,z,yaw)=>{const c=column++;for(const y of TEACHER_ROWS)out.push({slotId:next(zone),group:zone,wall,x,y,z,yaw,column:c,width:TEACHER_FRAME.width,height:TEACHER_FRAME.height});};
+ // Ban Giám hiệu: three identical 2:3 frames on one line, HT in the centre (13/11).
  const leader=(group,n,x,width,height,y)=>out.push({slotId:group+'-'+String(n).padStart(3,'0'),group,wall:'back',x,y,z:-7.73,yaw:0,column:column++,width,height});
- // Ban Giám hiệu: three identical 2:3 frames (user request 13/11) on one line, HT in the centre.
  leader('deputy',1,-1.6,1.00,1.50,1.80);leader('principal',1,0,1.00,1.50,1.80);leader('deputy',2,1.6,1.00,1.50,1.80);
- for(let i=0;i<6;i++)pair('teacher','back',-5.8-i*.9,-7.86,0);
- for(let i=0;i<14;i++)pair('teacher','left',-11.86,-5.85+i*.9,Math.PI/2);
- for(let i=0;i<7;i++)pair('teacher','front',-10.35+i*.9,7.86,Math.PI);
- for(let i=0;i<5;i++)pair('teacher','front',10.35-i*.9,7.86,Math.PI);
- for(let i=0;i<14;i++)pair('teacher','right',11.86,5.85-i*.9,-Math.PI/2);
- // Former 12 deputy positions (back wall, right of centre) become teacher-093…104 for growth.
- for(let i=0;i<6;i++)pair('teacher','back',5.8+i*.9,-7.86,0);
- // Compact leadership panel (5.4 m) frees ~2.6 m per side: two new columns each side → teacher-105…112.
- for(const x of [-3.85,-4.75,3.85,4.75])pair('teacher','back',x,-7.86,0);
- for(const x of [-4.05,-3.15,2.7,3.6,4.5,5.4])pair('staff','front',x,7.86,Math.PI);
- // Keep IDs fixed while moving staff onto one uninterrupted interior wall.
- const staff=out.filter(s=>s.group==='staff'),swap=out.filter(s=>s.group==='teacher'&&s.wall==='right').slice(0,12);
- const pose=s=>({wall:s.wall,x:s.x,z:s.z,yaw:s.yaw});
- staff.forEach((s,i)=>{const old=pose(s);Object.assign(s,pose(swap[i]));Object.assign(swap[i],old);});
- // Symmetric front bays, well clear of the entrance, hinges and door leaves.
- for(const side of [-1,1]){
-  const columns=[...new Set(out.filter(s=>s.wall==='front'&&Math.sign(s.x)===side).map(s=>s.column))];
-  columns.sort((a,b)=>out.find(s=>s.column===a).x-out.find(s=>s.column===b).x);
-  columns.forEach((c,i)=>{const x=side<0?-10.45+i*.85:3.65+i*.85;out.filter(s=>s.column===c).forEach(s=>{s.x=x;});});
- }
- // Free the entrance-left bay for memorabilia without deleting a portrait slot.
- // Relocate its nine columns onto the side walls; keep IDs, two rows and photo sizes.
- const displaced=[...new Set(out.filter(s=>s.wall==='front'&&s.x>0).map(s=>s.column))];
- displaced.forEach((column,i)=>out.filter(s=>s.column===column).forEach(s=>{
-  Object.assign(s,{wall:i<5?'left':'right',x:i<5?-11.86:11.86,z:i<5?10+i:-14+i,yaw:i<5?Math.PI/2:-Math.PI/2});
- }));
- for(const wall of ['left','right']){
-  const columns=[...new Set(out.filter(s=>s.wall===wall).map(s=>s.column))]
-   .sort((a,b)=>out.find(s=>s.column===a).z-out.find(s=>s.column===b).z);
-  columns.forEach((column,i)=>out.filter(s=>s.column===column).forEach(s=>{s.z=-6.4+i*12.8/(columns.length-1);}));
- }
- // Existing back-wall teacher columns shift .15 m towards the centre to sit evenly after the new ones (.9 m pitch).
- for(const s of out)if(s.group==='teacher'&&s.wall==='back'&&Math.abs(s.x)>=5.79)s.x=Math.sign(s.x)*Math.round((Math.abs(s.x)-.15)*1000)/1000;
- // 16/11 (user: the two back-wall teacher bays crowded the Ban Giám hiệu cabinet — 0.48 m to its pier caps but 1.4 m to
- // the corners): both bays move 0.5 m outwards → ≈0.9 m clear on each side (BACK_BAY in hallLayout, slats in Blender).
- for(const s of out)if(s.group==='teacher'&&s.wall==='back')s.x=Math.sign(s.x)*Math.round((Math.abs(s.x)+BACK_BAY_SHIFT)*1000)/1000;
+ const bay=side=>{for(let i=0;i<BACK_COLUMNS;i++)pair('teacher','back',side*BACK_BAY_X+(i-(BACK_COLUMNS-1)/2)*BACK_PITCH,-7.86,0);};
+ const sideZ=i=>Math.round((-SIDE_SPAN+i*2*SIDE_SPAN/(SIDE_COLUMNS-1))*1000)/1000;
+ bay(-1);
+ for(let i=0;i<SIDE_COLUMNS;i++)pair('teacher','left',-11.86,sideZ(i),Math.PI/2);
+ for(let i=0;i<SIDE_COLUMNS;i++)pair('teacher','right',11.86,sideZ(i),-Math.PI/2);
+ bay(1);
  return out;
 }
 /** Existing valid assignments win; new IDs fill only unused slots in their zone. */
 export function assignExhibitSlots(people){
  const definitions=exhibitSlots(),used=new Set(),assigned=new Map(),warnings=[];
- for(const p of people){const slot=definitions.find(s=>s.slotId===p.displaySlot&&s.group===exhibitZone(p));if(slot&&!used.has(slot.slotId)){used.add(slot.slotId);assigned.set(p.id,slot);}}
- const pending=people.filter(p=>!assigned.has(p.id)).sort((a,b)=>(a.startYear??Infinity)-(b.startYear??Infinity)||String(a.id).localeCompare(String(b.id),'en',{numeric:true}));
- for(const p of pending){const slot=definitions.find(s=>s.group===exhibitZone(p)&&!used.has(s.slotId));if(slot){used.add(slot.slotId);assigned.set(p.id,slot);}else warnings.push({id:p.id,zone:exhibitZone(p)});}
+ // 17/11 (99 positions): people WITH a photo always come first — a photo-less sample record (“Giáo viên mẫu”) only fills
+ // what is left and never keeps a real teacher off the wall. Within each class the old rules hold (own slot, then by year).
+ const photo=p=>Boolean(p.image),order=(a,b)=>(a.startYear??Infinity)-(b.startYear??Infinity)||String(a.id).localeCompare(String(b.id),'en',{numeric:true});
+ const own=p=>definitions.find(s=>s.slotId===p.displaySlot&&s.group===exhibitZone(p));
+ const claimedBySamples=new Set(people.filter(p=>!photo(p)).map(own).filter(Boolean).map(s=>s.slotId));
+ for(const cls of [true,false]){
+  const group=people.filter(p=>photo(p)===cls);
+  for(const p of group){const slot=own(p);if(slot&&!used.has(slot.slotId)){used.add(slot.slotId);assigned.set(p.id,slot);}}
+  for(const p of group.filter(p=>!assigned.has(p.id)).sort(order)){
+   const free=s=>s.group===exhibitZone(p)&&!used.has(s.slotId);
+   const slot=(cls&&definitions.find(s=>free(s)&&!claimedBySamples.has(s.slotId)))||definitions.find(free);
+   if(slot){used.add(slot.slotId);assigned.set(p.id,slot);}else warnings.push({id:p.id,zone:exhibitZone(p)});
+  }
+ }
  return {assigned,warnings,definitions};
 }
 export function attachExhibitSlots(people){const {assigned}=assignExhibitSlots(people);return people.map(p=>({...p,displaySlot:assigned.get(p.id)?.slotId||''}));}

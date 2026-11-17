@@ -16,7 +16,9 @@ test('Photo references and slot defaults',()=>{
 });
 
 test('Admin adds a teacher into a chosen empty wall slot; nobody else moves',()=>{
- const store=createCatalogStore(seed,{storage:memory(),year:2026}),before=store.getSnapshot().people;
+ const store=createCatalogStore(seed,{storage:memory(),year:2026});
+ // 17/11: the 84 teacher positions are all taken by the seed — free one first (a teacher leaves)
+ store.removePerson(store.getSnapshot().people.find(p=>p.group==='teacher').id);const before=store.getSnapshot().people;
  const used=new Set(before.map(p=>p.displaySlot)),empty=exhibitSlots().filter(s=>s.group==='teacher'&&!used.has(s.slotId)).at(-1);
  const saved=store.savePerson(newPerson(empty));
  assert.equal(saved.displaySlot,empty.slotId);assert.equal(saved.image,'idb:abcdef1234567890');
@@ -56,6 +58,7 @@ test('Admin mode wiring: login gate, wall editor, real data with empty slots, no
 test('16/11 (user): admin moves a portrait — swap with another of the same zone, move to an empty slot, never across zones',async()=>{
  const {summarize}=await import('../src/data/publishSummary.mjs');
  const store=createCatalogStore(seed,{storage:memory()}),people=()=>store.getSnapshot().people,at=id=>people().find(p=>p.id===id).displaySlot;
+ store.removePerson(people().filter(p=>p.group==='teacher').at(-1).id);   // 17/11: zone full (84/84) → leave one position free
  const teachers=people().filter(p=>exhibitSlots().find(s=>s.slotId===p.displaySlot)?.group==='teacher');
  assert.ok(teachers.length>=2);
  const [a,b]=teachers,before=people().map(p=>({...p})),slotA=a.displaySlot,slotB=b.displaySlot;
@@ -69,8 +72,8 @@ test('16/11 (user): admin moves a portrait — swap with another of the same zon
  const used=new Set(people().map(p=>p.displaySlot)),empty=exhibitSlots().find(s=>s.group==='teacher'&&!used.has(s.slotId));
  assert.equal(store.moveToSlot(a.id,empty.slotId),null);assert.equal(at(a.id),empty.slotId);assert.ok(!people().some(p=>p.displaySlot===slotB),'old frame is empty now');
  // across zones / unknown slot → refused, nothing changes
- const staffSlot=exhibitSlots().find(s=>s.group==='staff').slotId,snap=JSON.stringify(people());
- assert.throws(()=>store.moveToSlot(a.id,staffSlot),/cùng khu/);assert.throws(()=>store.moveToSlot(a.id,'XX-99'),/không hợp lệ/);
+ const leaderSlot=exhibitSlots().find(s=>s.group==='deputy').slotId,snap=JSON.stringify(people());
+ assert.throws(()=>store.moveToSlot(a.id,leaderSlot),/cùng khu/,'17/11: teachers & staff share one wall; Ban Giám hiệu stays apart');assert.throws(()=>store.moveToSlot(a.id,'XX-99'),/không hợp lệ/);
  assert.equal(JSON.stringify(people()),snap);
  // the move survives a reload of the working copy
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8'),editor=readFileSync(new URL('../src/components/AdminSlotEditor.tsx',import.meta.url),'utf8');

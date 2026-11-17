@@ -7,7 +7,9 @@ const seed=JSON.parse(readFileSync(new URL('../src/data/legacy-seed.json',import
 const newTeacher={id:'GV097',name:'Mẫu mới',group:'teacher',role:'Giáo viên',dept:'Toán',status:'Đang công tác',birthYear:null,description:'Mẫu',image:'',photoRatio:.75,workHistory:[{id:'a',startYear:2026,endYear:null,role:'Giáo viên'}]};
 test('96→97, sửa tên, thay thứ tự danh sách không đổi chỗ của96người cũ',()=>{
  const store=createCatalogStore(seed);const before=store.getSnapshot().people;
- const slots=new Map(before.map(p=>[p.id,p.displaySlot]));store.savePerson(newTeacher);
+ const slots=new Map(before.map(p=>[p.id,p.displaySlot]));
+ // 17/11: the teacher zone is exactly full (84/84) — the 97th person is a new staff member (staff 9/12)
+ store.savePerson({...newTeacher,group:'staff',role:'Nhân viên',workHistory:[{id:'a',startYear:2026,endYear:null,role:'Nhân viên'}]});
  const after=store.getSnapshot().people;
  assert.ok(after.at(-1).displaySlot);assert.equal(new Set(after.map(p=>p.displaySlot)).size,97);
  after.slice(0,96).forEach(p=>assert.equal(p.displaySlot,slots.get(p.id)));
@@ -21,15 +23,16 @@ test('Reload, cập nhật người quay lại và thêm hiệu trưởng không
  const p=store.getSnapshot().people.find(v=>v.group==='teacher');const id=p.displaySlot;
  store.savePerson({...p,name:'Tên đã cập nhật'}, {id:p.id});assert.equal(store.getSnapshot().people.find(v=>v.id===p.id).displaySlot,id);
 });
-test('Ban Giám hiệu 1 HT + 2 PHT; 112 GV (92 + 20 dự phòng tăng thêm); 12 NV; không đè nhau',()=>{
+test('17/11: 99 vị trí — 1 HT + 2 PHT + 96 GV & NV liền mạch (98 người: 3 CBQL, 90 GV, 5 NV); không đè nhau',()=>{
  const p={...newTeacher,group:'management',role:'Đã nghỉ hưu',workHistory:[{role:'Hiệu trưởng'}]};assert.equal(exhibitZone(p),'principal');
- const definitions=exhibitSlots();assert.equal(definitions.length,127);assert.equal(new Set(definitions.map(s=>s.slotId)).size,127);
- assert.equal(new Set(definitions.map(s=>[s.x,s.y,s.z].join())).size,127);
+ const definitions=exhibitSlots();assert.equal(definitions.length,99);assert.equal(new Set(definitions.map(s=>s.slotId)).size,99);
+ assert.equal(new Set(definitions.map(s=>[s.x,s.y,s.z].join())).size,99);
  assert.equal(definitions.filter(s=>s.group==='principal').length,1);
  assert.equal(definitions.filter(s=>s.group==='deputy').length,2);
- assert.equal(definitions.filter(s=>s.group==='teacher').length,112);
- for(const d of definitions)assert.ok(Math.abs(d.height/d.width-(d.group==='principal'||d.group==='deputy'?1.5:.80/.55))<1e-9,'4×6 frames');
- assert.equal(definitions.filter(s=>s.group==='staff').length,12);
+ assert.equal(definitions.filter(s=>s.group==='teacher').length,96);
+ for(const d of definitions.filter(s=>s.group==='teacher'||s.group==='staff'))assert.ok(d.width===.66&&d.height===.96,'17/11: frames 20 % larger each way');
+ for(const d of definitions)assert.ok(Math.abs(d.height/d.width-(d.group==='principal'||d.group==='deputy'?1.5:.96/.66))<1e-9,'4×6 frames');
+ assert.equal(definitions.filter(s=>s.group==='staff').length,0);assert.equal(exhibitZone({group:'staff'}),'teacher','staff share the teachers wall');
  const list=Array.from({length:7},(_,i)=>({...p,id:'P'+i}));const result=assignExhibitSlots(list);assert.equal(result.assigned.size,1);assert.equal(result.warnings.length,6);
 });
 test('HT ở giữa, hai PHT đối xứng cùng hàng; cập nhật ảnh không đổi ID/vị trí khi reload',()=>{

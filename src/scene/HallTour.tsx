@@ -73,7 +73,7 @@ export default function HallTour(p:Props){
  // A slot that is already taken opens that person's editor (never a second person in one frame).
  const onEmpty=(slotId:string)=>{if(mover){moveTo(slotId);return;}const taken=layout.slots.find((s:any)=>s.slotId===slotId);if(taken){setEditor({slot:{slotId,group:taken.group},person:taken.person});return;}const d=exhibitSlots().find((x:any)=>x.slotId===slotId);if(d)setEditor({slot:{slotId,group:d.group}});};
  const counts=useMemo(()=>{const c=(g:string)=>layout.slots.filter((s:any)=>s.group===g).length,t=(g:string)=>exhibitSlots().filter((s:any)=>s.group===g).length;
-  return 'HT '+c('principal')+'/'+t('principal')+' · PHT '+c('deputy')+'/'+t('deputy')+' · GV '+c('teacher')+'/'+t('teacher')+' · NV '+c('staff')+'/'+t('staff');},[layout]);
+  return 'HT '+c('principal')+'/'+t('principal')+' · PHT '+c('deputy')+'/'+t('deputy')+' · GV & NV '+c('teacher')+'/'+t('teacher');},[layout]);
 
  return <>
   <Visit
@@ -321,7 +321,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </nav></div>
   {ready&&!moving&&(!manual||atDoor)&&!panel&&!p.paused&&!automatic&&!closeup&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
 
-  {layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
+  {p.admin&&layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
   {import.meta.env.DEV&&p.admin&&ready&&<div className={'hall-admin-bar'+(p.adminMoving?' is-moving':'')} role="status"><b>Chế độ quản trị</b>{p.adminMoving
    ?<><span className="hall-admin-move">Đang đổi chỗ: <b>{p.adminMoving}</b> — bấm vào ảnh khác cùng khu để đổi chỗ, hoặc ô “+ Thêm ảnh” để chuyển sang.</span><button onClick={()=>p.onCancelMove?.()}>Hủy đổi chỗ</button></>
