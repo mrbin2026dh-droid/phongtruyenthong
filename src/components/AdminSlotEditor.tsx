@@ -14,6 +14,12 @@ const year=()=>new Date().getFullYear();
 
 /** On-wall editor: replace photo / edit info of the person in a slot, add a new person to an empty slot,
  * or remove them from the wall. Photos go to IndexedDB, info to the catalog (same data as list/profile). */
+/** 17/11 (người dùng): danh sách tổ và chức danh của trường để chọn nhanh. */
+const DEPTS=['Ngữ Văn','Sử-Địa','Tiếng Anh','Văn Thể Mỹ','Toán-Tin','KHTN','Văn Phòng'];
+const ROLES=['Giáo viên','Nhân viên','Tổ trưởng','Tổ phó'];
+/** The list plus the person's current value when it is not in the list (never lose existing data). */
+const withCurrent=(list:string[],v:string)=>list.includes(v)?list:[v,...list];
+
 export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{slot:{slotId:string;group:string};person?:Person;onClose:()=>void;onSaved:(msg:string)=>void;onMove?:()=>void}){
  const defaults=slotDefaults(slot.group)!;
  const single=person?person.workHistory.length===1:true;
@@ -54,7 +60,7 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{sl
    const photoRatio=file?storedRatio(file.width,file.height):(person?.photoRatio||3/4);
    const history=person?(single?[{...person.workHistory[0],startYear,role:defaults.roleLocked?defaults.role:role.trim(),endYear:status==='Đang công tác'?null:person.workHistory[0].endYear??year()}]:person.workHistory)
     :[{id:crypto.randomUUID(),startYear,endYear:status==='Đang công tác'?null:year(),role:defaults.roleLocked?defaults.role:role.trim()}];
-   const saved=catalog.savePerson({name:name.trim(),role:defaults.roleLocked?defaults.role:role.trim(),dept:dept.trim(),group:defaults.group,status,birthYear,description,image,photoRatio,workHistory:history,displaySlot:slot.slotId},{id:person?.id||'',allowSameName});
+   const saved=catalog.savePerson({name:name.trim(),role:defaults.roleLocked?defaults.role:role.trim(),dept:dept.trim(),group:defaults.roleLocked?defaults.group:(role==='Nhân viên'||dept==='Văn Phòng'?'staff':'teacher'),status,birthYear,description,image,photoRatio,workHistory:history,displaySlot:slot.slotId},{id:person?.id||'',allowSameName});
    if(oldRef&&oldRef!==image&&isPhotoRef(oldRef))void deletePhoto(oldRef);
    onSaved((person?'Đã cập nhật ':'Đã thêm ')+saved.name+' ('+saved.id+')'+(saved.displaySlot===slot.slotId?'':' — lưu ý: chưa đặt được vào ô này, kiểm tra chức danh.'));
   }catch(err){
@@ -82,8 +88,9 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{sl
    </div>
    <div className="admin-slot-fields">
     <label>Họ và tên<input value={name} onChange={e=>setName(e.target.value)} maxLength={120} required autoFocus/></label>
-    <label>Chức danh<input value={defaults.roleLocked?defaults.role:role} onChange={e=>setRole(e.target.value)} disabled={defaults.roleLocked} maxLength={80}/></label>
-    <label>Tổ / bộ phận<input value={dept} onChange={e=>setDept(e.target.value)} maxLength={80} placeholder="Ví dụ: Toán – Tin" required/></label>
+    {/* 17/11 (người dùng): chọn nhanh chức danh và tổ; giá trị cũ không có trong danh sách vẫn được giữ làm một lựa chọn */}
+    <label>Chức danh{defaults.roleLocked?<input value={defaults.role} disabled/>:<select value={role} onChange={e=>setRole(e.target.value)}>{withCurrent(ROLES,role).map(r=><option key={r} value={r}>{r||'— Chọn —'}</option>)}</select>}</label>
+    <label>Tổ / bộ phận<select value={dept} onChange={e=>setDept(e.target.value)} required>{withCurrent(DEPTS,dept).map(d=><option key={d} value={d}>{d||'— Chọn tổ —'}</option>)}</select></label>
     {single?<label>Năm bắt đầu công tác tại trường<input type="number" inputMode="numeric" min={1950} max={year()} value={start} onChange={e=>setStart(e.target.value)}/></label>
      :<p className="fine">Người này có nhiều đợt công tác; sửa các đợt ở trang Quản trị hồ sơ.</p>}
     <label>Năm sinh (không bắt buộc)<input type="number" inputMode="numeric" min={1900} max={year()} value={birth} onChange={e=>setBirth(e.target.value)}/></label>
