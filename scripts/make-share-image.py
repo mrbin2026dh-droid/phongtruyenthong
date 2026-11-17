@@ -9,6 +9,8 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__)); WEB = os.path.dirname(HERE)
 SRC = sys.argv[1]
+# 17/11: ảnh nền có thể là ảnh phòng 3D (mặc định: phóng 1,22 lần, bỏ bớt trần) hoặc ảnh sân trường: --san-truong (giữ trọn khung)
+YARD = '--san-truong' in sys.argv
 OUT = os.path.join(WEB, 'public', 'og'); os.makedirs(OUT, exist_ok=True)
 UF = os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts'); WF = 'C:/Windows/Fonts'
 def font(path, size): return ImageFont.truetype(path, size)
@@ -19,9 +21,9 @@ TEAL, GOLD, GOLD_L, CREAM = (11, 36, 40), (201, 165, 96), (251, 230, 176), (240,
 
 # hall photo on the right 70 %, scaled to cover, aisle (centre of the shot) at ~66 % of the card
 hall = Image.open(SRC).convert('RGB')
-s = max(W * .80 / hall.width, H * 1.22 / hall.height); hall = hall.resize((round(hall.width * s), round(hall.height * s)), Image.LANCZOS)   # less ceiling, portraits larger
+s = max(W * .80 / hall.width, H * (1.0 if YARD else 1.22) / hall.height); hall = hall.resize((round(hall.width * s), round(hall.height * s)), Image.LANCZOS)   # less ceiling, portraits larger
 card = Image.new('RGB', (W, H), TEAL)
-x0 = round(W * .70 - hall.width / 2); y0 = round(-H * .14)
+x0 = round(W * .70 - hall.width / 2); y0 = 0 if YARD else round(-H * .14)
 card.paste(hall, (x0, y0))
 # left fade: solid teal under the text, dissolving into the photo
 fade = Image.new('L', (W, H), 0); fd = ImageDraw.Draw(fade)
