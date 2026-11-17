@@ -15,7 +15,7 @@ export default function VisitLoading({overlay=false,pct=null,stage,stalled=false
   <div className="visit-stage">
    <img className="visit-loading-art" src={TRI_AN+'-1200.webp'} srcSet={TRI_AN+'-1200.webp 1200w, '+TRI_AN+'-1800.webp 1800w, '+TRI_AN+'-2600.webp 2600w'} sizes="(orientation:portrait) 100vw, min(100vw, 165vh)" alt="Tranh khảm tri ân thầy cô nhân ngày Nhà giáo Việt Nam 20/11" decoding="async" fetchPriority="high" draggable={false}/>
    <div className="visit-loading-info">
-    <strong>{ready&&pct!==null&&pct>=100?'Mời thầy cô vào tham quan':stalled?'Tải đang bị gián đoạn':late?'Đường truyền hơi chậm, vẫn đang tải…':'Đang mở không gian tham quan'}</strong><span>{stage||'Chuẩn bị ánh sáng và hình ảnh'}</span>
+    <strong>{ready&&pct!==null&&pct>=100?'Đã sẵn sàng':stalled?'Tải đang bị gián đoạn':late?'Đường truyền hơi chậm, vẫn đang tải…':'Đang mở không gian tham quan'}</strong>{!ready&&<span>{stage||'Chuẩn bị ánh sáng và hình ảnh'}</span>}
     {pct===null
      ?<div className="visit-loading-track" aria-hidden="true"><i/></div>
      :<><div className="visit-loading-track visit-loading-bar" role="progressbar" aria-label="Tiến độ tải" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><i style={{width:pct+'%'}}/></div><span className="visit-loading-pct" aria-hidden="true">{pct}%</span></>}
@@ -24,17 +24,15 @@ export default function VisitLoading({overlay=false,pct=null,stage,stalled=false
      {onList&&<button type="button" className="visit-loading-alt" onClick={onList}>Xem danh sách ảnh</button>}
     </div>}
     {ready&&onEnter&&<div className="visit-loading-actions visit-loading-enter"><button type="button" onClick={onEnter}>Vào tham quan<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>}
-    {late&&onList&&<p className="visit-loading-note">Danh sách ảnh xem được ngay, không cần tải không gian 3D.</p>}
    </div>
    {/* 17/11: mã QR mở trang ảnh kỷ niệm (/tri-an/) — thầy cô quét bằng điện thoại để lưu ảnh / gửi Zalo.
-       Trên màn cảm ứng (chính điện thoại đó) hiện thành nút bấm thay vì mã. */}
+       Nội dung giống nhau trên máy tính và điện thoại; chỉ khác bố cục. */}
    <a className="visit-qr" href={BASE+'tri-an/'} target="_blank" rel="noopener" aria-label="Mở trang lưu ảnh kỷ niệm Tri ân Thầy Cô 20.11">
     <span className="visit-qr-card"><img src={BASE+'welcome/qr-tri-an.svg'} alt="" width="37" height="37" draggable={false}/></span>
     <span className="visit-qr-cap"><b>Quét mã</b> lưu ảnh kỷ niệm</span>
-    <span className="visit-qr-tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Lưu ảnh kỷ niệm</span>
    </a>
   </div>
   {/* 16/11: phones held upright — ask for landscape (CSS shows it only in portrait on touch screens) */}
-  <p className="visit-rotate-hint"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="15" y="5" width="18" height="30" rx="3"/><path d="M8 30a16 16 0 0 0 14 13M40 18A16 16 0 0 0 26 5"/></svg><span>Mở khóa xoay màn hình và <b>xoay ngang điện thoại</b> để tham quan rõ và rộng hơn</span></p>
+  <p className="visit-rotate-hint"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="15" y="5" width="18" height="30" rx="3"/><path d="M8 30a16 16 0 0 0 14 13M40 18A16 16 0 0 0 26 5"/></svg><span><b>Xoay ngang điện thoại</b> để xem rõ hơn</span></p>
  </div>;
 }

@@ -22,5 +22,5 @@ export default function HallLoading({required,onList,openedAt=performance.now(),
  const [now,setNow]=useState(()=>performance.now());
  useEffect(()=>{if(leaving)return;const t=setInterval(()=>setNow(performance.now()),120);return()=>clearInterval(t);},[leaving]);
  const shown=shownProgress(pct,now-openedAt,done);
- return <VisitLoading overlay pct={shown} stage={done?'Đã tải xong — mời vào tham quan':loadStage(state)} stalled={stalled&&!done} onList={onList} ready={done} leaving={leaving} onEnter={onEnter}/>;
+ return <VisitLoading overlay pct={shown} stage={loadStage(state)} stalled={stalled&&!done} onList={onList} ready={done} leaving={leaving} onEnter={onEnter}/>;
 }

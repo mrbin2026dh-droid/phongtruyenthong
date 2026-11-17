@@ -16,16 +16,11 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink)}
 body{min-height:100dvh;font:400 15px/1.6 "Noto Sans","Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(ellipse at 50% 0%,var(--bg2),var(--bg) 65%) fixed;padding:max(18px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom))}
-main{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center}
-.kicker{margin:6px 0 0;font:600 12px/1.4 inherit;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-h1{margin:6px 0 2px;font:600 clamp(26px,6vw,40px)/1.2 "Noto Serif","Times New Roman",Cambria,serif;color:var(--ink)}
-.sub{margin:0;color:var(--muted);font-size:14px}
-.rule{display:flex;align-items:center;gap:10px;width:180px;margin:14px auto 18px;color:var(--gold2)}
-.rule::before,.rule::after{content:"";flex:1;height:1px;background:currentColor;opacity:.7}
-.rule i{width:6px;height:6px;background:currentColor;transform:rotate(45deg)}
+main{max-width:1040px;margin:0 auto;min-height:calc(100dvh - 46px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+h1{margin:10px 0 2px;font:600 clamp(26px,6vw,40px)/1.2 "Noto Serif","Times New Roman",Cambria,serif;color:var(--ink)}
+.sub{margin:0 0 18px;color:var(--gold);font-size:14px;letter-spacing:.04em}
 figure{margin:0;width:100%}
 figure img{display:block;width:100%;height:auto;border-radius:10px;box-shadow:0 18px 50px #0009,0 0 0 1px #e1c28640;background:#0c272b}
-figcaption{margin-top:10px;color:var(--muted);font-size:13px}
 .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:22px 0 6px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:999px;border:1px solid var(--gold);font:600 15px/1.2 inherit;text-decoration:none;cursor:pointer}
 .btn-primary{background:linear-gradient(180deg,#f0d18d,#d6b06a);color:#122d38;border-color:#e9c97f;box-shadow:0 6px 18px #0006}
@@ -33,32 +28,20 @@ figcaption{margin-top:10px;color:var(--muted);font-size:13px}
 .btn-ghost{background:transparent;color:var(--ink);border-color:#d2b37699}
 .btn-ghost:hover{background:#ffffff12}
 .btn svg{width:18px;height:18px;flex:none}
-.hint{max-width:560px;margin:14px auto 0;padding:12px 16px;border:1px solid #d2b37640;border-radius:14px;background:#0a2226aa;color:var(--muted);font-size:13px;text-align:left}
-.hint b{color:var(--gold);font-weight:600}
-.back{margin-top:26px;color:var(--gold);font-size:14px}
-.back a{color:inherit}
-footer{margin-top:22px;color:#8fa6a2;font-size:12px}
 @media (max-width:520px){.btn{width:100%}}
 </style>
 </head>
 <body>
 <main>
- <p class="kicker">Trường THCS Chu Văn An</p>
  <h1>Tri ân Thầy Cô · 20.11</h1>
- <p class="sub">Kỷ niệm 44 năm Ngày Nhà giáo Việt Nam (20/11/1982 – 20/11/2026)</p>
- <div class="rule" aria-hidden="true"><i></i></div>
+ <p class="sub">Trường THCS Chu Văn An</p>
  <figure>
-  <img src="tri-an-thay-co-20-11.jpg" width="2560" height="1808" alt="Tranh khảm trái tim ghép từ chân dung thầy cô, nhân viên Trường THCS Chu Văn An — Tri ân Thầy Cô 20.11">
-  <figcaption>Trái tim ghép từ chân dung thầy cô, nhân viên nhà trường</figcaption>
+  <img src="tri-an-thay-co-20-11.jpg" width="2560" height="1808" alt="Tri ân Thầy Cô 20.11 — Trường THCS Chu Văn An">
  </figure>
  <div class="actions">
-  <a class="btn btn-primary" href="tri-an-thay-co-20-11.jpg" download="Tri-an-Thay-Co-20-11-THCS-Chu-Van-An.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Lưu ảnh về máy</a>
-  <button class="btn btn-ghost" type="button" id="share" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Chia sẻ (Zalo…)</button>
-  <a class="btn btn-ghost" href="tri-an-thay-co-20-11-ban-in.jpg" download="Tri-an-Thay-Co-20-11-ban-in.jpg">Bản nét để in</a>
+  <a class="btn btn-primary" href="tri-an-thay-co-20-11.jpg" download="Tri-an-Thay-Co-20-11.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Lưu ảnh</a>
+  <button class="btn btn-ghost" type="button" id="share" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Chia sẻ</button>
  </div>
- <p class="hint">Mở bằng Zalo mà không tải được? <b>Nhấn giữ vào ảnh</b> rồi chọn <b>Lưu ảnh</b>, hoặc bấm <b>⋯</b> góc trên → <b>Mở bằng trình duyệt</b>. Khi gửi qua Zalo, chọn gửi <b>dạng tệp</b> để ảnh giữ nguyên độ nét.</p>
- <p class="back"><a href="../">Tham quan Phòng truyền thống 3D →</a></p>
- <footer>Trường THCS Chu Văn An · Xã Đăk Hà · Tỉnh Quảng Ngãi</footer>
 </main>
 <script>
 (function(){
