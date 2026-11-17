@@ -9,6 +9,7 @@ const AdminLogin=import.meta.env.DEV?lazy(()=>import('../components/AdminLogin')
 const AdminSlotEditor=import.meta.env.DEV?lazy(()=>import('../components/AdminSlotEditor')):null;
 const AdminPublish=import.meta.env.DEV?lazy(()=>import('../components/AdminPublish')):null;
 const AdminArrange=import.meta.env.DEV?lazy(()=>import('../components/AdminArrange')):null;
+const AdminGallery=import.meta.env.DEV?lazy(()=>import('../components/AdminGallery')):null;
 import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
@@ -42,7 +43,7 @@ import '../hall.css';
 const Scene=lazy(()=>import('./HallScene'));
 
 type Props={people:Person[];sort:string;onSelect:(id:string)=>void;onModule:(n:number)=>void;onList:()=>void;onNarrate:(text:string)=>void;onSilence:()=>void;caption:string;speaking:boolean;paused:boolean};
-type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void;onArrange?:()=>void;onClearPhotos?:()=>void;onUndoClear?:()=>void};
+type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void;onArrange?:()=>void;onClearPhotos?:()=>void;onUndoClear?:()=>void;onGalleryAdmin?:()=>void};
 
 export default function HallTour(p:Props){
  const [page,setPage]=useState(0),[demo,setDemo]=useState<Person|null>(null);
@@ -52,6 +53,7 @@ export default function HallTour(p:Props){
  const enabled=new URLSearchParams(window.location.search).get('preview')!=='off'&&!admin&&!publishedPeople;
  const [publish,setPublish]=useState(false),[arranging,setArranging]=useState(false);
  // 17/11: “Xóa tất cả ảnh” (xác nhận trước) + Hoàn tác cho tới khi rời trang
+ const [galleryAdmin,setGalleryAdmin]=useState(false);
  const [confirmClear,setConfirmClear]=useState(false),[clearUndo,setClearUndo]=useState<Person[]|null>(null);
  const photoCount=p.people.filter(x=>x.image).length;
  const preview=useMemo(()=>hallPreview(p.people,enabled),[p.people,enabled]);
@@ -86,10 +88,11 @@ export default function HallTour(p:Props){
    key={'page-'+layout.page}
    {...p}
    onSelect={select}
-   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish||arranging||confirmClear}
+   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish||arranging||confirmClear||galleryAdmin}
    onPublish={()=>setPublish(true)}
    onArrange={()=>{setMover(null);setArranging(true);}}
    onClearPhotos={()=>{setMover(null);setConfirmClear(true);}}
+   onGalleryAdmin={()=>{setMover(null);setGalleryAdmin(true);}}
    onUndoClear={clearUndo?()=>{try{catalog.restorePeople(clearUndo);setClearUndo(null);setAdminMessage('Đã hoàn tác: ảnh đã trở lại · chưa xuất bản');}catch(err){setAdminMessage(err instanceof Error?err.message:'Không hoàn tác được.');}}:undefined}
    admin={admin}
    adminEmpties={empties}
@@ -103,6 +106,7 @@ export default function HallTour(p:Props){
    onPage={setPage}
    mockCount={preview.added.length}
   />
+  {AdminGallery&&galleryAdmin&&<Suspense fallback={null}><AdminGallery onClose={()=>setGalleryAdmin(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
   {AdminArrange&&arranging&&<Suspense fallback={null}><AdminArrange onClose={()=>setArranging(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
   {AdminLogin&&login&&<Suspense fallback={null}><AdminLogin onClose={()=>setLogin(false)}/></Suspense>}
   {AdminPublish&&publish&&<Suspense fallback={null}><AdminPublish people={p.people} onClose={()=>setPublish(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
@@ -367,7 +371,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
   {import.meta.env.DEV&&p.admin&&ready&&<div className={'hall-admin-bar'+(p.adminMoving?' is-moving':'')} role="status"><b>Chế độ quản trị</b>{p.adminMoving
    ?<><span className="hall-admin-move">Đang đổi chỗ: <b>{p.adminMoving}</b> — bấm vào ảnh khác cùng khu để đổi chỗ, hoặc ô “+ Thêm ảnh” để chuyển sang.</span><button onClick={()=>p.onCancelMove?.()}>Hủy đổi chỗ</button></>
-   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button onClick={()=>p.onArrange?.()}>Sắp xếp theo tổ…</button>{p.onUndoClear?<button onClick={p.onUndoClear}>Hoàn tác xóa ảnh</button>:<button className="danger" onClick={()=>p.onClearPhotos?.()}>Xóa tất cả ảnh</button>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
+   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button onClick={()=>p.onArrange?.()}>Sắp xếp theo tổ…</button><button onClick={()=>p.onGalleryAdmin?.()}>Ảnh trình diễn…</button>{p.onUndoClear?<button onClick={p.onUndoClear}>Hoàn tác xóa ảnh</button>:<button className="danger" onClick={()=>p.onClearPhotos?.()}>Xóa tất cả ảnh</button>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
   {benchOn&&!benchResult&&ready&&<div className="hall-progress" role="status">{pause?'Đang tạm dừng — bấm ▶ để tiếp tục đo':'Đang đo hiệu năng… '+Math.max(0,benchStep.current)+'/'+benchRoute(layout.stops).length}</div>}
   {benchResult&&<BenchPanel result={benchResult} onClose={()=>setBenchResult(null)}/>}
  </section></div>;

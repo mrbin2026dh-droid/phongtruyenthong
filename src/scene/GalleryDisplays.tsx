@@ -41,11 +41,14 @@ function matTexture(url:string,aspect:number){
  return mats.get(key)!;
 }
 function captionTexture(text:string){
- const c=document.createElement('canvas');c.width=2048;c.height=112;const g=c.getContext('2d')!;
- g.clearRect(0,0,c.width,c.height);g.font='500 54px "Noto Sans"';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#f3e4c4';
+ const c=document.createElement('canvas');c.width=2048;c.height=140;const g=c.getContext('2d')!;
+ g.clearRect(0,0,c.width,c.height);g.font='500 68px "Noto Sans"';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#f3e4c4';
  let s=text;while(s.length>3&&g.measureText(s).width>c.width-80)s=s.slice(0,-2);if(s!==text)s=s.trimEnd()+'…';
  g.fillText(s,c.width/2,c.height/2+2);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.minFilter=LinearFilter;return t;
 }
+const panelLight=(()=>{if(typeof document==='undefined')return null;const c=document.createElement('canvas');c.width=8;c.height=256;const g=c.getContext('2d')!;
+ const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#2a5458');gr.addColorStop(.18,'#173a3e');gr.addColorStop(1,'#0c2225');g.fillStyle=gr;g.fillRect(0,0,8,256);
+ const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
 const sheen=(()=>{if(typeof document==='undefined')return null;const c=document.createElement('canvas');c.width=256;c.height=256;const g=c.getContext('2d')!;
  const gr=g.createLinearGradient(0,0,256,256);gr.addColorStop(0,'#ffffff30');gr.addColorStop(.35,'#ffffff08');gr.addColorStop(.6,'#ffffff00');gr.addColorStop(1,'#ffffff10');
  g.fillStyle=gr;g.fillRect(0,0,256,256);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
@@ -94,7 +97,7 @@ function Screen({items,onOpen,active}:{items:DisplayItem[];onOpen:(i:number)=>vo
    </group>
   </group>
   {sheen&&<mesh position={[0,SCREEN.y,-.009]}><planeGeometry args={[SCREEN.w,SCREEN.h]}/><meshBasicMaterial map={sheen} transparent depthWrite={false} toneMapped={false}/></mesh>}
-  <mesh position={[0,CAPTION_Y,-.0105]}><planeGeometry args={[SCREEN.w,.1]}/><meshBasicMaterial map={caption} transparent toneMapped={false} depthWrite={false}/></mesh>
+  <mesh position={[0,CAPTION_Y,-.0105]}><planeGeometry args={[SCREEN.w,.125]}/><meshBasicMaterial map={caption} transparent toneMapped={false} depthWrite={false}/></mesh>
  </group>;
 }
 
@@ -136,7 +139,7 @@ export default function GalleryDisplays({items,onOpen}:Props){
   return <group key={c.id} position={[c.x,0,n.wallZ]} rotation={[0,Math.PI,0]}>
    {i===1
     ?<>{/* dark display panel in front of the old sample objects */}
-     <mesh position={[0,mid+.025,-.012]}><planeGeometry args={[n.width-.11,n.top-n.bottom-.05]}/><meshBasicMaterial color="#10292d" toneMapped={false}/></mesh>
+     <mesh position={[0,mid+.025,-.012]}><planeGeometry args={[n.width-.11,n.top-n.bottom-.05]}/><meshBasicMaterial color={panelLight?"#ffffff":"#10292d"} map={panelLight} toneMapped={false}/></mesh>
      <Screen items={list} active={active} onOpen={k=>onOpen('activity',k)}/></>
     :<FlipFrame items={list} face={FACES[i]} period={9000} delay={i===2?2500:6000} active={active} onOpen={k=>onOpen(cat as 'award'|'memento',k)}/>}
   </group>;})}</>;
