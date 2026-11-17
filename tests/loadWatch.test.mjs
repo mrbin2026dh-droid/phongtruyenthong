@@ -46,7 +46,7 @@ test('No dead ends: slow/stalled loading, scene errors and missing WebGL all off
  const loading=src('components/VisitLoading.tsx'),app=src('PeopleApp.tsx'),hall=src('scene/HallTour.tsx');
  assert.ok(loading.includes('setTimeout(()=>setSlow(true),SLOW_MS)')&&loading.includes('Thử lại')&&loading.includes('Xem danh sách ảnh'));
  assert.ok(hall.includes('<HallLoading required={required} onList={p.onList} '));
- assert.ok(hall.includes('revealTimer.current=setTimeout(reveal,benchOn?')&&hall.includes('MIN_SHOW_MS-(performance.now()-openedAt.current)'),'17/11: picture shown ≥ MIN_SHOW_MS, bench unchanged');
+ assert.ok(hall.includes('if(benchOn)revealTimer.current=setTimeout(reveal,')&&hall.includes('onEnter={()=>revealNow.current?.()}'),'17/11: visitors enter only with “Vào tham quan”; bench runs still enter by themselves');
  assert.ok(hall.includes('(assetsLoaded||(assetTimeout&&modelsReady))'),'timeout never reveals a scene without room + statue');
  assert.ok(app.includes('<VisitLoading onList={()=>navigate(\'list\')}/>'),'chunk download screen can also leave');
  assert.ok(app.includes('<SceneBoundary onList={()=>navigate(\'list\')}>')&&!app.includes('Tra cứu trên thanh đầu trang'),'public site has no header menu');

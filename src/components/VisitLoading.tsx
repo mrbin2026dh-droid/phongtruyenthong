@@ -23,13 +23,12 @@ export default function VisitLoading({overlay=false,pct=null,stage,stalled=false
      <button type="button" onClick={()=>window.location.reload()}>Thử lại</button>
      {onList&&<button type="button" className="visit-loading-alt" onClick={onList}>Xem danh sách ảnh</button>}
     </div>}
-    {ready&&onEnter&&<div className="visit-loading-actions visit-loading-enter"><button type="button" onClick={onEnter}>Vào tham quan<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>}
+    {ready&&onEnter&&(pct===null||pct>=100)&&<div className="visit-loading-actions visit-loading-enter"><button type="button" onClick={onEnter}>Vào tham quan<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>}
    </div>
    {/* 17/11: mã QR mở trang ảnh kỷ niệm (/tri-an/) — thầy cô quét bằng điện thoại để lưu ảnh / gửi Zalo.
        Nội dung giống nhau trên máy tính và điện thoại; chỉ khác bố cục. */}
    <a className="visit-qr" href={BASE+'tri-an/'} target="_blank" rel="noopener" aria-label="Mở trang lưu ảnh kỷ niệm Tri ân Thầy Cô 20.11">
     <span className="visit-qr-card"><img src={BASE+'welcome/qr-tri-an.svg'} alt="" width="37" height="37" draggable={false}/></span>
-    <span className="visit-qr-cap"><b>Quét mã</b> lưu ảnh kỷ niệm</span>
    </a>
   </div>
   {/* 16/11: phones held upright — ask for landscape (CSS shows it only in portrait on touch screens) */}

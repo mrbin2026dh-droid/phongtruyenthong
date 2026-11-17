@@ -12,7 +12,6 @@ const AdminArrange=import.meta.env.DEV?lazy(()=>import('../components/AdminArran
 import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
-import {MIN_SHOW_MS} from '../data/loadWatch.mjs';
 import VirtualHost from '../components/VirtualHost';
 import {hallNarration} from '../data/narration.mjs';
 import {portraitPath,adminAvailable,publishedPeople,catalog} from '../data/repository';
@@ -166,15 +165,15 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    // 16/11 (user): manual walking (Tự bước) is on from the foyer onwards, not only inside the room
    if(benchOn)openDoor();else{setAtDoor(true);setManual(true);}
   };
-  // 17/11 (user): keep the tri ân picture on screen at least MIN_SHOW_MS even on fast networks;
-  // “Vào tham quan” (revealNow) lets anyone enter as soon as everything is loaded.
+  // 17/11 (user): the visitor enters ONLY by pressing “Vào tham quan” (revealNow) — no automatic reveal.
+  // The bar still runs for MIN_SHOW_MS so the tri ân picture can be seen. Performance runs (?bench) still enter by themselves.
   revealNow.current=reveal;setLoadDone(true);
-  revealTimer.current=setTimeout(reveal,benchOn?Math.max(400,700-(performance.now()-openedAt.current)):Math.max(400,MIN_SHOW_MS-(performance.now()-openedAt.current)));
+  if(benchOn)revealTimer.current=setTimeout(reveal,Math.max(400,700-(performance.now()-openedAt.current)));
   },[sceneReady,assetsLoaded,assetTimeout,modelsReady]);
  const revealNow=useRef<(()=>void)|null>(null);
  const [loadDone,setLoadDone]=useState(false),[loadingGone,setLoadingGone]=useState(false);
- // fade the loading picture out over the first frames of the scene instead of cutting
- useEffect(()=>{if(!ready||loadingGone)return;const t=setTimeout(()=>setLoadingGone(true),900);return()=>clearTimeout(t);},[ready,loadingGone]);
+ // 17/11: “step into the picture” transition (VisitLoading .visit-loading-leaving, 1,6 s) over the first frames of the scene
+ useEffect(()=>{if(!ready||loadingGone)return;const t=setTimeout(()=>setLoadingGone(true),1800);return()=>clearTimeout(t);},[ready,loadingGone]);
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
  const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};
  const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
