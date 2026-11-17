@@ -15,6 +15,7 @@ import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
 import VirtualHost from '../components/VirtualHost';
+import {MC_ENABLED} from '../data/features';
 import {hallNarration} from '../data/narration.mjs';
 import {portraitPath,adminAvailable,publishedPeople,catalog,gallery,galleryURL} from '../data/repository';
 import GalleryViewer from '../components/GalleryViewer';
@@ -368,10 +369,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    <button aria-label="Sơ đồ phòng chung" title="Sơ đồ phòng chung" aria-expanded={panel==='map'} disabled={atDoor} onClick={e=>toggle('map',e)}><TourIcon name="map"/></button>
    {icon(automatic?(pause?'Tiếp tục trình diễn':'Tạm dừng trình diễn'):moving?(pause?'Tiếp tục hành trình':'Tạm dừng hành trình'):'Trình diễn tự động',automatic||moving?(pause?'play':'pause'):'play',()=>{autoPaused.current=false;if(automatic||moving)setPause(v=>!v);else start();},!ready)}
    <button aria-label="Tự bước" title="Tự bước" aria-pressed={manual} disabled={p.paused||!ready||doorOpening} onClick={()=>{setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(v=>!v);}}><TourIcon name="walk"/></button>
-   {icon(p.speaking?'Tắt lời dẫn':'Nghe giới thiệu','sound',audio)}
+   {MC_ENABLED&&icon(p.speaking?'Tắt lời dẫn':'Nghe giới thiệu','sound',audio)}
    <button aria-label="Tùy chọn" title="Tùy chọn" aria-expanded={panel==='more'} onClick={e=>toggle('more',e)}><TourIcon name="more"/></button>
   </nav></div>
-  {ready&&!moving&&(!manual||atDoor)&&!panel&&!p.paused&&!automatic&&!closeup&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
+  {MC_ENABLED&&ready&&!moving&&(!manual||atDoor)&&!panel&&!p.paused&&!automatic&&!closeup&&<VirtualHost compact active={voice} speaking={p.speaking} caption={p.caption} onPlay={audio} onStop={()=>{p.onSilence();setVoice(false);}} onPanelChange={setHostOpen}/>}
 
   {p.admin&&layout.warnings.length>0&&<p className="hall-capacity-warning" role="alert">Có {layout.warnings.length} hồ sơ chưa có chỗ trong khu tương ứng. Hồ sơ vẫn được giữ; mở Tra cứu để xem đầy đủ.</p>}
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}

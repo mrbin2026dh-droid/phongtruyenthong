@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import VirtualHost from './VirtualHost';
+import {MC_ENABLED} from '../data/features';
 import InstallApp from './InstallApp';
 type Props={minimal?:boolean;count:number;onEnter:()=>void;onModule:(id:number)=>void;onList:()=>void;onGreeting:()=>void;speaking:boolean;caption:string};
 function Emblem({kind}:{kind:'people'|'trophy'|'cap'|'book'|'arrow'|'sound'|'devices'}){
@@ -20,7 +21,7 @@ export default function Welcome({minimal=false,count,onEnter,onModule,onList,onG
     <div className="welcome-ornament" aria-hidden="true"><span/>✦<span/></div>
     <button className="welcome-start" onClick={onEnter}><Emblem kind="book"/><span>Bắt đầu tham quan</span><Emblem kind="arrow"/></button>
     {minimal&&<InstallApp/>}
-    <VirtualHost active={showCaption} caption={caption} speaking={speaking} onPlay={()=>{setShowCaption(true);onGreeting();}} onStop={()=>{if(speaking)onGreeting();setShowCaption(false);}}/>
+    {MC_ENABLED&&<VirtualHost active={showCaption} caption={caption} speaking={speaking} onPlay={()=>{setShowCaption(true);onGreeting();}} onStop={()=>{if(speaking)onGreeting();setShowCaption(false);}}/>}
    </div>
    <figure className="welcome-campus">
     {schoolPhoto

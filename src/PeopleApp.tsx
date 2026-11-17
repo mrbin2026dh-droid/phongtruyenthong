@@ -15,6 +15,7 @@ import {vietnameseVoice} from './data/narration.mjs';
 import {enterImmersive} from './data/immersive';
 import {startHallSound} from './scene/hallAudio';
 import {track} from './data/analytics';
+import {MC_ENABLED} from './data/features';
 import {inAppBrowser,platformOf} from './data/browserEnv.mjs';
 import OpenInBrowser from './components/OpenInBrowser';
 import UpdateBar from './components/UpdateBar';
@@ -75,7 +76,7 @@ export default function PeopleApp(){
  {view==='admin'&&adminAvailable&&PeopleAdmin&&(admin?<Suspense fallback={null}><PeopleAdmin people={people} storageError={snapshot.storageError}/></Suspense>:<section className="admin-info"><h2>Khu vực quản trị</h2><p>Chỉ quản trị viên được chỉnh sửa hồ sơ.</p><button className="gold" onClick={()=>setAdminLogin(true)}>Đăng nhập quản trị</button></section>)}
  {AdminLogin&&adminLogin&&<Suspense fallback={null}><AdminLogin onClose={()=>setAdminLogin(false)}/></Suspense>}
  {(view==='list'||view==='admin')&&!minimal&&<section className="modules" aria-label="Ba phân hệ"><button className="module-card available" onClick={()=>navigate('room')}><span>01 · ĐANG THỬ NGHIỆM</span><h3>CBQL – Giáo viên – Nhân viên</h3><p>Những người đã và đang công tác tại trường</p><b>Vào tham quan →</b></button>{[2,3].map(n=><button className="module-card" key={n} onClick={()=>setModule(n)}><span>0{n} · ĐANG XÂY DỰNG</span><h3>Tôn vinh {n===2?'giáo viên':'học sinh'} xuất sắc</h3><p>Khu vực giới thiệu — chưa triển khai</p><b>Xem thông báo →</b></button>)}</section>}
- {(view==='list'||view==='admin')&&!minimal&&<aside className="mc"><div><b>MC · Lời dẫn thử nghiệm</b><p role="status">{caption}</p></div><button onClick={()=>speaking?silence():speak(greeting)}>{speaking?'Tắt âm thanh':'Nghe lời chào'}</button></aside>}</main>
+ {MC_ENABLED&&(view==='list'||view==='admin')&&!minimal&&<aside className="mc"><div><b>MC · Lời dẫn thử nghiệm</b><p role="status">{caption}</p></div><button onClick={()=>speaking?silence():speak(greeting)}>{speaking?'Tắt âm thanh':'Nghe lời chào'}</button></aside>}</main>
  {view!=='room'&&!minimal&&<footer><i>Tự hào quá khứ — Kiến tạo tương lai</i></footer>}
  {view!=='room'&&<UpdateBar/>}
  {module&&<Dialog title="Phân hệ đang xây dựng" onClose={()=>setModule(null)}><p>Khu vực “Tôn vinh {module===2?'giáo viên':'học sinh'} xuất sắc” hiện đang xây dựng. Vui lòng quay lại sau.</p><button className="gold" onClick={()=>setModule(null)}>Đã hiểu</button></Dialog>}
