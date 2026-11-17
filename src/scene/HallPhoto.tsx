@@ -8,7 +8,8 @@ const cache=new Map<string,Entry>();
 /** Texture tiers (2:3): 0 far 96×144 · 1 near 600×900 · 2 close 900×1350 = the admin upload size (16/11: standing
  * right in front of a frame the photo covers ~1000 screen px — the 600 px copy was magnified and looked soft). */
 export type PhotoTier=0|1|2;
-export const TIER_SIZE:[number,number][]=[[96,144],[600,900],[900,1350]];
+// 17/11 (người dùng: ảnh tường cuối hơi mờ): bản xa 96×144 → 160×240 (ở 7–9 m một ảnh chiếm ~60–110 điểm ảnh màn hình)
+export const TIER_SIZE:[number,number][]=[[160,240],[600,900],[900,1350]];
 function entry(path:string,tier:PhotoTier){
  const key=path+'|'+tier;if(cache.has(key))return cache.get(key)!;
  const canvas=document.createElement('canvas');[canvas.width,canvas.height]=TIER_SIZE[tier];
@@ -49,5 +50,6 @@ export default function HallPhoto({person,tier}:{person:Person;tier:PhotoTier}){
  const sharp=!display.key.endsWith('|0');
  return sharp
   ?<meshBasicMaterial key="sharp" map={display.e.texture} toneMapped={false} onBeforeCompile={sharpen} customProgramCacheKey={()=>'photo-lod-bias'}/>
-  :<meshBasicMaterial key="far" map={display.e.texture} toneMapped={false}/>;
+  // 17/11: the far copy keeps its finer mip level too (it is shown smaller than its texture as well)
+  :<meshBasicMaterial key="far" map={display.e.texture} toneMapped={false} onBeforeCompile={sharpen} customProgramCacheKey={()=>'photo-lod-bias'}/>;
 }

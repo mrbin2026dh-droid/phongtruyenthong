@@ -21,7 +21,7 @@ test('Every portrait overlaps its frame bars on all four sides (no gap), never p
 test('Standing right in front of a frame uses the full 900×1350 upload; tiers have hysteresis',()=>{
  const hall=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
  const photo=readFileSync(new URL('../src/scene/HallPhoto.tsx',import.meta.url),'utf8');
- assert.ok(photo.includes('TIER_SIZE:[number,number][]=[[96,144],[600,900],[900,1350]]'));
+ assert.ok(photo.includes('TIER_SIZE:[number,number][]=[[160,240],[600,900],[900,1350]]'));
  assert.ok(hall.includes('if(d<(cur===2?3:2.4))return 2;')&&hall.includes('return d<(cur>=1?8.5:6.5)?1:0;'));
  // same rule as photoTier(), evaluated here
  const tier=(cur,d)=>d<(cur===2?3:2.4)?2:(d<(cur>=1?8.5:6.5)?1:0);
