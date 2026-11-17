@@ -1,7 +1,7 @@
-import {EXHIBIT_ZONES,exhibitSlots,assignExhibitSlots} from '../data/exhibitSlots.mjs';
+import {EXHIBIT_ZONES,exhibitSlots,assignExhibitSlots,FRONT_BAY} from '../data/exhibitSlots.mjs';
 import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
-export const HALL={width:24,depth:16,height:4.2,capacity:99,pitch:.9};
+export const HALL={width:24,depth:16,height:4.2,capacity:103,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
 /** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
  * pier caps (x 3.02) and to the corners (x 12). Exported to Blender (slats + wall washers). */
@@ -17,19 +17,15 @@ export const MONUMENT={x:7.05,z:11.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestal
  niche:{wallX:4.54,width:2.2,height:2.8,depth:STATUE_ROOM.x1-4.54},room:STATUE_ROOM};
 /** Where the visitor stands in the statue room (1.7 m from the statue: it fills the view, sharp). */
 export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[5.35,1.6,11.1],target:[7.05,1.45,11.1],dwell:9000};
-export const CABINETS=[
- {id:'memory-0',x:4.7,title:'Tư liệu và kỷ vật',description:'Không gian lưu giữ tư liệu, hình ảnh và kỷ vật về hành trình xây dựng nhà trường.'},
- {id:'memory-1',x:7.1,title:'Dấu ấn nhà trường',description:'Vị trí dành cho các dấu mốc của nhà trường; hiện đang dùng hiện vật mẫu, chờ tư liệu được phê duyệt.'},
- {id:'memory-2',x:9.5,title:'Thành tích tập thể',description:'Vị trí dành cho thành tích chung của nhà trường; sẽ bổ sung nguồn và thời gian khi có tư liệu được phê duyệt.'}
-];
-// Recesses in the entrance wall: front glazing is nearly flush at z=7.96.
+/** 17/11 (A+, user): the three memory cabinets were removed (sample objects only, small and dark from the room).
+ * The entrance wall left of the door (seen from inside, x 4.8 → 9.2) carries one large slide screen instead: school
+ * activities, achievements and documents (gallery.mjs), tap → full-screen viewer. Kept as an (empty) list for the
+ * Blender build script and old code paths. */
+export const CABINETS=[];
+export const FRONT_SCREEN={id:'memory-1',x:7.0,y:1.88,width:4.4,height:2.475,wallZ:8,title:'Dấu ấn nhà trường',description:'Hình ảnh hoạt động, thành tích và tư liệu của nhà trường.'};
 export const CABINET_NICHE={width:2.12,bottom:.85,top:2.95,wallZ:8,depth:.48,frame:.035};
-export function cabinetWallPieces(){
- const n=CABINET_NICHE,pieces=[{x:7,y:n.bottom/2,width:10,height:n.bottom},{x:7,y:(n.top+HALL.height)/2,width:10,height:HALL.height-n.top}];
- let edge=2;
- for(const c of CABINETS){const left=c.x-n.width/2;pieces.push({x:(edge+left)/2,y:(n.bottom+n.top)/2,width:left-edge,height:n.top-n.bottom});edge=c.x+n.width/2;}
- pieces.push({x:(edge+12)/2,y:(n.bottom+n.top)/2,width:12-edge,height:n.top-n.bottom});return pieces;
-}
+/** Plaster of the entrance wall right of the door (x 2 → 12): one solid piece since the cabinets are gone. */
+export function cabinetWallPieces(){return [{x:7,y:HALL.height/2,width:10,height:HALL.height}];}
 // Fixed wall positions (17/11): 1 principal + 2 deputies (Ban Giám hiệu) + 96 teachers & staff in one run = 99 (98 people today).
 export function wallColumns(){return exhibitSlots().filter((s,i,a)=>a.findIndex(v=>v.column===s.column)===i);}
 export function layoutHall(people,sort='service',page=0){
@@ -56,7 +52,7 @@ export function layoutHall(people,sort='service',page=0){
  ring.sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||(a.wall==='right'?b.eye[2]-a.eye[2]:a.wall==='back'?b.eye[0]-a.eye[0]:a.wall==='left'?a.eye[2]-b.eye[2]:a.eye[0]-b.eye[0]));
  const seen={};
  for(const stop of ring){seen[stop.group]=(seen[stop.group]||0)+1;const zone=EXHIBIT_ZONES.find(z=>z.id===stop.group);stop.title=stop.group==='principal'?'Ban Giám hiệu':zone.name+' · '+seen[stop.group];}
- const finalStops=[...stops,...CABINETS.map(c=>({...c,group:'memory',wall:'front',eye:[c.x,1.7,4.0],target:[c.x,1.65,7.45],dwell:9000})),...ring,
+ const finalStops=[...stops,{...FRONT_SCREEN,group:'memory',wall:'front',eye:[FRONT_SCREEN.x,1.7,3.3],target:[FRONT_SCREEN.x,FRONT_SCREEN.y,7.95],dwell:9000},...ring,
   // 16/11: the visit opens facing the statue, so the tour ends with it — a closing tribute before leaving
   {...STATUE_STOP},
   {id:'finish',title:'Kết thúc vòng tham quan',group:'',eye:[0,1.7,9.1],target:[0,1.65,-7.8],dwell:0}];
@@ -65,23 +61,32 @@ export function layoutHall(people,sort='service',page=0){
  {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-left',text:TEACHER_MOTTO,x:-11.79,z:0,yaw:Math.PI/2,width:13.4,y:3.48,motto:true},
  {id:'teacher-right',text:'TẤT CẢ VÌ HỌC SINH THÂN YÊU',x:11.79,z:0,yaw:-Math.PI/2,width:13.4,y:3.48,motto:true,fontReference:TEACHER_MOTTO},
- {id:'memory-sign',text:'HIỀN TÀI LÀ NGUYÊN KHÍ CỦA MỘT QUỐC GIA',x:7.1,z:7.78,yaw:Math.PI,width:7.1,y:3.44,motto:true}];
+ {id:'memory-sign',text:'HIỀN TÀI LÀ NGUYÊN KHÍ CỦA MỘT QUỐC GIA',x:FRONT_SCREEN.x,z:7.78,yaw:Math.PI,width:6.4,y:3.5,motto:true},
+ // 17/11 (A+): the new portrait bay on the entrance wall gets the same title as the back-wall bays
+ {id:'teacher-front',text:'CÁC THẾ HỆ NHÀ GIÁO',x:FRONT_BAY.x,z:7.79,yaw:Math.PI,width:5.6,y:3.32}];
  return {slots,zones,stops:finalStops,signs,pages:1,page:0,total:people.length,displayed:slots.length,warnings,reserved:definitions.length-slots.length};
 }
 // A dedicated wide shot on portrait screens keeps all four principals visible.
 /** Phones held sideways (16/11, user: teacher photos too small): stand 1.9 m from the teacher/staff walls instead of
- * 2.8 m — the closest distance at which both rows still fit the 62° vertical view — aimed at the middle of the rows. */
-export const PHONE_WALL_DISTANCE=1.9,ROWS_CENTER_Y=2.02,CLOSEUP_DISTANCE=1.1;
+ * 2.8 m — the closest distance at which both rows still fit the 62° vertical view — aimed at the middle of the rows.
+ * 17/11 (A+, user chose “giữ cỡ ảnh”): one ROW at a time instead — 1.2 m from the wall, first the upper row, then
+ * (next stop “…-low”, same place) the lower row: each portrait looks ≈1.6× larger than at 1.9 m. */
+export const PHONE_WALL_DISTANCE=1.2,ROWS_CENTER_Y=2.02,CLOSEUP_DISTANCE=1.1,PHONE_ROW_Y=[2.64,1.44];
 export function fitHallStops(stops,aspect,phone=false){
- return stops.map(s=>{
-  if(s.id==='principal-0'&&aspect<1.1)return {...s,eye:[0,1.7,-2.6]};
+ return stops.flatMap(s=>{
+  if(s.id==='principal-0'&&aspect<1.1)return [{...s,eye:[0,1.7,-2.6]}];
   if(phone&&aspect>=1.1&&(s.group==='teacher'||s.group==='staff')&&Number.isFinite(s.yaw)){
-   const [tx,,tz]=s.target,eye=[tx+Math.sin(s.yaw)*PHONE_WALL_DISTANCE,1.7,tz+Math.cos(s.yaw)*PHONE_WALL_DISTANCE];
-   if(isWalkable(eye))return {...s,eye,target:[tx,ROWS_CENTER_Y,tz]};
+   const [tx,,tz]=s.target;
+   for(const d of [PHONE_WALL_DISTANCE,1.4,1.9]){
+    const eye=[tx+Math.sin(s.yaw)*d,1.7,tz+Math.cos(s.yaw)*d];
+    if(isWalkable(eye))return [{...s,eye,target:[tx,PHONE_ROW_Y[0],tz]},{...s,id:s.id+'-low',row:'low',eye,target:[tx,PHONE_ROW_Y[1],tz],dwell:Math.min(s.dwell??8000,6000)}];
+   }
   }
-  return s;
+  return [s];
  });
 }
+/** Stop id without the phone's “-low” (lower row) suffix — the zone stop it belongs to. */
+export const baseStopId=id=>String(id||'').replace(/-low$/,'');
 /** Close-up of one portrait (phones): 1.1 m in front of it — the whole frame fits a short landscape screen above the
  * close-up bar — eye at the photo's height, aimed 5 cm low so the photo sits in the free upper part (kept walkable). */
 export function closeupStop(slot,title){

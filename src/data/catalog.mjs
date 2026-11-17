@@ -1,5 +1,10 @@
 import {attachExhibitSlots,exhibitSlots,exhibitZone} from './exhibitSlots.mjs';
 import {isPhotoRef,isPublishedPhoto} from './photoRef.mjs';
+import {LAYOUT_VERSION} from './exhibitSlots.mjs';
+import {migrateSlotsV1} from './slotMigration.mjs';
+import {isOffice} from './arrangeByDept.mjs';
+/** 17/11: “staff” follows the record (role Nhân viên / tổ Văn Phòng), not an old stored tag. Leaders untouched. */
+const fixGroup=p=>p.group==='management'?p:{...p,group:isOffice(p)?'staff':'teacher'};
 // One canonical profile per person. Original periods remain archived in legacy-seed.json.
 export const GROUPS=[
  {id:'management',name:'Cán bộ quản lý',short:'CBQL',description:'Những người đã và đang đảm nhiệm vai trò quản lý nhà trường'},
@@ -95,15 +100,18 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
   if(resetToken&&published&&published.length&&storage&&storage.getItem(key+'-reset')!==resetToken){
    if(raw)storage.setItem(key+'-backup-'+resetToken,raw);
    storage.setItem(key+'-reset',resetToken);
-   if(raw){storage.setItem(key,JSON.stringify({schemaVersion:1,people:base}));raw=storage.getItem(key);}
+   if(raw){storage.setItem(key,JSON.stringify({schemaVersion:1,layout:LAYOUT_VERSION,people:base}));raw=storage.getItem(key);}
   }
   persistedRaw=raw??null;
   if(raw){
    const saved=JSON.parse(raw);
    if(saved.schemaVersion!==1||!Array.isArray(saved.people))throw new Error('Sai phiên bản dữ liệu');
-   const people=attachExhibitSlots(saved.people.map(p=>validatePerson(p,year)));
+   // 17/11 (A+): a copy saved for the 99-position wall moves to the 103-position wall in the same reading order
+   const stale=saved.layout!==LAYOUT_VERSION;
+   const people=attachExhibitSlots((stale?migrateSlotsV1(saved.people):saved.people).map(p=>fixGroup(validatePerson(p,year))));
    if(new Set(people.map(p=>p.id)).size!==people.length)throw new Error('Trùng mã hồ sơ');
    snapshot={schemaVersion:1,revision:0,people,storageError:''};
+   if(stale){const migrated=JSON.stringify({schemaVersion:1,layout:LAYOUT_VERSION,people});storage.setItem(key,migrated);persistedRaw=migrated;}
   }
  }catch{locked=true;snapshot={...snapshot,storageError:'Không đọc được dữ liệu lưu cục bộ. Đang xem mẫu gốc; tạm khóa ghi để bảo toàn dữ liệu đã lưu.'};}
  const publish=people=>{
@@ -112,7 +120,7 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
   let currentRaw;
   try{currentRaw=storage?.getItem(key)??null;}catch{throw new Error('Không đọc được bộ nhớ trình duyệt; chưa thay đổi hồ sơ.');}
   if(currentRaw!==persistedRaw)throw new Error('Dữ liệu đã thay đổi ở tab khác. Hãy tải lại trang trước khi lưu để tránh ghi đè.');
-  const serialized=JSON.stringify({schemaVersion:1,people});
+  const serialized=JSON.stringify({schemaVersion:1,layout:LAYOUT_VERSION,people});
   try{storage?.setItem(key,serialized);}catch{throw new Error('Không lưu được trên trình duyệt. Hồ sơ chưa được thay đổi; hãy xuất bản sao và kiểm tra dung lượng lưu trữ.');}
   persistedRaw=storage?serialized:null;
   snapshot=next;listeners.forEach(fn=>fn());
@@ -127,7 +135,7 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
   /** 17/11 “Sắp xếp theo tổ”: every new position and tổ name in ONE save. Returns the previous people (for undo). */
   arrange:(slot,rename)=>{
    const before=snapshot.people;
-   const next=before.map(p=>slot.has(p.id)||rename.has(p.id)?validatePerson({...p,displaySlot:slot.get(p.id)??p.displaySlot,dept:rename.get(p.id)??p.dept},year):p);
+   const next=before.map(p=>slot.has(p.id)||rename.has(p.id)?fixGroup(validatePerson({...p,displaySlot:slot.get(p.id)??p.displaySlot,dept:rename.get(p.id)??p.dept},year)):p);
    const used=next.map(p=>p.displaySlot).filter(Boolean);if(new Set(used).size!==used.length)throw new Error('Hai người trùng một vị trí; chưa thay đổi gì.');
    publish(attachExhibitSlots(next));return before;
   },

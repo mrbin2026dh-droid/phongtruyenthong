@@ -5,12 +5,12 @@ import {layoutHall,fitHallStops,createHallPlan,segmentWalkable,isWalkable} from 
 import {routeFromPosition,roundedPath,samplePath,presentationTurnStep} from '../src/scene/hallMotion.mjs';
 import {nextPresentationStop,presentationDwell} from '../src/scene/hallPresentation.mjs';
 
-test('Finite clockwise tour starts with overview and three cases, covers every portrait once, ends at the statue, then stops',()=>{
+test('Finite clockwise tour starts with overview and the slide screen, covers every portrait once, ends at the statue, then stops',()=>{
  const l=layoutHall([]),ids=l.stops.map(s=>s.id);
- assert.deepEqual(ids.slice(0,4),['entrance','memory-0','memory-1','memory-2']);assert.equal(ids.at(-2),'statue','16/11: the visit opens facing the statue and closes with it');
+ assert.deepEqual(ids.slice(0,2),['entrance','memory-1'],'17/11 (A+): one slide screen replaced the three cabinets');assert.equal(ids.at(-2),'statue','16/11: the visit opens facing the statue and closes with it');
  assert.equal(ids.at(-1),'finish');assert.equal(new Set(ids).size,ids.length);
  const shown=l.stops.flatMap(s=>s.slotIds||[]);
- assert.equal(shown.length,99);assert.equal(new Set(shown).size,99);
+ assert.equal(shown.length,103);assert.equal(new Set(shown).size,103);
  assert.deepEqual([...shown].sort(),exhibitSlots().map(s=>s.slotId).sort());
  let at='gate';const visited=[];
  for(let i=0;i<100;i++){const next=nextPresentationStop(l.stops,at);if(!next)break;visited.push(next.id);at=next.id;}
@@ -38,12 +38,13 @@ test('Camera turn is bounded, eases to rest and behaves consistently at 30/60/12
  assert.ok(presentationTurnStep(.01,.016)<presentationTurnStep(1,.016));
 });
 
-test('Memorabilia bay has no portraits and blocks walking through cases; 99 IDs and two rows remain (17/11)',()=>{
- const slots=exhibitSlots();assert.equal(slots.length,99);
- assert.equal(new Set(slots.map(s=>s.slotId)).size,99);
- assert.ok(slots.every(s=>s.wall!=='front'),'17/11: no portraits on the entrance wall any more');
+test('17/11 (A+): entrance wall = slide screen (x>0) + 8 portrait columns (x<0); 103 IDs, two rows, same frames',()=>{
+ const slots=exhibitSlots();assert.equal(slots.length,103);
+ assert.equal(new Set(slots.map(s=>s.slotId)).size,103);
+ const front=slots.filter(s=>s.wall==='front');assert.equal(front.length,16);
+ assert.ok(front.every(s=>s.x>=-10.6&&s.x<=-3.4&&s.z===7.86&&Math.abs(s.yaw-Math.PI)<1e-9),'left of the door seen from inside, clear of the portal and the corner');
  assert.ok(slots.filter(s=>s.group!=='principal'&&s.group!=='deputy').every(s=>s.width===.66&&s.height===.96&&[1.44,2.64].includes(s.y)));
- for(const x of [4.7,7.1,9.5]){assert.equal(isWalkable([x,1.7,7.4]),false);assert.equal(isWalkable([x,1.7,4.65]),true);}
+ const stop=layoutHall([]).stops.find(s=>s.id==='memory-1');assert.ok(isWalkable(stop.eye)&&stop.target[2]>7.9,'the screen is viewed from the room');
 });
 
 test('Every leg, including portrait camera and closing doorway, has a collision-free rounded route',()=>{

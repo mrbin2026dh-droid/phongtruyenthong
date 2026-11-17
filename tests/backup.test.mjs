@@ -5,12 +5,15 @@ import {createCatalogStore,parseCatalogBackup} from '../src/data/catalog.mjs';
 const seed=JSON.parse(readFileSync(new URL('../src/data/legacy-seed.json',import.meta.url),'utf8'));
 const storage=()=>{const map=new Map();return {getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v)};};
 const pack=people=>JSON.stringify({schemaVersion:1,people});
+import {isOffice} from '../src/data/arrangeByDept.mjs';
 test('Backup roundtrip preserves IDs, slots, photos and work spells, commits atomically and survives reload',()=>{
  const mem=storage(),store=createCatalogStore(seed,{storage:mem,year:2026});const original=store.getSnapshot().people;
  const copy=structuredClone(original);copy[0].description='Bản sao đã đối chiếu';copy[0].image='data:image/jpeg;base64,YWJj';
  const text=pack(copy);assert.equal(parseCatalogBackup(text,2026)[0].id,original[0].id);
  store.restoreBackup(text,{expectedRevision:0});assert.equal(store.getSnapshot().revision,1);
- const reloaded=createCatalogStore(seed,{storage:mem,year:2026});assert.deepEqual(reloaded.getSnapshot().people,parseCatalogBackup(text,2026));
+ // 17/11: on reload the staff/teacher group follows role and tổ (isOffice) — everything else is kept as it was
+ const fix=p=>p.group==='management'?p:{...p,group:isOffice(p)?'staff':'teacher'};
+ const reloaded=createCatalogStore(seed,{storage:mem,year:2026});assert.deepEqual(reloaded.getSnapshot().people,parseCatalogBackup(text,2026).map(fix));
  assert.deepEqual(reloaded.getSnapshot().people.map(p=>p.displaySlot),original.map(p=>p.displaySlot));
 });
 test('Invalid backup, duplicate IDs, unsafe images, overlapping history and DEMO never mutate the catalog',()=>{

@@ -23,13 +23,13 @@ test('Reload, cập nhật người quay lại và thêm hiệu trưởng không
  const p=store.getSnapshot().people.find(v=>v.group==='teacher');const id=p.displaySlot;
  store.savePerson({...p,name:'Tên đã cập nhật'}, {id:p.id});assert.equal(store.getSnapshot().people.find(v=>v.id===p.id).displaySlot,id);
 });
-test('17/11: 99 vị trí — 1 HT + 2 PHT + 96 GV & NV liền mạch (98 người: 3 CBQL, 90 GV, 5 NV); không đè nhau',()=>{
+test('17/11 (A+): 103 vị trí — 1 HT + 2 PHT + 100 GV & NV liền mạch (đủ ≥ 100 người); không đè nhau',()=>{
  const p={...newTeacher,group:'management',role:'Đã nghỉ hưu',workHistory:[{role:'Hiệu trưởng'}]};assert.equal(exhibitZone(p),'principal');
- const definitions=exhibitSlots();assert.equal(definitions.length,99);assert.equal(new Set(definitions.map(s=>s.slotId)).size,99);
- assert.equal(new Set(definitions.map(s=>[s.x,s.y,s.z].join())).size,99);
+ const definitions=exhibitSlots();assert.equal(definitions.length,103);assert.equal(new Set(definitions.map(s=>s.slotId)).size,103);
+ assert.equal(new Set(definitions.map(s=>[s.x,s.y,s.z].join())).size,103);
  assert.equal(definitions.filter(s=>s.group==='principal').length,1);
  assert.equal(definitions.filter(s=>s.group==='deputy').length,2);
- assert.equal(definitions.filter(s=>s.group==='teacher').length,96);
+ assert.equal(definitions.filter(s=>s.group==='teacher').length,100);
  for(const d of definitions.filter(s=>s.group==='teacher'||s.group==='staff'))assert.ok(d.width===.66&&d.height===.96,'17/11: frames 20 % larger each way');
  for(const d of definitions)assert.ok(Math.abs(d.height/d.width-(d.group==='principal'||d.group==='deputy'?1.5:.96/.66))<1e-9,'4×6 frames');
  assert.equal(definitions.filter(s=>s.group==='staff').length,0);assert.equal(exhibitZone({group:'staff'}),'teacher','staff share the teachers wall');

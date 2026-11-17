@@ -25,7 +25,7 @@ test('Every one of the 99 frames has a reachable close-up 1.1 m in front of it',
 });
 test('Trước / Sau order stays in the zone, top row before bottom row of each column',()=>{
  const slots=exhibitSlots(),teachers=closeupOrder(slots,'teacher'),leaders=closeupOrder(slots,'principal');
- assert.equal(teachers.length,96);assert.ok(teachers.every(s=>s.group==='teacher'));
+ assert.equal(teachers.length,100);assert.ok(teachers.every(s=>s.group==='teacher'));
  assert.ok(teachers[0].y>teachers[1].y&&teachers[0].column===teachers[1].column);
  assert.equal(leaders.length,3);assert.equal(closeupOrder(slots,'staff').length,0,'17/11: no separate staff zone');
 });

@@ -1,3 +1,4 @@
+import {SCHOOL_DEPTS} from '../data/arrangeByDept.mjs';
 import {Suspense,lazy,useEffect,useMemo,useState} from 'react';
 import Dialog from './Dialog';
 import {catalog,portraitPath,type Person} from '../data/repository';
@@ -15,7 +16,7 @@ const year=()=>new Date().getFullYear();
 /** On-wall editor: replace photo / edit info of the person in a slot, add a new person to an empty slot,
  * or remove them from the wall. Photos go to IndexedDB, info to the catalog (same data as list/profile). */
 /** 17/11 (người dùng): danh sách tổ và chức danh của trường để chọn nhanh. */
-const DEPTS=['Ngữ Văn','Sử-Địa','Tiếng Anh','Văn Thể Mỹ','Toán-Tin','KHTN','Văn Phòng'];
+const DEPTS=SCHOOL_DEPTS;
 const ROLES=['Giáo viên','Nhân viên','Tổ trưởng','Tổ phó'];
 /** The list plus the person's current value when it is not in the list (never lose existing data). */
 const withCurrent=(list:string[],v:string)=>list.includes(v)?list:[v,...list];

@@ -27,7 +27,7 @@ import EmptySlots from './EmptySlots';
 import type {DoorState} from './EntranceDoors';
 import type {QualityControl} from './PerfProbe';
 
-type Props={gallery?:import('./GalleryDisplays').DisplayItemsByCat;onGallery?:(cat:'activity'|'award'|'memento',index:number)=>void;hideMarkers?:boolean;layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
+type Props={gallery?:import('./GalleryDisplays').DisplayItem[];onGallery?:(index:number)=>void;hideMarkers?:boolean;layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
 
 const cube=new BoxGeometry(1,1,1);
 // Portrait frames (15/11): satin brass, less mirror-like, so every frame reads the same tone from any angle.
@@ -418,7 +418,7 @@ export default function HallScene(p:Props){
   <pointLight position={[0,3.6,-6.3]} intensity={16} distance={9} color="#ffe8bc" decay={2}/>
   <pointLight position={[-8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/><pointLight position={[8,3.7,0]} intensity={12} distance={12} color="#fff0d4" decay={2}/>
 
-  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer>{p.gallery&&p.onGallery&&<GalleryDisplays items={p.gallery} onOpen={(c,i)=>{if(!p.moving&&!p.paused)p.onGallery!(c,i);}}/>}<PrincipalLamps/><LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/><DeptPlates slots={p.layout.slots}/>
+  <GalleryEnvironment/>{baked&&<Suspense fallback={null}><BakedHall/></Suspense>}<StaticInstancer><Architecture baked={baked}/><MonumentReservation baked={baked}/><MemoryCabinets baked={baked}/></StaticInstancer>{p.gallery&&p.onGallery&&<GalleryDisplays items={p.gallery} onOpen={i=>{if(!p.moving&&!p.paused)p.onGallery!(i);}}/>}<PrincipalLamps/><LeaderFrames slots={p.layout.slots.filter(isLeaderSlot)}/><Frames slots={p.layout.slots.filter((s:any)=>!isLeaderSlot(s))} material={walnut} lip/><ZoneNames layout={p.layout}/><DeptPlates slots={p.layout.slots}/>
   {p.layout.slots.map((slot:any)=><Photo key={slot.person.id} slot={slot} onSelect={id=>{if(!p.moving&&!p.paused)p.onSelect(id);}}/>)}
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)||Boolean(p.hideMarkers)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}

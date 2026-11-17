@@ -36,7 +36,7 @@ export default function AdminGallery({onClose,onDone}:{onClose:()=>void;onDone:(
  return <Dialog title="Ảnh trình diễn khu tủ kỷ vật" onClose={onClose}>
   <div className="admin-gallery">
    <div className="admin-gallery-tabs" role="tablist">{GALLERY_CATS.map((c:any)=><button key={c.id} role="tab" aria-selected={cat===c.id} className={cat===c.id?'active':''} onClick={()=>setCat(c.id)}>{c.title} <span>{snap.items.filter(i=>i.cat===c.id).length}</span></button>)}</div>
-   <p className="fine">{cat==='activity'?'Màn trình chiếu hốc giữa: ảnh tự chuyển, cắt vừa khung 16:9.':'Khung trên của hốc tủ: ảnh tự lật, hiện trọn ảnh (không cắt).'}</p>
+   <p className="fine">{cat==='activity'?'Màn trình chiếu tường lối vào: ảnh cắt vừa khung 16:9.':'Màn trình chiếu tường lối vào: hiện trọn ảnh (không cắt), sau các ảnh hoạt động.'}</p>
    <label className="gold admin-gallery-add">{busy||'+ Thêm ảnh từ máy'}<input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={Boolean(busy)} onChange={e=>{void add(e.target.files);e.target.value='';}}/></label>
    {error&&<p role="alert" className="form-error">{error}</p>}
    <ol className="admin-gallery-list">{list.map((it,k)=><li key={it.id}>
@@ -46,7 +46,7 @@ export default function AdminGallery({onClose,onDone}:{onClose:()=>void;onDone:(
     <div className="admin-gallery-tools"><button aria-label="Lên" disabled={k===0} onClick={()=>run(()=>gallery.move(it.id,-1))}>↑</button><button aria-label="Xuống" disabled={k===list.length-1} onClick={()=>run(()=>gallery.move(it.id,1))}>↓</button>
      <button className="danger" onClick={()=>run(()=>{const old=gallery.remove(it.id);if(old&&isPhotoRef(old.image))void deletePhoto(old.image);})}>Xóa</button></div>
    </li>)}</ol>
-   {!list.length&&<p className="fine">Chưa có ảnh — hốc tủ đang giữ hiện vật minh họa.</p>}
+   {!list.length&&<p className="fine">Chưa có ảnh trong mục này.</p>}
    <div className="admin-actions"><button className="gold" onClick={onClose}>Xong</button></div>
   </div>
  </Dialog>;

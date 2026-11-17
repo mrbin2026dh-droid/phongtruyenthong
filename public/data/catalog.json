@@ -2,6 +2,7 @@
  "schemaVersion": 1,
  "publishedAt": "2026-11-17T06:11:08.101Z",
  "resetLocal": "hinh-2026-11-17",
+ "layout": 2,
  "people": [
   {
    "id": "GV002",
@@ -451,7 +452,7 @@
    "description": "",
    "image": "data/photos/GV020-c487d526b5.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-017",
+   "displaySlot": "teacher-047",
    "workHistory": [
     {
      "id": "GV020-work-1",
@@ -474,7 +475,7 @@
    "description": "",
    "image": "data/photos/GV021-ebbaec4088.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-018",
+   "displaySlot": "teacher-048",
    "workHistory": [
     {
      "id": "GV021-work-1",
@@ -497,7 +498,7 @@
    "description": "",
    "image": "data/photos/GV092-c042be3b0d.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-019",
+   "displaySlot": "teacher-045",
    "workHistory": [
     {
      "id": "GV092-work-1",
@@ -520,7 +521,7 @@
    "description": "",
    "image": "data/photos/GV093-be951cffdb.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-020",
+   "displaySlot": "teacher-046",
    "workHistory": [
     {
      "id": "GV093-work-1",
@@ -543,7 +544,7 @@
    "description": "",
    "image": "data/photos/GV094-45d5edb881.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-021",
+   "displaySlot": "teacher-043",
    "workHistory": [
     {
      "id": "GV094-work-1",
@@ -566,7 +567,7 @@
    "description": "",
    "image": "data/photos/GV095-e0a10e6808.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-022",
+   "displaySlot": "teacher-044",
    "workHistory": [
     {
      "id": "GV095-work-1",
@@ -589,7 +590,7 @@
    "description": "",
    "image": "data/photos/GV096-a4b016fe66.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-023",
+   "displaySlot": "teacher-017",
    "workHistory": [
     {
      "id": "GV096-work-1",
@@ -612,7 +613,7 @@
    "description": "",
    "image": "data/photos/GV097-564a8b79c0.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-024",
+   "displaySlot": "teacher-018",
    "workHistory": [
     {
      "id": "GV097-work-1",
@@ -635,7 +636,7 @@
    "description": "",
    "image": "data/photos/GV100-36e88ed11f.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-025",
+   "displaySlot": "teacher-019",
    "workHistory": [
     {
      "id": "GV100-work-1",
@@ -658,7 +659,7 @@
    "description": "",
    "image": "data/photos/GV102-b1112a671d.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-026",
+   "displaySlot": "teacher-020",
    "workHistory": [
     {
      "id": "GV102-work-1",
@@ -681,7 +682,7 @@
    "description": "",
    "image": "data/photos/GV104-cdc4ac6923.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-027",
+   "displaySlot": "teacher-021",
    "workHistory": [
     {
      "id": "GV104-work-1",
@@ -704,7 +705,7 @@
    "description": "",
    "image": "data/photos/GV105-a7cf1d0e8f.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-028",
+   "displaySlot": "teacher-022",
    "workHistory": [
     {
      "id": "GV105-work-1",
@@ -727,7 +728,7 @@
    "description": "",
    "image": "data/photos/GV106-8285eb6b64.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-029",
+   "displaySlot": "teacher-023",
    "workHistory": [
     {
      "id": "GV106-work-1",
@@ -750,7 +751,7 @@
    "description": "",
    "image": "data/photos/GV109-4ac88d07c7.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-030",
+   "displaySlot": "teacher-024",
    "workHistory": [
     {
      "id": "GV109-work-1",
@@ -773,7 +774,7 @@
    "description": "",
    "image": "data/photos/GV110-1b6ec2926d.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-031",
+   "displaySlot": "teacher-025",
    "workHistory": [
     {
      "id": "GV110-work-1",
@@ -796,7 +797,7 @@
    "description": "",
    "image": "data/photos/GV111-ca714dbea7.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-032",
+   "displaySlot": "teacher-026",
    "workHistory": [
     {
      "id": "GV111-work-1",
@@ -819,7 +820,7 @@
    "description": "",
    "image": "data/photos/GV112-03bd8c8576.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-033",
+   "displaySlot": "teacher-027",
    "workHistory": [
     {
      "id": "GV112-work-1",
@@ -842,7 +843,7 @@
    "description": "",
    "image": "data/photos/GV113-e81e3fd132.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-034",
+   "displaySlot": "teacher-028",
    "workHistory": [
     {
      "id": "GV113-work-1",
@@ -865,7 +866,7 @@
    "description": "",
    "image": "data/photos/GV114-2142a7291e.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-035",
+   "displaySlot": "teacher-029",
    "workHistory": [
     {
      "id": "GV114-work-1",
@@ -888,7 +889,7 @@
    "description": "",
    "image": "data/photos/GV115-4e525fefdb.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-036",
+   "displaySlot": "teacher-030",
    "workHistory": [
     {
      "id": "GV115-work-1",
@@ -911,7 +912,7 @@
    "description": "",
    "image": "data/photos/GV116-20797f6bee.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-037",
+   "displaySlot": "teacher-031",
    "workHistory": [
     {
      "id": "GV116-work-1",
@@ -934,7 +935,7 @@
    "description": "",
    "image": "data/photos/GV125-aad10222c4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-038",
+   "displaySlot": "teacher-032",
    "workHistory": [
     {
      "id": "GV125-work-1",
@@ -957,7 +958,7 @@
    "description": "",
    "image": "data/photos/GV126-16eb0dc5ec.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-039",
+   "displaySlot": "teacher-033",
    "workHistory": [
     {
      "id": "GV126-work-1",
@@ -980,7 +981,7 @@
    "description": "",
    "image": "data/photos/GV127-dd49af6891.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-040",
+   "displaySlot": "teacher-034",
    "workHistory": [
     {
      "id": "GV127-work-1",
@@ -1003,7 +1004,7 @@
    "description": "",
    "image": "data/photos/GV128-8cbed473ff.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-041",
+   "displaySlot": "teacher-035",
    "workHistory": [
     {
      "id": "GV128-work-1",
@@ -1026,7 +1027,7 @@
    "description": "",
    "image": "data/photos/GV129-12f081bfd4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-042",
+   "displaySlot": "teacher-036",
    "workHistory": [
     {
      "id": "GV129-work-1",
@@ -1049,7 +1050,7 @@
    "description": "",
    "image": "data/photos/GV130-2d714210fb.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-043",
+   "displaySlot": "teacher-037",
    "workHistory": [
     {
      "id": "GV130-work-1",
@@ -1072,7 +1073,7 @@
    "description": "",
    "image": "data/photos/GV131-cfd582f586.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-044",
+   "displaySlot": "teacher-038",
    "workHistory": [
     {
      "id": "GV131-work-1",
@@ -1095,7 +1096,7 @@
    "description": "",
    "image": "data/photos/GV132-9907b7ca6a.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-045",
+   "displaySlot": "teacher-039",
    "workHistory": [
     {
      "id": "GV132-work-1",
@@ -1118,7 +1119,7 @@
    "description": "",
    "image": "data/photos/GV133-fe1b1b488e.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-046",
+   "displaySlot": "teacher-040",
    "workHistory": [
     {
      "id": "GV133-work-1",
@@ -1141,7 +1142,7 @@
    "description": "",
    "image": "data/photos/GV134-f0e8e71710.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-047",
+   "displaySlot": "teacher-041",
    "workHistory": [
     {
      "id": "GV134-work-1",
@@ -1164,7 +1165,7 @@
    "description": "",
    "image": "data/photos/GV135-055e462d8c.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-048",
+   "displaySlot": "teacher-042",
    "workHistory": [
     {
      "id": "GV135-work-1",
@@ -1647,7 +1648,7 @@
    "description": "",
    "image": "data/photos/GV072-bf1d9160c4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-069",
+   "displaySlot": "teacher-099",
    "workHistory": [
     {
      "id": "GV072-work-1",
@@ -1670,7 +1671,7 @@
    "description": "",
    "image": "data/photos/GV073-ad648f6303.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-070",
+   "displaySlot": "teacher-100",
    "workHistory": [
     {
      "id": "GV073-work-1",
@@ -1693,7 +1694,7 @@
    "description": "",
    "image": "data/photos/GV074-05775a09d8.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-071",
+   "displaySlot": "teacher-097",
    "workHistory": [
     {
      "id": "GV074-work-1",
@@ -1716,7 +1717,7 @@
    "description": "",
    "image": "data/photos/GV075-8eea0609ae.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-072",
+   "displaySlot": "teacher-098",
    "workHistory": [
     {
      "id": "GV075-work-1",
@@ -1739,7 +1740,7 @@
    "description": "",
    "image": "data/photos/GV076-27844159e9.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-073",
+   "displaySlot": "teacher-095",
    "workHistory": [
     {
      "id": "GV076-work-1",
@@ -1762,7 +1763,7 @@
    "description": "",
    "image": "data/photos/GV077-e454b8509a.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-074",
+   "displaySlot": "teacher-096",
    "workHistory": [
     {
      "id": "GV077-work-1",
@@ -1785,7 +1786,7 @@
    "description": "",
    "image": "data/photos/GV078-273e9bdaff.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-075",
+   "displaySlot": "teacher-093",
    "workHistory": [
     {
      "id": "GV078-work-1",
@@ -1808,7 +1809,7 @@
    "description": "",
    "image": "data/photos/GV079-e2619c5dd6.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-076",
+   "displaySlot": "teacher-094",
    "workHistory": [
     {
      "id": "GV079-work-1",
@@ -1831,7 +1832,7 @@
    "description": "",
    "image": "data/photos/GV080-de081b56eb.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-077",
+   "displaySlot": "teacher-091",
    "workHistory": [
     {
      "id": "GV080-work-1",
@@ -1854,7 +1855,7 @@
    "description": "",
    "image": "data/photos/GV081-90881a3328.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-078",
+   "displaySlot": "teacher-092",
    "workHistory": [
     {
      "id": "GV081-work-1",
@@ -1877,7 +1878,7 @@
    "description": "",
    "image": "data/photos/GV082-865316ff65.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-079",
+   "displaySlot": "teacher-089",
    "workHistory": [
     {
      "id": "GV082-work-1",
@@ -1900,7 +1901,7 @@
    "description": "",
    "image": "data/photos/GV083-6110a101cd.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-080",
+   "displaySlot": "teacher-090",
    "workHistory": [
     {
      "id": "GV083-work-1",
@@ -1923,7 +1924,7 @@
    "description": "",
    "image": "data/photos/GV084-e8c1b2214f.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-081",
+   "displaySlot": "teacher-069",
    "workHistory": [
     {
      "id": "GV084-work-1",
@@ -1946,7 +1947,7 @@
    "description": "",
    "image": "data/photos/GV085-3d30244f0d.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-082",
+   "displaySlot": "teacher-070",
    "workHistory": [
     {
      "id": "GV085-work-1",
@@ -1969,7 +1970,7 @@
    "description": "",
    "image": "data/photos/GV086-0c5d372697.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-083",
+   "displaySlot": "teacher-071",
    "workHistory": [
     {
      "id": "GV086-work-1",
@@ -1992,7 +1993,7 @@
    "description": "",
    "image": "data/photos/GV087-b2e0e4e2ee.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-084",
+   "displaySlot": "teacher-072",
    "workHistory": [
     {
      "id": "GV087-work-1",
@@ -2015,7 +2016,7 @@
    "description": "",
    "image": "data/photos/GV156-2c07b1c32a.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-085",
+   "displaySlot": "teacher-073",
    "workHistory": [
     {
      "id": "GV156-work-1",
@@ -2038,7 +2039,7 @@
    "description": "",
    "image": "data/photos/GV124-a9043608d5.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-086",
+   "displaySlot": "teacher-074",
    "workHistory": [
     {
      "id": "GV124-work-1",
@@ -2061,7 +2062,7 @@
    "description": "",
    "image": "data/photos/GV121-ec4f4edbb8.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-087",
+   "displaySlot": "teacher-075",
    "workHistory": [
     {
      "id": "GV121-work-1",
@@ -2084,7 +2085,7 @@
    "description": "",
    "image": "data/photos/GV123-4055f91a88.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-088",
+   "displaySlot": "teacher-076",
    "workHistory": [
     {
      "id": "GV123-work-1",
@@ -2107,7 +2108,7 @@
    "description": "",
    "image": "data/photos/GV119-ec448824bd.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-089",
+   "displaySlot": "teacher-077",
    "workHistory": [
     {
      "id": "GV119-work-1",
@@ -2130,7 +2131,7 @@
    "description": "",
    "image": "data/photos/GV120-b77bc46607.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-090",
+   "displaySlot": "teacher-078",
    "workHistory": [
     {
      "id": "GV120-work-1",
@@ -2153,7 +2154,7 @@
    "description": "",
    "image": "data/photos/GV117-f10411f5d4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-091",
+   "displaySlot": "teacher-079",
    "workHistory": [
     {
      "id": "GV117-work-1",
@@ -2176,7 +2177,7 @@
    "description": "",
    "image": "data/photos/GV118-240ad12d0a.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-092",
+   "displaySlot": "teacher-080",
    "workHistory": [
     {
      "id": "GV118-work-1",
@@ -2199,7 +2200,7 @@
    "description": "",
    "image": "data/photos/GV157-c3d8ec13f4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-093",
+   "displaySlot": "teacher-081",
    "workHistory": [
     {
      "id": "GV157-work-1",
@@ -2222,7 +2223,7 @@
    "description": "",
    "image": "data/photos/GV103-6ebf391cc4.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-094",
+   "displaySlot": "teacher-082",
    "workHistory": [
     {
      "id": "GV103-work-1",
@@ -2245,7 +2246,7 @@
    "description": "",
    "image": "data/photos/GV107-89a90be1ff.jpg",
    "photoRatio": 0.6666666666666666,
-   "displaySlot": "teacher-095",
+   "displaySlot": "teacher-083",
    "workHistory": [
     {
      "id": "GV107-work-1",

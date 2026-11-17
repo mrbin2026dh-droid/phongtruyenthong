@@ -3,7 +3,7 @@ import Dialog from './Dialog';
 import {catalog,type Person} from '../data/repository';
 import {arrangeByDept,deptGroups} from '../data/arrangeByDept.mjs';
 
-const WALL:Record<string,string>={back:'Tường chính (BGH)',left:'Tường trái',right:'Tường phải',front:'Tường cửa vào'};
+const WALL:Record<string,string>={back:'Tường chính (BGH)',left:'Tường trái',right:'Tường phải',front:'Tường lối vào (cạnh cửa)'};
 const segName=(wall:string,seg:number)=>wall==='back'?(seg===0?'Tường chính – bên trái BGH':'Tường chính – bên phải BGH'):WALL[wall];
 
 /** 17/11 (user): “Sắp xếp theo tổ” on the admin computer. Step 1: check / merge / rename the tổ (spelling variants are already
@@ -44,8 +44,8 @@ export default function AdminArrange({onClose,onDone}:{onClose:()=>void;onDone:(
       </select></td>
      </tr>)}
     </tbody></table>
-    {office>0&&<p className="fine"><b>Tổ văn phòng</b> ({office} người: toàn bộ nhân viên và người ghi tổ “Văn phòng”) luôn xếp <b>cuối dãy</b> — cuối tường phải, gần lối ra.</p>}
-    <p className="fine">Bước 2 · Xem trước ({result.teachers}/{result.capacity} chỗ). Trong mỗi tổ: tổ trưởng → tổ phó → theo năm vào trường.
+    {office>0&&<p className="fine"><b>Tổ văn phòng</b> ({office} người: toàn bộ nhân viên và người ghi tổ “Văn phòng”) luôn xếp <b>cuối dãy</b> — mảng ảnh tường lối vào, cạnh cửa.</p>}
+    <p className="fine">Bước 2 · Xem trước ({result.teachers}/{result.capacity} chỗ). Trong mỗi tổ: tổ trưởng → tổ phó → theo năm vào trường → theo tên.
      Giáo viên và nhân viên chung một dãy liền mạch; tổ có số người lẻ dùng chung một cột với tổ kế bên. Không xét nam/nữ.</p>
     <ul className="admin-arrange-plan">{[...bySeg.entries()].map(([seg,list])=><li key={seg}><b>{seg}:</b> {list.map(x=>x.name+' ('+x.count+')').join(' · ')}</li>)}</ul>
     {result.split.length>0&&<p className="fine">Tổ phải chia làm 2 khối vì không vừa trọn một mảng tường: <b>{result.split.join(', ')}</b> (đã chọn thứ tự cắt ít nhất).</p>}

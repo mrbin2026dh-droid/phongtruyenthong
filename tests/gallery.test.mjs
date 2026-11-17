@@ -42,5 +42,5 @@ test('Wiring: displays in the scene, viewer on tap, admin dialog, sent with “X
  assert.ok(src('components/AdminPublish.tsx').includes('gallery:galleryPayload'));
  assert.ok(src('main.tsx').includes("data/gallery.json"));
  const vite=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');assert.ok(vite.includes('buildGalleryPublication(input.gallery'));
- const disp=src('scene/GalleryDisplays.tsx');assert.ok(disp.includes('if(!list.length)return null'),'no pictures → the cabinet keeps its sample objects');
+ const disp=src('scene/GalleryDisplays.tsx');assert.ok(disp.includes('if(!items.length)return null'),'no pictures → plain wall, nothing drawn');
 });

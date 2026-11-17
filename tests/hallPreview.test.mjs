@@ -1,11 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
 import {migratePeople} from '../src/data/catalog.mjs';import {hallPreview} from '../src/scene/hallPreview.mjs';import {layoutHall} from '../src/scene/hallLayout.mjs';
 const seed=JSON.parse(readFileSync(new URL('../src/data/legacy-seed.json',import.meta.url)));
-test('Bản thử đủ99ảnh (17/11): 1HT, 2PHT, 96 GV & NV liền mạch; không sửa96hồ sơ gốc và không tạo ID trùng',()=>{
+test('Bản thử đủ 103 ảnh (17/11 A+): 1HT, 2PHT, 100 GV & NV liền mạch; không sửa96hồ sơ gốc và không tạo ID trùng',()=>{
  const people=migratePeople(seed),raw=JSON.stringify(people),preview=hallPreview(people);
- assert.equal(preview.people.length,99);assert.equal(preview.added.length,3);assert.equal(new Set(preview.people.map(p=>p.id)).size,99);assert.equal(JSON.stringify(people),raw);
- const l=layoutHall(preview.people);assert.equal(l.slots.length,99);assert.equal(l.warnings.length,0);
- assert.deepEqual(l.zones.map(z=>z.people.length),[1,2,96]);
+ assert.equal(preview.people.length,103);assert.equal(preview.added.length,7);assert.equal(new Set(preview.people.map(p=>p.id)).size,103);assert.equal(JSON.stringify(people),raw);
+ const l=layoutHall(preview.people);assert.equal(l.slots.length,103);assert.equal(l.warnings.length,0);
+ assert.deepEqual(l.zones.map(z=>z.people.length),[1,2,100]);
  assert.equal(new Set(l.slots.filter(s=>s.group==='principal').map(s=>s.y)).size,1);
  assert.ok(preview.added.every(p=>p.displaySlot));
  assert.equal(hallPreview(people,false).people.length,96);

@@ -4,20 +4,28 @@
 // tổ is searched so that as few tổ as possible are cut across two walls. No gender is used (the data has none).
 import {exhibitSlots,exhibitZone} from './exhibitSlots.mjs';
 
-const strip=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
+// 17/11: also Ð/ð (U+00D0/U+00F0, looks exactly like Đ) — a teacher list typed with it split “Sử – Địa” in two
+const strip=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').replace(/[đĐðÐ]/g,'d');
 /** Spelling-insensitive key: case, accents kept apart from dashes/spaces (“Toán - Tin” = “Toán Tin” = “Toán – Tin”). */
 /** 17/11 (user): every staff member belongs to “Tổ văn phòng”, which always closes the run (end of the right wall). */
 export const OFFICE_KEY='van phong';
-const keyOf=p=>p.group==='staff'?OFFICE_KEY:deptKey(p.dept);
+/** 17/11: Tổ văn phòng = role “Nhân viên” or tổ “Văn Phòng” — decided from the record itself, never from an old stored group
+ * (an earlier import had tagged 12 teachers as staff by their old wall position). */
+export const isOffice=p=>/nhan vien/.test(strip(p.role).toLowerCase())||deptKey(p.dept)===OFFICE_KEY;
+const keyOf=p=>isOffice(p)?OFFICE_KEY:deptKey(p.dept);
 export function deptKey(dept){
- const k=strip(dept).toLowerCase().replace(/[-–—_/.,]+/g,' ').replace(/\s+/g,' ').trim();
+ // any dash, slash, dot, NBSP or other separator counts as a space (“Sử-Địa” = “Sử – Địa” = “Sử ‐ Địa”)
+ const k=strip(dept).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
  return ({khtn:'khoa hoc tu nhien',khxh:'khoa hoc xa hoi'})[k]||k;
 }
-const PRETTY={'khoa hoc tu nhien':'Khoa học tự nhiên','khoa hoc xa hoi':'Khoa học xã hội','van phong':'Văn phòng'};
+/** 17/11 (người dùng): the school's own tổ names — shown everywhere (arrangement, tổ plates, the editor's list). */
+export const SCHOOL_DEPTS=['Ngữ Văn','Sử-Địa','Tiếng Anh','Văn Thể Mỹ','Toán-Tin','KHTN','Văn Phòng'];
+const PRETTY={'khoa hoc xa hoi':'Khoa học xã hội',...Object.fromEntries(SCHOOL_DEPTS.map(n=>[deptKey(n),n]))};
 /** Readable name for a group of spellings: the most used one, with a proper en dash and sentence-like case kept. */
-function prettyName(variants){
+function prettyName(key,variants){
+ // 17/11: the group's own key decides a known tổ name (the office group used to borrow “Sử-Địa” from its members' old tổ)
+ if(PRETTY[key])return PRETTY[key];
  const best=[...variants.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'vi'))[0][0];
- const key=deptKey(best);if(PRETTY[key])return PRETTY[key];
  return best.replace(/\s*[-–—]\s*/g,' – ').replace(/\s+/g,' ').trim();
 }
 
@@ -27,13 +35,13 @@ export function deptGroups(people){
  for(const p of people){if(exhibitZone(p)!=='teacher')continue;const key=keyOf(p);
   if(!groups.has(key))groups.set(key,{key,variants:new Map(),ids:[]});
   const g=groups.get(key);g.variants.set(p.dept,(g.variants.get(p.dept)||0)+1);g.ids.push(p.id);}
- return [...groups.values()].map(g=>({key:g.key,name:prettyName(g.variants),variants:[...g.variants.keys()],count:g.ids.length}))
+ return [...groups.values()].map(g=>({key:g.key,name:prettyName(g.key,g.variants),variants:[...g.variants.keys()],count:g.ids.length}))
   .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi'));
 }
 
 /** Wall segments of the teacher zone in visiting priority, each with its cells in reading order. */
-export function teacherSegments(){
- const slots=exhibitSlots().filter(s=>s.group==='teacher');
+export function teacherSegments(all=exhibitSlots()){
+ const slots=all.filter(s=>s.group==='teacher');
  // position along the wall as the visitor reads it (left → right when facing the wall)
  const along=s=>s.wall==='back'?s.x:s.wall==='left'?-s.z:s.wall==='right'?s.z:-s.x;
  const out=[];
@@ -49,6 +57,9 @@ export function teacherSegments(){
 }
 
 const roleRank=p=>{const r=strip([p.role,...(p.workHistory||[]).map(h=>h.role)].join(' ')).toLowerCase();return /to truong/.test(r)?0:/to pho/.test(r)?1:2;};
+/** Vietnamese order: by tên (last word), then the middle name, then the family name (“Nguyễn Thị An” before “Lê Văn Bình”). */
+const nameParts=p=>{const w=String(p.name||'').trim().split(/\s+/);return [w.at(-1)||'',w.slice(1,-1).join(' '),w[0]||''];};
+export const byGivenName=(a,b)=>{const x=nameParts(a),y=nameParts(b);for(let i=0;i<3;i++){const c=x[i].localeCompare(y[i],'vi');if(c)return c;}return 0;};
 const firstYear=p=>Math.min(...(p.workHistory||[]).map(h=>h.startYear).concat(p.startYear??Infinity));
 
 /** Order of the tổ that cuts the fewest tổ across segment borders (exact search over subsets; greedy beyond 18 tổ). */
@@ -77,7 +88,7 @@ export function arrangeByDept(people,names={}){
  const nameOf=p=>names[keyOf(p)]||defaults.get(keyOf(p));
  const byName=new Map();for(const p of teachers){const n=nameOf(p);if(!byName.has(n))byName.set(n,[]);byName.get(n).push(p);}
  // largest first, then alphabetical: the search keeps this preference among equally good orders (deterministic)
- const groups=[...byName.entries()].map(([name,list])=>({name,list:list.sort((a,b)=>roleRank(a)-roleRank(b)||firstYear(a)-firstYear(b)||a.name.localeCompare(b.name,'vi')||String(a.id).localeCompare(String(b.id)))}))
+ const groups=[...byName.entries()].map(([name,list])=>({name,list:list.sort((a,b)=>roleRank(a)-roleRank(b)||firstYear(a)-firstYear(b)||byGivenName(a,b)||String(a.id).localeCompare(String(b.id)))}))
   .sort((a,b)=>b.list.length-a.list.length||a.name.localeCompare(b.name,'vi'));
  // Tổ văn phòng (all staff + any teacher filed under “Văn phòng”) is taken out of the search and closes the run
  const officeIdx=groups.findIndex(g=>g.list.some(p=>keyOf(p)===OFFICE_KEY)),rest=groups.map((g,i)=>i).filter(i=>i!==officeIdx);
