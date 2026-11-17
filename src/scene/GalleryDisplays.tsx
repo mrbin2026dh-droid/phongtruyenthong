@@ -112,7 +112,8 @@ export default function GalleryDisplays({items,onOpen}:Props){
   {/* the strip: previous · current · next, clipped to the screen */}
   <group ref={strip} position={[0,0,-.008]}>
    {[-1,0,1].map(k=>{const m=mapOf(k);return <mesh key={k} position={[k*w,0,0]} onPointerDown={down}><planeGeometry args={[w,h]}/>
-    <meshBasicMaterial map={m} color={m?'#ffffff':'#0b1719'} toneMapped={false} clippingPlanes={clip}/></mesh>;})}
+    {/* key: a NEW material when the picture arrives — the shader compiled without a map would draw the plane plain white */}
+    <meshBasicMaterial key={m?m.uuid:'empty'} map={m} color={m?'#ffffff':'#0b1719'} toneMapped={false} clippingPlanes={clip}/></mesh>;})}
   </group>
   {sheen&&<mesh position={[0,0,-.006]}><planeGeometry args={[w,h]}/><meshBasicMaterial map={sheen} transparent depthWrite={false} toneMapped={false}/></mesh>}
   {/* position dots, like a touch screen (only for a short list) */}
