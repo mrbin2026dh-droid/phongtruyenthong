@@ -26,3 +26,13 @@
 .fallback-actions,.list-back{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .list-back{justify-content:flex-end;flex-shrink:0}
 @media(max-width:650px){.list-back{flex-direction:column;align-items:stretch}.list-back button{font-size:12px;padding:9px 12px}}
+/* 17/11: tranh khảm tri ân 20/11 ở màn hình đang tải — tranh ở trên, tiến độ gọn bên dưới */
+.visit-loading{gap:8px;padding:clamp(10px,2.5vh,24px) 16px;background:radial-gradient(ellipse at 50% 30%,#1d4448,#0c272b 70%)}
+.visit-loading-art{display:block;flex:0 1 auto;min-height:0;width:auto;height:auto;max-width:min(100%,1100px);max-height:calc(100% - 150px);object-fit:contain;border-radius:6px;box-shadow:0 14px 40px #0008;margin-bottom:6px}
+.visit-loading:not(.visit-loading-overlay) .visit-loading-art{max-height:calc(100dvh - 330px)}
+.visit-loading-track{margin-top:6px}
+@media (orientation:portrait) and (pointer:coarse){.visit-loading-art{max-height:calc(100% - 300px)}}
+@media (max-height:520px){.visit-loading{gap:4px;padding:8px 16px}.visit-loading strong{font-size:14px;line-height:1.4}.visit-loading-art{max-height:calc(100% - 92px);margin-bottom:2px}.visit-loading-pct{display:none}}
+.visit-loading-late .visit-loading-art{max-height:calc(100% - 250px)}
+@media (max-height:520px){.visit-loading-late .visit-loading-art{max-height:calc(100% - 150px)}.visit-loading-late .visit-loading-note{display:none}.visit-loading-late .visit-loading-actions{margin-top:4px}}
+@media (orientation:portrait) and (pointer:coarse){.visit-loading-late .visit-loading-art{max-height:calc(100% - 420px)}}

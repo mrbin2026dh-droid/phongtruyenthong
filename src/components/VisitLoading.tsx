@@ -1,6 +1,8 @@
 import {useEffect,useState} from 'react';
 import '../entry.css';
 import {SLOW_MS} from '../data/loadWatch.mjs';
+/** 17/11: tranh khảm tri ân 20/11 (83 gương mặt thầy cô — đã đồng ý công khai) làm nền màn hình đang tải. */
+const TRI_AN=import.meta.env.BASE_URL+'welcome/tri-an-20-11';
 type Props={overlay?:boolean;pct?:number|null;stage?:string;stalled?:boolean;onList?:()=>void};
 /** 15/11 (việc 1): shows real progress when known, and after SLOW_MS (or a stalled download) offers
  * “Thử lại” and “Xem danh sách ảnh” so nobody is stuck on the loading screen. */
@@ -8,8 +10,8 @@ export default function VisitLoading({overlay=false,pct=null,stage,stalled=false
  const [slow,setSlow]=useState(false);
  useEffect(()=>{const t=setTimeout(()=>setSlow(true),SLOW_MS);return()=>clearTimeout(t);},[]);
  const late=slow||stalled;
- return <div className={'visit-loading'+(overlay?' visit-loading-overlay':'')} role="status" aria-live="polite" aria-label="Đang chuẩn bị chuyến tham quan">
-  <svg className="visit-loading-door" viewBox="0 0 80 96" fill="none" aria-hidden="true"><path d="M14 89V12h52v77M23 89V22h34v67M5 89h70"/><path className="visit-loading-light" d="M40 22v67"/></svg>
+ return <div className={'visit-loading'+(overlay?' visit-loading-overlay':'')+(late?' visit-loading-late':'')} role="status" aria-live="polite" aria-label="Đang chuẩn bị chuyến tham quan">
+  <img className="visit-loading-art" src={TRI_AN+'-1200.webp'} srcSet={TRI_AN+'-1200.webp 1200w, '+TRI_AN+'-1600.webp 1600w'} sizes="(max-width:900px) 100vw, 80vw" alt="Tranh khảm tri ân thầy cô nhân ngày Nhà giáo Việt Nam 20/11" decoding="async" fetchPriority="high"/>
   <strong>{stalled?'Tải đang bị gián đoạn':late?'Đường truyền hơi chậm, vẫn đang tải…':'Đang mở không gian tham quan'}</strong><span>{stage||'Chuẩn bị ánh sáng và hình ảnh'}</span>
   {pct===null
    ?<div className="visit-loading-track" aria-hidden="true"><i/></div>
