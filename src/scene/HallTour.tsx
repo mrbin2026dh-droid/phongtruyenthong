@@ -40,7 +40,7 @@ import '../hall.css';
 const Scene=lazy(()=>import('./HallScene'));
 
 type Props={people:Person[];sort:string;onSelect:(id:string)=>void;onModule:(n:number)=>void;onList:()=>void;onNarrate:(text:string)=>void;onSilence:()=>void;caption:string;speaking:boolean;paused:boolean};
-type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void;onArrange?:()=>void};
+type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?:(slotId:string)=>void;onAdminLogin?:()=>void;adminMessage?:string;adminCounts?:string;adminMoving?:string;onCancelMove?:()=>void;onArrange?:()=>void;onClearPhotos?:()=>void;onUndoClear?:()=>void};
 
 export default function HallTour(p:Props){
  const [page,setPage]=useState(0),[demo,setDemo]=useState<Person|null>(null);
@@ -49,6 +49,9 @@ export default function HallTour(p:Props){
  // Layout preview (DEMO fill) only while nothing has been published yet; never for the admin.
  const enabled=new URLSearchParams(window.location.search).get('preview')!=='off'&&!admin&&!publishedPeople;
  const [publish,setPublish]=useState(false),[arranging,setArranging]=useState(false);
+ // 17/11: “Xóa tất cả ảnh” (xác nhận trước) + Hoàn tác cho tới khi rời trang
+ const [confirmClear,setConfirmClear]=useState(false),[clearUndo,setClearUndo]=useState<Person[]|null>(null);
+ const photoCount=p.people.filter(x=>x.image).length;
  const preview=useMemo(()=>hallPreview(p.people,enabled),[p.people,enabled]);
  const [login,setLogin]=useState(false),[editor,setEditor]=useState<{slot:{slotId:string;group:string};person?:Person}|null>(null),[adminMessage,setAdminMessage]=useState('');
  const layout=useMemo(()=>layoutHall(preview.people,p.sort,page),[preview,p.sort,page]);
@@ -81,9 +84,11 @@ export default function HallTour(p:Props){
    key={'page-'+layout.page}
    {...p}
    onSelect={select}
-   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish||arranging}
+   paused={p.paused||Boolean(demo)||login||Boolean(editor)||publish||arranging||confirmClear}
    onPublish={()=>setPublish(true)}
    onArrange={()=>{setMover(null);setArranging(true);}}
+   onClearPhotos={()=>{setMover(null);setConfirmClear(true);}}
+   onUndoClear={clearUndo?()=>{try{catalog.restorePeople(clearUndo);setClearUndo(null);setAdminMessage('Đã hoàn tác: ảnh đã trở lại · chưa xuất bản');}catch(err){setAdminMessage(err instanceof Error?err.message:'Không hoàn tác được.');}}:undefined}
    admin={admin}
    adminEmpties={empties}
    onEmpty={onEmpty}
@@ -101,6 +106,7 @@ export default function HallTour(p:Props){
   {AdminPublish&&publish&&<Suspense fallback={null}><AdminPublish people={p.people} onClose={()=>setPublish(false)} onDone={msg=>setAdminMessage(msg)}/></Suspense>}
   {AdminSlotEditor&&editor&&<Suspense fallback={null}><AdminSlotEditor key={editor.slot.slotId+(editor.person?.id||'')} slot={editor.slot} person={editor.person} onClose={()=>setEditor(null)} onSaved={msg=>{setEditor(null);setAdminMessage(msg);}}
    onMove={editor.person?()=>{const e=editor;setEditor(null);setAdminMessage('');setMover({id:e.person!.id,name:e.person!.name,slotId:e.slot.slotId});}:undefined}/></Suspense>}
+  {confirmClear&&<Dialog title="Xóa tất cả ảnh?" onClose={()=>setConfirmClear(false)}><div className="admin-clear"><p>Gỡ ảnh của <b>{photoCount}</b> người trên tường. Tên, chức vụ, tổ và vị trí giữ nguyên để tải ảnh mới lên.</p><p>Trang công khai chỉ thay đổi khi bấm “Xuất bản lên website”. Trước đó có thể Hoàn tác.</p><div className="admin-clear-actions"><button onClick={()=>setConfirmClear(false)}>Hủy</button><button className="danger" disabled={!photoCount} onClick={()=>{try{const before=catalog.clearPhotos();setClearUndo(before as Person[]);setAdminMessage('Đã xóa ảnh của '+photoCount+' người · chưa xuất bản');}catch(err){setAdminMessage(err instanceof Error?err.message:'Không xóa được ảnh.');}setConfirmClear(false);}}>Xóa tất cả ảnh</button></div></div></Dialog>}
   {demo&&<Dialog title="Hồ sơ minh họa bố cục" onClose={()=>setDemo(null)}><div className="profile"><div><img src={portraitPath(demo)} alt="Chân dung minh họa lặp để xem bố cục"/></div><div><p className="eyebrow">{demo.id}</p><h3>{demo.name}</h3><p>{demo.description}</p><p>Vị trí: {demo.displaySlot}</p><p>Ảnh chỉ dùng thử; không phải chân dung hiệu trưởng hay giáo viên thật được xác nhận.</p><button onClick={()=>setDemo(null)}>Đóng hồ sơ minh họa</button></div></div></Dialog>}
  </>;
 }
@@ -174,6 +180,17 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  const [loadDone,setLoadDone]=useState(false),[loadingGone,setLoadingGone]=useState(false);
  // 17/11: “step into the picture” transition (VisitLoading .visit-loading-leaving, 1,6 s) over the first frames of the scene
  useEffect(()=>{if(!ready||loadingGone)return;const t=setTimeout(()=>setLoadingGone(true),1800);return()=>clearTimeout(t);},[ready,loadingGone]);
+ // 17/11 (người dùng): thanh điều khiển tự trượt xuống khi đang di chuyển (cần, kéo nhìn, phím, đi tới điểm), hiện lại
+ // sau 1,6 s đứng yên — như Matterport/Street View: giao diện lùi lại khi người xem đang nhìn cảnh.
+ const [navBusy,setNavBusy]=useState(false);
+ useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;
+  const busy=()=>{setNavBusy(true);clearTimeout(t);t=setTimeout(()=>setNavBusy(false),1600);};
+  const poll=setInterval(()=>{const i=input.current;if(i.forward||i.strafe||i.turn||i.look)busy();},150);
+  const key=(e:KeyboardEvent)=>{if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase()))busy();};
+  const drag=(e:PointerEvent)=>{if(e.buttons&&e.target instanceof HTMLCanvasElement)busy();};
+  window.addEventListener('keydown',key);window.addEventListener('pointermove',drag);
+  return()=>{clearInterval(poll);clearTimeout(t);window.removeEventListener('keydown',key);window.removeEventListener('pointermove',drag);};},[]);
+ const dockHidden=ready&&!panel&&(navBusy||(moving&&!automatic));
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
  const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};
  const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
@@ -320,7 +337,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    <button type="button" className="hall-closeup-step" aria-label="Người sau" disabled={moving} onClick={()=>stepCloseup(1)}><TourIcon name="right"/></button>
    <button type="button" className="hall-closeup-close" aria-label="Thoát xem cận" onClick={leaveCloseup}><TourIcon name="close"/></button>
   </div>}
-  <div className="visitor-controls"><nav className="visitor-dock hall-dock" aria-label="Điều hướng phòng chung">
+  <div className={'visitor-controls'+(dockHidden?' is-hidden':'')}><nav className="visitor-dock hall-dock" aria-label="Điều hướng phòng chung">
    {icon('Về cổng vào','home',()=>go('gate',true),!ready||atDoor)}
    <button aria-label="Sơ đồ phòng chung" title="Sơ đồ phòng chung" aria-expanded={panel==='map'} disabled={atDoor} onClick={e=>toggle('map',e)}><TourIcon name="map"/></button>
    {icon(automatic?(pause?'Tiếp tục trình diễn':'Tạm dừng trình diễn'):moving?(pause?'Tiếp tục hành trình':'Tạm dừng hành trình'):'Trình diễn tự động',automatic||moving?(pause?'play':'pause'):'play',()=>{autoPaused.current=false;if(automatic||moving)setPause(v=>!v);else start();},!ready)}
@@ -334,7 +351,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   {failed&&<div className="visitor-error" role="alert"><p>Thiết bị vừa mất kết nối đồ họa 3D.</p><button type="button" onClick={()=>window.location.reload()}>Thử lại</button> <button type="button" onClick={p.onList}>Xem danh sách ảnh</button></div>}
   {import.meta.env.DEV&&p.admin&&ready&&<div className={'hall-admin-bar'+(p.adminMoving?' is-moving':'')} role="status"><b>Chế độ quản trị</b>{p.adminMoving
    ?<><span className="hall-admin-move">Đang đổi chỗ: <b>{p.adminMoving}</b> — bấm vào ảnh khác cùng khu để đổi chỗ, hoặc ô “+ Thêm ảnh” để chuyển sang.</span><button onClick={()=>p.onCancelMove?.()}>Hủy đổi chỗ</button></>
-   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button onClick={()=>p.onArrange?.()}>Sắp xếp theo tổ…</button><button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
+   :<span className="hall-admin-hint">Bấm vào ảnh để thay ảnh / sửa thông tin / đổi chỗ · Bấm ô “+ Thêm ảnh” để thêm người mới</span>}<span className="hall-admin-counts">{p.adminCounts}</span>{p.adminMessage&&<span className="hall-admin-msg">{p.adminMessage}</span>}<button onClick={()=>p.onArrange?.()}>Sắp xếp theo tổ…</button>{p.onUndoClear?<button onClick={p.onUndoClear}>Hoàn tác xóa ảnh</button>:<button className="danger" onClick={()=>p.onClearPhotos?.()}>Xóa tất cả ảnh</button>}<button className="gold" onClick={()=>p.onPublish?.()}>Xuất bản lên website</button><button onClick={()=>signOut()}>Đăng xuất</button></div>}
   {benchOn&&!benchResult&&ready&&<div className="hall-progress" role="status">{pause?'Đang tạm dừng — bấm ▶ để tiếp tục đo':'Đang đo hiệu năng… '+Math.max(0,benchStep.current)+'/'+benchRoute(layout.stops).length}</div>}
   {benchResult&&<BenchPanel result={benchResult} onClose={()=>setBenchResult(null)}/>}
  </section></div>;

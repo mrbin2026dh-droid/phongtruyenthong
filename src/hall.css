@@ -71,6 +71,25 @@
 @media (orientation:portrait){.hall-scene .hall-door-prompt,.hall-scene .hall-door-prompt:hover,.hall-scene .hall-door-prompt:focus,.hall-scene .hall-door-prompt:focus-visible,.hall-scene .hall-door-prompt:active{justify-content:center;align-items:flex-start;padding:64px 0 0}}
 @media (max-height:500px) and (orientation:landscape){.immersive-tour .hall-scene .hall-door-prompt{padding:0 4% 0 0}}
 /* 16/11: “Chạm để mở cửa” is attached to the door leaves in 3D (drei Html), not a full-screen tap area */
-.door-open-label{padding:10px 22px;min-height:44px;border-radius:999px;background:#0e2a32e0;color:#f8e9c6;font-size:15px;letter-spacing:.02em;border:1px solid #d9b56fbb;box-shadow:0 4px 18px #0006;white-space:nowrap;cursor:pointer;animation:door-hint 2.4s ease-in-out infinite}
-.door-open-label:hover,.door-open-label:focus-visible{background:#163a45;outline:2px solid #f3d38c;outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.door-open-label{animation:none}}
+
+/* 17/11: “Xóa tất cả ảnh” (quản trị) */
+.hall-admin-bar button.danger{background:#fff;color:#8f2d22;border-color:#c98a80}
+.hall-admin-bar button.danger:hover{background:#8f2d22;color:#fff;border-color:#8f2d22}
+.admin-clear p{margin:0 0 12px;font:14px/1.6 "Noto Sans",sans-serif;color:#29454c}
+.admin-clear-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+.admin-clear .danger{background:#8f2d22;color:#fff;border-color:#8f2d22}
+/* 17/11: điểm chạm mở cửa = vòng tròn bàn tay + 2 vòng sáng lan ra (không chữ) */
+.door-open-label{position:relative;display:grid;place-items:center;width:64px;height:64px;min-height:64px;padding:0;border-radius:50%;background:radial-gradient(circle at 50% 40%,#1d4a52f2,#0e2a32f0);color:#f6dfa6;border:1.5px solid #e0bd74;box-shadow:0 0 0 4px #e0bd7426,0 6px 22px #0007;cursor:pointer;animation:door-tap-bob 2.4s ease-in-out infinite}
+.door-open-label svg{width:30px;height:30px;transform:translate(1px,1px)}
+.door-open-label::before,.door-open-label::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid #f0d18d;opacity:0;animation:door-tap-ring 2.4s ease-out infinite;pointer-events:none}
+.door-open-label::after{animation-delay:1.2s}
+.door-open-label:hover,.door-open-label:focus-visible{background:#1f5059;outline:2px solid #f3d38c;outline-offset:4px}
+@keyframes door-tap-ring{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.1);opacity:0}}
+@keyframes door-tap-bob{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.door-open-label,.door-open-label::before,.door-open-label::after{animation:none}}
+@media (pointer:coarse){.door-open-label{width:72px;height:72px}.door-open-label svg{width:34px;height:34px}}
+/* 17/11: thanh điều khiển trượt xuống khi đang di chuyển, hiện lại khi đứng yên */
+.hall-scene .visitor-controls{transition:transform .38s cubic-bezier(.4,0,.2,1),opacity .3s ease}
+.hall-scene .visitor-controls.is-hidden{transform:translate(-50%,calc(100% + 28px));opacity:0;pointer-events:none}
+.hall-scene .visitor-controls.is-hidden *{pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hall-scene .visitor-controls{transition:opacity .2s}.hall-scene .visitor-controls.is-hidden{transform:translateX(-50%)}}

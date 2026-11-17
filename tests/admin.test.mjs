@@ -87,3 +87,21 @@ test('16/11 (user): the admin bar sits at the top of the 3D view — never over 
  assert.ok(rule.includes('top:58px')&&rule.includes('bottom:auto')&&rule.includes('right:118px'),'top, clear of the MC/music buttons');
  assert.ok(!/\.hall-admin-bar\{[^}]*bottom:\d/.test(css),'no bottom placement left (phones included)');
 });
+
+test('17/11 “Xóa tất cả ảnh”: every photo removed in one save, names/slots kept, undo restores',()=>{
+ const store=createCatalogStore(seed,{storage:memory(),year:2026});
+ const p=store.getSnapshot().people.find(v=>v.group==='teacher');
+ store.savePerson({...p,image:'idb:0123456789abcdef'},{id:p.id});
+ const before=store.getSnapshot().people,rev=store.getSnapshot().revision;
+ assert.ok(before.some(v=>v.image),'seed has photos');
+ const undo=store.clearPhotos();
+ const after=store.getSnapshot().people;
+ assert.equal(store.getSnapshot().revision,rev+1,'one save');
+ assert.ok(after.every(v=>v.image===''),'no photo left');
+ before.forEach(v=>{const a=after.find(x=>x.id===v.id);assert.equal(a.name,v.name);assert.equal(a.displaySlot,v.displaySlot);assert.equal(a.dept,v.dept);});
+ assert.equal(after.length,before.length,'nobody removed');
+ store.restorePeople(undo);
+ assert.deepEqual(store.getSnapshot().people.map(v=>[v.id,v.image,v.displaySlot]),before.map(v=>[v.id,v.image,v.displaySlot]));
+ const src=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ assert.ok(src.includes('title="Xóa tất cả ảnh?"')&&src.includes('Hoàn tác xóa ảnh'),'confirm dialog + undo button');
+});

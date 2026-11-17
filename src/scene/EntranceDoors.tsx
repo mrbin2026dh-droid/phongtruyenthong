@@ -121,7 +121,10 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
    {([[-1,parts.left],[1,parts.right]] as const).map(([side,s])=><primitive key={side} object={s.g}><Leaf side={side} m={s.m}/></primitive>)}
   </group>
   {waiting&&onOpen&&<Html position={DOOR_CENTER as [number,number,number]} center zIndexRange={[12,0]}>
-   <button type="button" className="door-open-label" onClick={onOpen} aria-label="Chạm vào cửa để mở cửa vào phòng truyền thống">Chạm để mở cửa</button>
+   {/* 17/11 (người dùng): biểu tượng bàn tay + vòng sáng lan tỏa thay cho chữ (kiểu điểm chạm của các tour 3D) */}
+   <button type="button" className="door-open-label" onClick={onOpen} aria-label="Chạm vào cửa để mở cửa vào phòng truyền thống" title="Chạm để mở cửa">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+   </button>
   </Html>}
  </>;
 }

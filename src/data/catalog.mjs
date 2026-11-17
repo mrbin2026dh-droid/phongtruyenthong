@@ -123,6 +123,13 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
    const used=next.map(p=>p.displaySlot).filter(Boolean);if(new Set(used).size!==used.length)throw new Error('Hai người trùng một vị trí; chưa thay đổi gì.');
    publish(attachExhibitSlots(next));return before;
   },
+  /** 17/11 (người dùng): “Xóa tất cả ảnh” — gỡ ảnh của mọi người trong MỘT lần lưu; tên, chức vụ, tổ, vị trí giữ nguyên.
+   * Trả về danh sách trước khi xóa (để Hoàn tác bằng restorePeople). */
+  clearPhotos:()=>{
+   const before=snapshot.people;
+   if(!before.some(p=>p.image))return before;
+   publish(before.map(p=>p.image?{...p,image:''}:p));return before;
+  },
   /** Undo of arrange(): puts the previous people back as they were. */
   restorePeople:people=>{publish(attachExhibitSlots(people.map(p=>validatePerson(p,year))));},
   moveToSlot:(id,slotId)=>{const r=moveToSlot(snapshot.people,id,slotId);if(r.people!==snapshot.people)publish(r.people);return r.other;},

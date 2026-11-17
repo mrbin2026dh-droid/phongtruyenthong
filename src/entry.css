@@ -34,7 +34,7 @@
 .visit-loading-overlay{position:absolute;inset:0;height:auto;border-radius:inherit}
 .visit-stage{position:relative;flex:0 0 auto;width:min(100cqw,164.8cqh);aspect-ratio:2976/1806;container:stage/inline-size}
 .visit-loading-art{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
-.visit-loading-info{position:absolute;left:58.25%;width:20.5%;top:78.6%;display:flex;flex-direction:column;align-items:center;gap:.55cqw;text-align:center;animation:visit-info-in .6s ease-out both}
+.visit-loading-info{position:absolute;left:58%;width:34%;top:65.5%;display:flex;flex-direction:column;align-items:center;gap:.55cqw;text-align:center;animation:visit-info-in .6s ease-out both}
 .visit-loading-info strong{font:600 clamp(12px,1.32cqw,20px)/1.35 "Noto Serif",serif;color:#f3e4c4;letter-spacing:.01em;text-shadow:0 1px 6px #0009}
 .visit-loading-info>span{font:400 clamp(10px,.92cqw,14px)/1.4 "Noto Sans",sans-serif;color:#c9d8d4;text-shadow:0 1px 4px #0009}
 .visit-loading-info .visit-loading-track{width:72%;max-width:260px;height:3px;margin-top:.35cqw;background:#e1c28626}
@@ -75,16 +75,16 @@
 @media (prefers-reduced-motion:reduce){.visit-loading-leaving{animation-duration:.6s}.visit-loading-leaving .visit-stage{animation:none}}
 .visit-loading-info .visit-loading-enter button{display:inline-flex;align-items:center;gap:.5em;padding:.4em 1.3em;background:linear-gradient(180deg,#f0d18d,#d6b06a);border-color:#e9c97f;color:#122d38;box-shadow:0 4px 14px #0007;animation:visit-info-in .5s ease-out both}
 .visit-loading-info .visit-loading-enter button svg{width:1.1em;height:1.1em}
-/* 17/11: mã QR cùng hàng với chữ tải, mép trên thẳng nhau, cả cụm căn giữa dưới cột chữ của tranh (x 0,58–0,92);
+/* 17/11: cột chữ của tranh đã dời lên (kết thúc y 0,634); chữ tải ngay dưới, mã QR ở dưới cùng, cả hai căn giữa cột chữ (x 0,75);
    lề ngà 9 % ≈ 4 ô mã (vùng yên tĩnh chuẩn QR) để camera bắt mã nhanh. */
-.visit-qr{position:absolute;left:80.25%;top:78.6%;width:11.5%;display:flex;flex-direction:column;align-items:center;gap:.55cqw;text-decoration:none;color:#e1c286;animation:visit-info-in .8s .3s ease-out both}
+.visit-qr{position:absolute;left:69.5%;bottom:2.5%;width:11%;display:flex;flex-direction:column;align-items:center;gap:.55cqw;text-decoration:none;color:#e1c286;animation:visit-info-in .8s .3s ease-out both}
 .visit-qr-card{display:block;width:100%;aspect-ratio:1;padding:9%;background:linear-gradient(160deg,#fbf5e6,#efe3c6);border-radius:10%;box-shadow:0 0 0 1px #b8924f,0 0 0 .3cqw #0e2b2f,0 0 0 calc(.3cqw + 1px) #d2b37699,0 10px 26px #0009;transition:transform .2s ease}
 .visit-qr-card img{display:block;width:100%;height:100%}
 .visit-qr:hover .visit-qr-card{transform:translateY(-2px)}
 /* khung nhỏ (điện thoại ngang): QR ra sát mép phải, ngoài mọi chữ của tranh (chữ tranh kết thúc ở x 0,893) */
 @container stage (max-width:980px){
- .visit-qr{left:89.6%;width:9.4%;top:auto;bottom:2.5%}
- .visit-loading-info{left:54%;width:35%}
+ .visit-qr{left:70.5%;width:9%;bottom:2.5%}
+ .visit-loading-info{left:56%;width:38%;top:64.6%}
  .visit-loading-info strong{font-size:11.5px}
 }
 @container visit (orientation:portrait){
@@ -93,7 +93,7 @@
 @media (prefers-reduced-motion:reduce){.visit-loading-info{animation:none}}
 /* khung rất nhỏ (iPhone SE ngang 568×320): thu cỡ chữ phụ, giữ nguyên nội dung */
 @container stage (max-width:560px){
- .visit-loading-info{gap:2px;top:78%}
+ .visit-loading-info{gap:2px;top:65%}
  .visit-loading-info strong{font-size:10.5px}
  .visit-loading-info>span,.visit-loading-info .visit-loading-pct{font-size:9px;line-height:1.25}
  .visit-loading-info .visit-loading-actions button{min-height:24px;font-size:9.5px}
@@ -108,3 +108,7 @@
  .visit-loading-info .visit-loading-actions button{min-height:40px;padding:.4em 1.1em;font-size:13px}
  .visit-qr{width:min(30vw,128px);gap:6px}
 }
+/* tải chậm: khối chữ cao hơn (có nút) → mã QR nhỏ lại để không chạm */
+.visit-loading-late .visit-qr{left:71%;width:8%}
+@container stage (max-width:980px){.visit-loading-late .visit-qr{left:71.5%;width:7%}}
+@container visit (orientation:portrait){.visit-loading-late .visit-qr{width:min(30vw,128px)}}
