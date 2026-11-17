@@ -29,7 +29,8 @@ function buildSlots({sideColumns,sideSpan,front}){
  const pair=(zone,wall,x,z,yaw)=>{const c=column++;for(const y of TEACHER_ROWS)out.push({slotId:next(zone),group:zone,wall,x,y,z,yaw,column:c,width:TEACHER_FRAME.width,height:TEACHER_FRAME.height});};
  // Ban Giám hiệu: three identical 2:3 frames on one line, HT in the centre (13/11).
  const leader=(group,n,x,width,height,y)=>out.push({slotId:group+'-'+String(n).padStart(3,'0'),group,wall:'back',x,y,z:-7.73,yaw:0,column:column++,width,height});
- leader('deputy',1,-1.6,1.00,1.50,1.80);leader('principal',1,0,1.00,1.50,1.80);leader('deputy',2,1.6,1.00,1.50,1.80);
+ // 17/11: khung 1,084 m trên tấm nền 4,86 m → 4 khoảng đều 0,402 m (hai mép = giữa các khung) → Phó HT ở ±1,486
+ leader('deputy',1,-1.486,1.00,1.50,1.80);leader('principal',1,0,1.00,1.50,1.80);leader('deputy',2,1.486,1.00,1.50,1.80);
  const bay=side=>{for(let i=0;i<BACK_COLUMNS;i++)pair('teacher','back',side*BACK_BAY_X+(i-(BACK_COLUMNS-1)/2)*BACK_PITCH,-7.86,0);};
  const sideZ=i=>Math.round((-sideSpan+i*2*sideSpan/(sideColumns-1))*1000)/1000;
  bay(-1);

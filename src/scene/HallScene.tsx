@@ -398,7 +398,7 @@ function MemoryCabinets({baked=false}:{baked?:boolean}){const n=CABINET_NICHE,mi
  
  </group>)}</>;}
 function PrincipalLamps(){
- const targets=useMemo(()=>[-1.6,0,1.6].map(x=>{const t=new Object3D();t.position.set(x,1.9,-7.70);return t;}),[]);
+ const targets=useMemo(()=>[-1.486,0,1.486].map(x=>{const t=new Object3D();t.position.set(x,1.9,-7.70);return t;}),[]);
  return <>{targets.map((target,i)=><group key={i}><primitive object={target}/><spotLight position={[target.position.x,3.1,-6.7]} target={target} color="#ffebcc" intensity={5} distance={4} angle={.48} penumbra={.85} decay={2}/></group>)}</>;
 }
 
