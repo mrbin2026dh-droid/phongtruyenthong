@@ -14,3 +14,5 @@
 @media(max-width:700px){.thumbstick{bottom:100px;width:98px}.thumbstick-move{left:max(14px,env(safe-area-inset-left))}.thumbstick-look{right:max(14px,env(safe-area-inset-right))}.thumbstick .thumbstick-base{width:98px;height:98px;min-width:98px;min-height:98px}.thumbstick-caption{font-size:9px;padding:2px 8px}.thumbstick-knob{left:calc(50% - 20px);top:calc(50% - 20px);width:40px;height:40px}}
 @media(max-height:500px) and (min-width:701px){.thumbstick{bottom:12px}.thumbstick-caption{display:none}.thumbstick .thumbstick-base{width:96px;height:96px;min-width:96px;min-height:96px}.thumbstick{width:96px}}
 @media(prefers-reduced-motion:reduce){.thumbstick-knob{transition:none}}
+/* 17/11 WCAG 1.4.3 (AA ≥ 4,5:1): nhãn cần điều khiển nằm trên cảnh 3D → nền gần đục, chữ đậm hơn (đo ≥ 8:1 trên mọi nền phòng) */
+.thumbstick-caption{color:#21434c;background:#f4f1e6ee;border-color:#ffffffb0}

@@ -40,3 +40,7 @@ footer{border-top:2px solid #ba9047;background:linear-gradient(100deg,#081b30,#1
 .styler-options legend{font-size:13px;font-weight:600;padding:0 4px}
 .styler-check{display:flex;gap:8px;align-items:flex-start}
 @media(max-width:560px){.styler-compare{grid-template-columns:1fr 1fr;gap:6px}}
+/* 17/11 WCAG AA: danh sách tra cứu — chức vụ 4,1:1 và mã hồ sơ 4,0:1 → ≥ 5,5:1 */
+.person-card span{color:#5a6062}.person-card .person-id,.person-id{color:#7b5c1d}
+/* 17/11 WCAG AA trên nền gradient sáng của trang tra cứu: dòng nhỏ trên tiêu đề 4,1:1, ghi chú thứ tự 4,2:1, đoạn giới thiệu 4,4:1 → ≥ 6:1 */
+.public-site .eyebrow,.eyebrow{color:#6e4e17}.public-site .period-note,.period-note{color:#5c5240}.public-site .intro p:not(.eyebrow){color:#3d4a4d}

@@ -14,3 +14,5 @@
 .virtual-host-floating .host-card{width:280px;max-width:100%;box-sizing:border-box;grid-template-columns:64px minmax(0,1fr);padding:18px 14px;backdrop-filter:blur(8px)}.virtual-host-floating .host-portrait{width:64px;height:64px}.virtual-host-floating .host-content{padding-top:15px}
 .virtual-host-floating .host-card:focus-visible{outline:2px solid #bd9954;outline-offset:2px}.host-launch:focus-visible,.host-audio:focus-visible,.host-close:focus-visible{outline:3px solid #bd9954;outline-offset:2px}
 @media(max-width:650px){.virtual-host-floating{top:62px;right:10px;max-width:calc(100% - 20px)}.virtual-host-floating .host-card{width:264px;grid-template-columns:56px minmax(0,1fr)}.virtual-host-floating .host-portrait{width:56px;height:56px}.host-caption p{max-height:90px;font-size:11px}.host-launch span{font-size:10px}.virtual-host-welcome .host-card{grid-template-columns:64px minmax(0,1fr);gap:12px;padding:14px}.virtual-host-welcome .host-portrait{width:64px;height:64px}}
+/* 17/11 WCAG AA: nhãn MC 9 px trên nền thẻ sáng — 4,2:1 → ≈ 6,5:1 */
+.host-label{color:#6b5326}

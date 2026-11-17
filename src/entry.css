@@ -118,3 +118,5 @@
 .visit-loading-ready .visit-qr{top:72.5%;left:68%;width:14%}
 @container stage (max-width:980px){.visit-loading-ready .visit-qr{top:76%;bottom:auto;left:69.25%;width:11.5%}}
 @container visit (orientation:portrait){.visit-loading-ready .visit-qr{width:min(36vw,156px)}}
+/* 17/11 WCAG AA: gợi ý xoay ngang có thể đè lên tranh khảm sáng → nền gần đục để chữ luôn ≥ 4,5:1 */
+.visit-rotate-hint{background:#0d222ceb}
