@@ -1,12 +1,12 @@
 {
  "schemaVersion": 1,
- "publishedAt": "2026-11-17T09:26:48.691Z",
+ "publishedAt": "2026-11-17T09:42:24.732Z",
  "people": [
   {
    "id": "GV002",
    "name": "Nguyễn Quang Nhật",
    "role": "Phó Hiệu trưởng",
-   "dept": "Ngữ văn",
+   "dept": "KHTN",
    "group": "management",
    "status": "Đang công tác",
    "birthYear": null,
@@ -29,7 +29,7 @@
    "id": "GV003",
    "name": "Ngô Thị Liền",
    "role": "Phó Hiệu trưởng",
-   "dept": "Ngoại ngữ",
+   "dept": "Ngữ Văn",
    "group": "management",
    "status": "Đang công tác",
    "birthYear": null,
@@ -52,7 +52,7 @@
    "id": "GV001",
    "name": "Nguyễn Văn Hiền",
    "role": "Hiệu trưởng",
-   "dept": "Toán – Tin",
+   "dept": "KHTN",
    "group": "management",
    "status": "Đang công tác",
    "birthYear": null,
