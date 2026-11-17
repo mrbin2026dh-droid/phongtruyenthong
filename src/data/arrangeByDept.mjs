@@ -34,7 +34,7 @@ export function deptGroups(people){
  const groups=new Map();
  for(const p of people){if(exhibitZone(p)!=='teacher')continue;const key=keyOf(p);
   if(!groups.has(key))groups.set(key,{key,variants:new Map(),ids:[]});
-  const g=groups.get(key);g.variants.set(p.dept,(g.variants.get(p.dept)||0)+1);g.ids.push(p.id);}
+  const g=groups.get(key),d=String(p.dept||'');g.variants.set(d,(g.variants.get(d)||0)+1);g.ids.push(p.id);}
  return [...groups.values()].map(g=>({key:g.key,name:prettyName(g.key,g.variants),variants:[...g.variants.keys()],count:g.ids.length}))
   .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi'));
 }
@@ -43,7 +43,9 @@ export function deptGroups(people){
 export function teacherSegments(all=exhibitSlots()){
  const slots=all.filter(s=>s.group==='teacher');
  // position along the wall as the visitor reads it (left → right when facing the wall)
- const along=s=>s.wall==='back'?s.x:s.wall==='left'?-s.z:s.wall==='right'?s.z:-s.x;
+ // 17/11 (A+): the entrance wall is read from the corner towards the door (the way the tour walks it), so the run —
+ // and Tổ văn phòng, which closes it — ends next to the door
+ const along=s=>s.wall==='back'?s.x:s.wall==='left'?-s.z:s.wall==='right'?s.z:s.x;
  const out=[];
  for(const wall of ['back','left','right','front']){
   const cols=[...new Set(slots.filter(s=>s.wall===wall).map(s=>s.column))]

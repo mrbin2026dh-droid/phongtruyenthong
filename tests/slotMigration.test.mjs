@@ -30,3 +30,15 @@ test('17/11 (A+): phones see each portrait bay row by row from 1.2 m (upper row,
  assert.equal(fitHallStops(stops,2.16,false).length,stops.length,'computers unchanged');
  assert.equal(PHONE_WALL_DISTANCE,1.2);
 });
+
+test('17/11: stops follow the tổ blocks — “Tổ …”, numbered in visiting order, ≤ 5 columns each; Tổ Văn Phòng closes by the door',async()=>{
+ const {readFileSync}=await import('node:fs');const {arrangeByDept}=await import('../src/data/arrangeByDept.mjs');
+ const P=JSON.parse(readFileSync(new URL('../public/data/catalog.json',import.meta.url))).people;
+ const r=arrangeByDept(P),arranged=P.map(p=>({...p,displaySlot:r.slot.get(p.id)??p.displaySlot,dept:r.rename.get(p.id)??p.dept}));
+ const stops=layoutHall(arranged).stops.filter(s=>s.group==='teacher');
+ assert.ok(stops.every(s=>/^Tổ |^Các thế hệ nhà giáo/.test(s.title)),'named after the tổ');
+ assert.ok(stops.every(s=>new Set(s.slotIds.map(id=>id)).size/2<=5),'each stop fits one view');
+ for(const t of new Set(stops.map(s=>s.title.replace(/ · \d+$/,'')))){const mine=stops.filter(s=>s.title.startsWith(t+' · '));mine.forEach((s,i)=>assert.ok(s.title.endsWith(' · '+(i+1)),'numbered in visiting order'));}
+ const last=stops.at(-1);assert.equal(last.title,'Tổ Văn Phòng');assert.equal(last.wall,'front');assert.ok(last.target[0]>-6,'next to the door');
+ assert.ok(layoutHall([]).stops.filter(s=>s.group==='teacher').every(s=>/^Các thế hệ nhà giáo/.test(s.title)),'empty room: zone chunks as before');
+});

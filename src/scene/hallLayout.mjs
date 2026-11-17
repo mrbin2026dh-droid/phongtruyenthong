@@ -1,5 +1,6 @@
 import {EXHIBIT_ZONES,exhibitSlots,assignExhibitSlots,FRONT_BAY} from '../data/exhibitSlots.mjs';
 import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
+import {deptGroups,deptKey,isOffice,OFFICE_KEY} from '../data/arrangeByDept.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
 export const HALL={width:24,depth:16,height:4.2,capacity:103,pitch:.9};
 export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
@@ -28,6 +29,34 @@ export const CABINET_NICHE={width:2.12,bottom:.85,top:2.95,wallZ:8,depth:.48,fra
 export function cabinetWallPieces(){return [{x:7,y:HALL.height/2,width:10,height:HALL.height}];}
 // Fixed wall positions (17/11): 1 principal + 2 deputies (Ban Giám hiệu) + 96 teachers & staff in one run = 99 (98 people today).
 export function wallColumns(){return exhibitSlots().filter((s,i,a)=>a.findIndex(v=>v.column===s.column)===i);}
+/** 17/11 (người dùng: “điểm dừng theo tổ cho khoa học”): one stop per tổ block — a run of columns of one tổ on one wall —
+ * titled “Tổ Ngữ Văn”; a block longer than 5 columns (wider than one view) is split evenly (“Tổ KHTN · 1”, “· 2”);
+ * a lone column (a tổ sharing a column, an empty position) joins its neighbour. A wall that is not arranged by tổ
+ * (too many tiny blocks) or an empty room keeps the old 3-column chunks (returns null). */
+const MAX_STOP_COLUMNS=5;
+function deptChunks(columns,slots){
+ const people=slots.filter(s=>s.group==='teacher').map(s=>s.person);if(!people.length)return null;
+ const names=new Map(deptGroups(people).map(g=>[g.key,g.name]));
+ const keyOfP=p=>isOffice(p)?OFFICE_KEY:deptKey(p.dept);
+ const colKey=c=>{const inCol=slots.filter(s=>s.column===c.column).sort((a,b)=>b.y-a.y);return inCol.length?keyOfP(inCol[0].person):null;};
+ let blocks=[];
+ for(const c of columns){const k=colKey(c),last=blocks.at(-1);
+  if(last&&last.cols[0].wall===c.wall&&Math.hypot(last.cols.at(-1).x-c.x,last.cols.at(-1).z-c.z)<=2&&(k===null||last.key===k))last.cols.push(c);
+  else blocks.push({key:k,cols:[c]});}
+ // lone columns join the neighbour on the same wall (previous first)
+ for(let i=0;i<blocks.length;i++){const b=blocks[i];if(b.cols.length>1&&b.key!==null)continue;
+  const prev=blocks[i-1],next=blocks[i+1],same=o=>o&&o.cols[0].wall===b.cols[0].wall;
+  const into=same(prev)?prev:same(next)?next:null;if(!into||(b.key!==null&&b.cols.length>1))continue;
+  if(into===prev)prev.cols.push(...b.cols);else next.cols.unshift(...b.cols);blocks.splice(i,1);i--;}
+ blocks=blocks.filter(b=>b.cols.length);
+ const named=blocks.filter(b=>b.key!==null&&names.has(b.key));
+ if(!named.length||blocks.length>columns.length*.45)return null;   // not arranged by tổ yet
+ const chunks=[],titles=[];
+ for(const b of blocks){const name=names.get(b.key)||'',parts=Math.ceil(b.cols.length/MAX_STOP_COLUMNS),size=Math.ceil(b.cols.length/parts);
+  // numbers (“· 1”, “· 2”) are given later, in visiting order; people without a tổ yet → the zone's own name
+  for(let k=0;k<parts;k++){chunks.push(b.cols.slice(k*size,(k+1)*size));titles.push(name&&b.key!==deptKey('Chưa phân tổ')?'Tổ '+name:'Các thế hệ nhà giáo');}}
+ return {chunks:chunks.filter(c=>c.length),titles:titles.filter((_,i)=>chunks[i].length)};
+}
 export function layoutHall(people,sort='service',page=0){
  const {assigned,warnings,definitions}=assignExhibitSlots(people);
  const slots=people.filter(p=>assigned.has(p.id)).map(person=>({...assigned.get(person.id),person}));
@@ -37,11 +66,12 @@ export function layoutHall(people,sort='service',page=0){
  for(const zone of zones){
   const wallOrder={back:0,left:1,front:2,right:3};
   const columns=definitions.filter(s=>s.group===zone.id).filter((s,i,a)=>a.findIndex(v=>v.column===s.column)===i).sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||(a.wall==='front'||a.wall==='back'?a.x-b.x:a.z-b.z));
-  const chunks=[];
-  for(const c of columns){let last=chunks.at(-1);if(!last||last.length>=3||last[0].wall!==c.wall||Math.hypot(last.at(-1).x-c.x,last.at(-1).z-c.z)>2){last=[];chunks.push(last);}last.push(c);}
+  const byTo=zone.id==='teacher'?deptChunks(columns,slots):null;
+  const chunks=byTo?byTo.chunks:[];
+  if(!byTo)for(const c of columns){let last=chunks.at(-1);if(!last||last.length>=3||last[0].wall!==c.wall||Math.hypot(last.at(-1).x-c.x,last.at(-1).z-c.z)>2){last=[];chunks.push(last);}last.push(c);}
   chunks.forEach((chunk,i)=>{
    const x=zone.id==='principal'?0:chunk.reduce((n,c)=>n+c.x,0)/chunk.length,z=chunk.reduce((n,c)=>n+c.z,0)/chunk.length,yaw=chunk[0].yaw;
-   exhibits.push({id:zone.id+'-'+i,title:zone.name+(chunks.length>1?' · '+(i+1):''),group:zone.id,wall:chunk[0].wall,yaw,labelWidth:zone.id==='principal'?7.3:Math.min(4.8,chunk.length*.9-.1),slotIds:definitions.filter(s=>chunk.some(c=>c.column===s.column)).map(s=>s.slotId),eye:[x+Math.sin(yaw)*2.8,1.7,z+Math.cos(yaw)*2.8],target:[x,zone.id==='principal'?1.85:1.9,z],dwell:8000});
+   exhibits.push({id:zone.id+'-'+i,title:byTo?byTo.titles[i]:zone.name+(chunks.length>1?' · '+(i+1):''),byTo:Boolean(byTo),group:zone.id,wall:chunk[0].wall,yaw,labelWidth:zone.id==='principal'?7.3:Math.min(4.8,chunk.length*.9-.1),slotIds:definitions.filter(s=>chunk.some(c=>c.column===s.column)).map(s=>s.slotId),eye:[x+Math.sin(yaw)*2.8,1.7,z+Math.cos(yaw)*2.8],target:[x,zone.id==='principal'?1.85:1.9,z],dwell:8000});
   });
  }
  // Hiệu trưởng and both Phó Hiệu trưởng share one centre wall, one sign and one stop.
@@ -51,7 +81,10 @@ export function layoutHall(people,sort='service',page=0){
  const wallOrder={right:0,back:1,left:2,front:3};
  ring.sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||(a.wall==='right'?b.eye[2]-a.eye[2]:a.wall==='back'?b.eye[0]-a.eye[0]:a.wall==='left'?a.eye[2]-b.eye[2]:a.eye[0]-b.eye[0]));
  const seen={};
- for(const stop of ring){seen[stop.group]=(seen[stop.group]||0)+1;const zone=EXHIBIT_ZONES.find(z=>z.id===stop.group);stop.title=stop.group==='principal'?'Ban Giám hiệu':zone.name+' · '+seen[stop.group];}
+ // tổ stops: “· n” in visiting order, only for a tổ that has several stops
+ {const total={},n={};for(const st of ring)if(st.byTo)total[st.title]=(total[st.title]||0)+1;
+  for(const st of ring)if(st.byTo&&total[st.title]>1){n[st.title]=(n[st.title]||0)+1;st.title=st.title+' · '+n[st.title];}}
+ for(const stop of ring){if(stop.byTo)continue;seen[stop.group]=(seen[stop.group]||0)+1;const zone=EXHIBIT_ZONES.find(z=>z.id===stop.group);stop.title=stop.group==='principal'?'Ban Giám hiệu':zone.name+' · '+seen[stop.group];}
  const finalStops=[...stops,{...FRONT_SCREEN,group:'memory',wall:'front',eye:[FRONT_SCREEN.x,1.7,3.3],target:[FRONT_SCREEN.x,FRONT_SCREEN.y,7.95],dwell:9000},...ring,
   // 16/11: the visit opens facing the statue, so the tour ends with it — a closing tribute before leaving
   {...STATUE_STOP},

@@ -10,13 +10,14 @@ import type {RouteState} from './HallController';
 
 const GOLD='#d4b06a';
 
+/** 17/11 (người dùng: “icon nhỏ, đẹp mắt”): a slim label — smaller text, thin gold rule, more transparent. */
 function labelTexture(text:string){
- const c=document.createElement('canvas');c.width=512;c.height=96;const g=c.getContext('2d')!;
- g.font='600 40px "Noto Sans"';const w=Math.min(500,g.measureText(text).width+56);
- g.fillStyle='rgba(16,43,50,.86)';g.beginPath();g.roundRect((512-w)/2,10,w,76,38);g.fill();
- g.strokeStyle=GOLD;g.lineWidth=3;g.stroke();
- g.fillStyle='#fff3d6';g.textAlign='center';g.textBaseline='middle';g.fillText(text,256,50,480);
- const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;
+ const c=document.createElement('canvas');c.width=512;c.height=80;const g=c.getContext('2d')!;
+ g.font='600 30px "Noto Sans"';const w=Math.min(500,g.measureText(text).width+44);
+ g.fillStyle='rgba(14,38,44,.72)';g.beginPath();g.roundRect((512-w)/2,14,w,52,26);g.fill();
+ g.strokeStyle='rgba(212,176,106,.8)';g.lineWidth=2;g.stroke();
+ g.fillStyle='#fff3d6';g.textAlign='center';g.textBaseline='middle';g.fillText(text,256,41,480);
+ const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=4;return t;
 }
 
 function StopMarker({stop,onGo}:{stop:any;onGo:(id:string)=>void}){
@@ -28,14 +29,14 @@ function StopMarker({stop,onGo}:{stop:any;onGo:(id:string)=>void}){
   onClick={e=>{e.stopPropagation();if(e.delta<6)onGo(stop.id);}}
   onPointerOver={e=>{e.stopPropagation();setHover(true);document.body.style.cursor='pointer';}}
   onPointerOut={()=>{setHover(false);document.body.style.cursor='';}}>
+  {/* 17/11: smaller, finer floor mark — a thin gold ring with a soft halo and a small dot (was a 0.72 m disc) */}
   <group rotation={[-Math.PI/2,0,0]} position={[0,.012,0]} scale={[s,s,s]}>
-   {/* Soft dark disc gives contrast on the light stone floor. */}
-   <mesh><circleGeometry args={[.36,40]}/><meshBasicMaterial color="#0f2f36" transparent opacity={hover?.42:.28} depthWrite={false} toneMapped={false}/></mesh>
-   <mesh position={[0,0,.001]}><ringGeometry args={[.25,.31,48]}/><meshBasicMaterial color={GOLD} transparent opacity={.95} depthWrite={false} toneMapped={false}/></mesh>
-   <mesh position={[0,0,.002]}><circleGeometry args={[.07,24]}/><meshBasicMaterial color={GOLD} depthWrite={false} toneMapped={false}/></mesh>
+   <mesh><circleGeometry args={[.21,40]}/><meshBasicMaterial color="#0f2f36" transparent opacity={hover?.3:.16} depthWrite={false} toneMapped={false}/></mesh>
+   <mesh position={[0,0,.001]}><ringGeometry args={[.15,.168,56]}/><meshBasicMaterial color={GOLD} transparent opacity={.9} depthWrite={false} toneMapped={false}/></mesh>
+   <mesh position={[0,0,.002]}><circleGeometry args={[.038,24]}/><meshBasicMaterial color={GOLD} transparent opacity={.95} depthWrite={false} toneMapped={false}/></mesh>
   </group>
-  <Billboard position={[0,.42,0]}>
-   <mesh scale={hover?1.08:1}><planeGeometry args={[.95,.18]}/><meshBasicMaterial map={label} transparent depthWrite={false} toneMapped={false}/></mesh>
+  <Billboard position={[0,.3,0]}>
+   <mesh scale={hover?1.08:1}><planeGeometry args={[.74,.116]}/><meshBasicMaterial map={label} transparent depthWrite={false} toneMapped={false}/></mesh>
   </Billboard>
  </group>;
 }
