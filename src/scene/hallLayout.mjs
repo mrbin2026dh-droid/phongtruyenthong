@@ -91,7 +91,8 @@ export function layoutHall(people,sort='service',page=0){
   // 16/11: the visit opens facing the statue, so the tour ends with it — a closing tribute before leaving
   {...STATUE_STOP},
   {id:'finish',title:'Kết thúc vòng tham quan',group:'',eye:[0,1.7,9.1],target:[0,1.65,-7.8],dwell:0}];
- const signs=[{id:'principal-sign',text:'BAN GIÁM HIỆU',x:0,z:-7.65,yaw:0,width:4.6,y:3.08},
+ // 17/11: tấm nền BGH mới cao tới 3,26 m (đèn LED 3,32) → biển hạ xuống 2,96 để không chạm mép trên
+ const signs=[{id:'principal-sign',text:'BAN GIÁM HIỆU',x:0,z:-7.65,yaw:0,width:4.6,y:2.96},
  {id:'teacher-back-right',text:'CÁC THẾ HỆ NHÀ GIÁO',x:BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-left',text:TEACHER_MOTTO,x:-11.79,z:0,yaw:Math.PI/2,width:13.4,y:3.48,motto:true},

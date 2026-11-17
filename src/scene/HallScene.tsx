@@ -46,7 +46,6 @@ export const isLeaderSlot=(s:{group:string})=>s.group==='principal'||s.group==='
 // (same two materials, roles swapped: walnut-on-oak there, gold-on-green here — walnut alone vanishes on the green, 1.3:1).
 export const LEADER_GOLD='#c9a560',LEADER_GOLD_DEEP='#9a7a40';
 const leaderGold=new MeshStandardMaterial({color:LEADER_GOLD,metalness:.6,roughness:.34});
-const leaderCove=new MeshStandardMaterial({color:LEADER_GOLD_DEEP,metalness:.55,roughness:.45});
 /** bands measured outward from the photo opening: [from, to, front z]; .5 mm gaps so no two faces are ever coplanar */
 export const LEADER_PROFILE:[number,number,number][]=[[0,.012,.036],[.0125,.058,.030],[.0585,.070,.044]];
 export const LEADER_BACK=-.094,LEADER_MOULDING=.07,PICTURE_LIGHT={length:.66,above:.16},PLAQUE={width:.60,height:.13,gap:.07};
@@ -62,7 +61,9 @@ function LeaderFrames({slots}:{slots:any[]}){
    }mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();});
  },[slots]);
  const count=Math.max(1,slots.length*4);
- return <>{[walnut,leaderCove,leaderGold].map((mat,i)=><instancedMesh key={i} ref={refs[i]} args={[cube,mat,count]} count={slots.length*4} frustumCulled={false}/>)}</>;
+ // 17/11 (modern BGH, matching the teacher bays): a walnut frame like theirs, a thin gold line inside and outside it
+ // so it still reads on the teal panel (walnut alone is 1.3:1 on the green) — no gilt moulding any more
+ return <>{[leaderGold,walnut,leaderGold].map((mat,i)=><instancedMesh key={i} ref={refs[i]} args={[cube,mat,count]} count={slots.length*4} frustumCulled={false}/>)}</>;
 }
 /** soft drop shadow on the fabric so the frame floats a little off the wall */
 const softShadow=(()=>{let t:CanvasTexture|null=null;return ()=>{if(t)return t;const c=document.createElement('canvas');c.width=128;c.height=192;const x=c.getContext('2d')!;
@@ -81,10 +82,9 @@ const lightPool=(()=>{let t:CanvasTexture|null=null;return ()=>{if(t)return t;co
  const h=x.createLinearGradient(0,0,256,0);h.addColorStop(0,'rgba(0,0,0,0)');h.addColorStop(.3,'rgba(0,0,0,1)');h.addColorStop(.7,'rgba(0,0,0,1)');h.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=h;x.fillRect(0,0,256,256);
  t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;};})();
 /** pool plane: top edge at the lamp, reaching down over the upper part of the frame */
-export const LIGHT_POOL={width:1.6,height:1.4,opacity:.34};
+export const LIGHT_POOL={width:1.6,height:1.4,opacity:.26};   // 17/11: softer — the cove light, not a lamp per portrait
 function LeaderDressing({slot}:{slot:any}){
  const [ew,eh]=leaderOpening(slot),top=eh+LEADER_MOULDING,L=PICTURE_LIGHT,ly=top+L.above,P=PLAQUE,py=-(top+P.gap+P.height/2);
- const tilt=Math.atan2(.042,.26);
  const plaque=useMemo(()=>{const c=document.createElement('canvas');c.width=1200;c.height=260;const x=c.getContext('2d')!;x.textAlign='center';x.fillStyle='#2a1f18';
   x.font='700 76px "Noto Serif"';x.fillText(slot.person.name,600,108,1120);x.font='500 44px "Noto Sans"';
   x.fillText([slot.person.role,workHistoryText(slot.person)].filter(Boolean).join(' · '),600,196,1120);
@@ -93,13 +93,7 @@ function LeaderDressing({slot}:{slot:any}){
  return <>
   <mesh position={[0,-.02,LEADER_BACK+.001]}><planeGeometry args={[2*(ew+LEADER_MOULDING)+.16,2*top+.2]}/><meshBasicMaterial map={softShadow()} transparent opacity={.45} depthWrite={false} color="#000"/></mesh>
   <mesh position={[0,ly-LIGHT_POOL.height/2,LEADER_BACK+.002]}><planeGeometry args={[LIGHT_POOL.width,LIGHT_POOL.height]}/><meshBasicMaterial map={lightPool()} transparent opacity={LIGHT_POOL.opacity} blending={AdditiveBlending} depthWrite={false} toneMapped={false}/></mesh>
-  {/* picture light: 2/3 of the frame width, 16 cm above it (picture-light sizing guidance) */}
-  <mesh position={[0,ly,.17]} rotation={[0,0,Math.PI/2]} material={leaderGold}><cylinderGeometry args={[.017,.017,L.length,24]}/></mesh>
-  <mesh position={[0,ly-.013,.17]} rotation={[Math.PI/2,0,0]}><planeGeometry args={[L.length-.04,.012]}/><meshBasicMaterial color="#fff1cf" toneMapped={false}/></mesh>
-  {[-.22,.22].map(x=><group key={x}>
-   <mesh position={[x,ly-.021,.04]} rotation={[-tilt,0,0]} material={leaderGold}><boxGeometry args={[.008,.008,.265]}/></mesh>
-   <mesh position={[x,ly-.042,LEADER_BACK+.005]} material={leaderGold}><boxGeometry args={[.026,.045,.01]}/></mesh>
-  </group>)}
+  {/* 17/11: no brass picture lamps (a classical cue) — the panel is lit by the slim LED cove above it (baked) */}
   {/* brushed-brass name plaque, engraved dark text (6.9:1), name in mixed case — museum label practice */}
   <mesh position={[0,py,LEADER_BACK+.008]} material={leaderGold}><boxGeometry args={[P.width,P.height,.014]}/></mesh>
   <mesh position={[0,py,LEADER_BACK+.0156]}><planeGeometry args={[P.width-.03,P.height-.02]}/><meshBasicMaterial map={plaque} transparent toneMapped={false}/></mesh>
