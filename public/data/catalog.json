@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "publishedAt": "2026-11-17T09:42:53.762Z",
+ "publishedAt": "2026-11-17T12:48:13.539Z",
  "people": [
   {
    "id": "GV002",
@@ -119,7 +119,7 @@
   },
   {
    "id": "GV143",
-   "name": "Nguyễn Phương Thảo",
+   "name": "Nguyễn Thị Phương Thảo",
    "role": "Giáo viên",
    "dept": "KHTN",
    "group": "teacher",
@@ -372,7 +372,7 @@
   },
   {
    "id": "GV137",
-   "name": "Lê Thị Kim Lan",
+   "name": "Nguyễn Thị Kim Lan",
    "role": "Tổ phó",
    "dept": "KHTN",
    "group": "teacher",
@@ -517,7 +517,7 @@
    "status": "Đang công tác",
    "birthYear": null,
    "description": "",
-   "image": "data/photos/GV095-e0a10e6808.jpg",
+   "image": "data/photos/GV095-35b6f03183.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-020",
    "workHistory": [
@@ -655,7 +655,7 @@
    "status": "Đang công tác",
    "birthYear": null,
    "description": "",
-   "image": "data/photos/GV102-b1112a671d.jpg",
+   "image": "data/photos/GV102-53f4546bb2.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-026",
    "workHistory": [
@@ -763,7 +763,7 @@
   },
   {
    "id": "GV077",
-   "name": "Nguyễn Thị Oanh",
+   "name": "Nguyễn Thị Kim Oanh",
    "role": "Giáo viên",
    "dept": "Sử-Địa",
    "group": "teacher",
@@ -1108,7 +1108,7 @@
   },
   {
    "id": "GV140",
-   "name": "Lê Văn Trọng",
+   "name": "Lại Văn Trọng",
    "role": "Giáo viên",
    "dept": "Toán-Tin",
    "group": "teacher",
@@ -1667,7 +1667,7 @@
    "status": "Đang công tác",
    "birthYear": null,
    "description": "",
-   "image": "data/photos/GV012-7b740be5be.jpg",
+   "image": "data/photos/GV012-96ea1e7205.jpg",
    "photoRatio": 0.6666666666666666,
    "displaySlot": "teacher-070",
    "workHistory": [
@@ -1890,7 +1890,7 @@
   },
   {
    "id": "GV021",
-   "name": "Nguyễn Thị Huệ",
+   "name": "Trương Thị Mỹ Huệ",
    "role": "Giáo viên",
    "dept": "Ngữ Văn",
    "group": "teacher",
