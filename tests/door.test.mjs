@@ -195,3 +195,14 @@ test('16/11 (user): manual walking (Tự bước) from the foyer — the closed 
  DOOR_GATE.closed=false;
  const through=slideStep([0,1.7,9.3],[0,0,-1.5],0,[]);assert.ok(through[2]<8.9,'open door: walk through');
 });
+
+test('17/11: floor stop markers and the control dock step aside while the visitor moves',()=>{
+ const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
+ const way=readFileSync(new URL('../src/scene/Wayfinding.tsx',import.meta.url),'utf8');
+ assert.ok(tour.includes('hideMarkers={navBusy||!markersOn}')&&tour.includes('setTimeout(()=>setMarkersOn(false),6000)'),'markers hide while moving and 6 s after stopping');
+ assert.ok(scene.includes('||Boolean(p.hideMarkers)}/>'),'HallScene passes hideMarkers to StopMarkers');
+ assert.ok(way.includes('.sort((a,b)=>a.d-b.d).slice(0,3)'),'only the 3 nearest stops');
+ assert.ok(tour.includes("'visitor-controls'+(dockHidden?' is-hidden':'')"),'dock slides away while moving');
+ assert.ok(!readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8').includes('>Chạm để mở cửa</button>'),'door shows an icon, not text');
+});

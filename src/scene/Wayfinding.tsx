@@ -40,13 +40,13 @@ function StopMarker({stop,onGo}:{stop:any;onGo:(id:string)=>void}){
  </group>;
 }
 
-/** A: visible floor stops with zone names; nearest few within reach, hidden while travelling. */
+/** A: visible floor stops with zone names; 3 nearest within reach (17/11: was 5), hidden while travelling/walking and after a few idle seconds. */
 export function StopMarkers({stops,onGo,disabled}:{stops:any[];onGo:(id:string)=>void;disabled:boolean}){
  const [visible,setVisible]=useState<string[]>([]);
  const candidates=useMemo(()=>stops.filter(s=>s.id!=='finish'),[stops]);
  useFrame(({camera})=>{
   const next=candidates.map(s=>({id:s.id,d:Math.hypot(camera.position.x-s.eye[0],camera.position.z-s.eye[2])}))
-   .filter(v=>v.d>1.2&&v.d<12).sort((a,b)=>a.d-b.d).slice(0,5).map(v=>v.id).sort();
+   .filter(v=>v.d>1.2&&v.d<12).sort((a,b)=>a.d-b.d).slice(0,3).map(v=>v.id).sort();
   if(next.join()!==visible.join())setVisible(next);
  });
  if(disabled)return null;

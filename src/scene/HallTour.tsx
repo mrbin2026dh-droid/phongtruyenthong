@@ -191,6 +191,11 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   window.addEventListener('keydown',key);window.addEventListener('pointermove',drag);
   return()=>{clearInterval(poll);clearTimeout(t);window.removeEventListener('keydown',key);window.removeEventListener('pointermove',drag);};},[]);
  const dockHidden=ready&&!panel&&(navBusy||(moving&&!automatic));
+ // 17/11 (người dùng): vòng tròn/nhãn điểm dừng trên sàn tự ẩn — hiện 6 s sau khi dừng lại hoặc chạm màn hình, rồi mờ đi
+ const [markersOn,setMarkersOn]=useState(true),markerTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ const showMarkers=()=>{setMarkersOn(true);clearTimeout(markerTimer.current);markerTimer.current=setTimeout(()=>setMarkersOn(false),6000);};
+ useEffect(()=>{if(!navBusy&&!moving&&ready)showMarkers();},[navBusy,moving,ready]);
+ useEffect(()=>{const tap=(e:PointerEvent)=>{if(e.target instanceof HTMLCanvasElement)showMarkers();};window.addEventListener('pointerup',tap);return()=>{window.removeEventListener('pointerup',tap);clearTimeout(markerTimer.current);};},[]);
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
  const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};
  const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
@@ -290,6 +295,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     moving={moving}
     effects={effects}
     controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}
+    hideMarkers={navBusy||!markersOn}
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
