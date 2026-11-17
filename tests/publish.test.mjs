@@ -50,11 +50,12 @@ test('Public site starts from the published catalog (read-only, no localStorage)
  assert.match(repo,/storage:adminAvailable\?\(storage\|\|blockedStorage\):null,published:publishedPeople/,'visitors never use localStorage');
 });
 
-test('Publish endpoint: dev-only, loopback-only, same-origin, consent required, Git limited to public/data',()=>{
+test('Publish endpoint: dev-only, loopback-only, same-origin, consent required, Git limited to public/data + the keepsake pictures',()=>{
  const vite=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');
  assert.match(vite,/name:'local-admin-publish',apply:'serve'/);assert.match(vite,/if\(!loopback\(req\.socket\.remoteAddress\)/);
  assert.match(vite,/if\(!origin\|\|origin!=='http:\/\/'\+req\.headers\.host\)/);assert.match(vite,/input\.consent!==true/);
- assert.match(vite,/git\(\['add','--','public\/data'\]\)/);assert.ok(!/--force|reset --hard/.test(vite));
+ assert.match(vite,/git\(\['add','--',\.\.\.PUBLISH_PATHS\]\)/);
+ assert.match(vite,/const PUBLISH_PATHS=\['public\/data','public\/tri-an\/tri-an-thay-co-20-11\.jpg',\.\.\.\[1200,1800,2600\]\.map\(w=>'public\/welcome\/tri-an-20-11-v2-'\+w\+'\.webp'\)\]/,'17/11: exact keepsake files only, never a whole folder');assert.ok(!/--force|reset --hard/.test(vite));
  const ignore=readFileSync(new URL('../.gitignore',import.meta.url),'utf8');
  for(const p of ['node_modules/','dist/','local-preview/','.env'])assert.ok(ignore.includes(p),p);
 });

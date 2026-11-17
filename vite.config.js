@@ -14,13 +14,15 @@ function privateClient(addr=''){const a=String(addr).replace(/^::ffff:/,'');retu
 const ROOT=fileURLToPath(new URL('.',import.meta.url)).replace(/[\\/]$/,'');
 const loopback=addr=>['127.0.0.1','::1','::ffff:127.0.0.1'].includes(addr);
 function git(args){return new Promise(resolve=>execFile('git',args,{cwd:ROOT,timeout:120000,windowsHide:true},(err,stdout,stderr)=>resolve({ok:!err,out:String(stdout||'')+String(stderr||'')})));}
+// 17/11: also the keepsake pictures refreshed by 10-QUA-TANG-20-11/CAP-NHAT-ANH-KY-NIEM.cmd (exact files only)
+const PUBLISH_PATHS=['public/data','public/tri-an/tri-an-thay-co-20-11.jpg',...[1200,1800,2600].map(w=>'public/welcome/tri-an-20-11-v2-'+w+'.webp')];
 async function pushPublication(){
  if(!(await git(['rev-parse','--is-inside-work-tree'])).ok)return {state:'no-repo',message:'Đã lưu trên máy. Chưa kết nối GitHub (thư mục website chưa là kho Git) — xem HUONG-DAN-QUAN-TRI.md mục “Lần đầu”.'};
- const add=await git(['add','--','public/data']);if(!add.ok)return {state:'error',message:'Không thêm được tệp vào Git: '+add.out.slice(0,300)};
- const staged=await git(['diff','--cached','--quiet','--','public/data']);
+ const add=await git(['add','--',...PUBLISH_PATHS]);if(!add.ok)return {state:'error',message:'Không thêm được tệp vào Git: '+add.out.slice(0,300)};
+ const staged=await git(['diff','--cached','--quiet','--',...PUBLISH_PATHS]);
  if(staged.ok)return {state:'nothing',message:'Không có thay đổi mới để đưa lên GitHub.'};
  const stamp=new Date().toLocaleString('vi-VN',{timeZone:'Asia/Bangkok'});
- const commit=await git(['commit','-m','Cập nhật dữ liệu phòng truyền thống ('+stamp+')','--','public/data']);
+ const commit=await git(['commit','-m','Cập nhật dữ liệu phòng truyền thống ('+stamp+')','--',...PUBLISH_PATHS]);
  if(!commit.ok)return {state:'error',message:'Không tạo được bản ghi Git: '+commit.out.slice(0,300)};
  if(!(await git(['remote'])).out.trim())return {state:'no-remote',message:'Đã lưu và ghi vào Git trên máy, nhưng chưa có kho GitHub (remote) để đưa lên.'};
  const push=await git(['push']);
