@@ -8,7 +8,7 @@
 // Camera không xoay khi đang vuốt màn hình (screenGrab). Ảnh chỉ tải khi người xem ở nửa phòng phía lối vào.
 import {useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
-import {CanvasTexture,SRGBColorSpace,Group,Plane,Vector3} from 'three';
+import {CanvasTexture,SRGBColorSpace,Group,Plane,Vector3,AdditiveBlending,MeshStandardMaterial} from 'three';
 import type {WebGLRenderer} from 'three';
 import {FRONT_SCREEN} from './hallLayout.mjs';
 import {screenGrab} from './screenGrab';
@@ -16,7 +16,9 @@ import {screenGrab} from './screenGrab';
 export type DisplayItem={id:string;url:string;caption:string;fit:'cover'|'contain'|'bare'};
 type Props={items:DisplayItem[];onOpen:(index:number)=>void};
 
-const S=FRONT_SCREEN,FACE_Z=S.wallZ-.03;          // screen face 3 cm in front of the plaster (wall face z 8.0)
+// 17/11: a real wall-mounted display — 4,8 cm body standing 1,2 cm off a slim bracket, 2 cm satin bezel
+const BODY_D=.048,BEZEL=.02;
+const S=FRONT_SCREEN,FACE_Z=S.wallZ-.06;          // glass 6 cm in front of the plaster (wall face z 8.0)
 const near=(z:number)=>z>.5;                       // visitor in the entrance half of the room
 const CENTER=new Vector3(),DIR=new Vector3(),LOOK=new Vector3();
 /** The screen is really being looked at: within 15 m and less than ~40° off the view direction. */
@@ -55,6 +57,16 @@ function trim(keep:Set<string>){for(const [k,p] of cache)if(!keep.has(k)){cache.
 const sheen=(()=>{if(typeof document==='undefined')return null;const c=document.createElement('canvas');c.width=256;c.height=256;const g=c.getContext('2d')!;
  const gr=g.createLinearGradient(0,0,256,256);gr.addColorStop(0,'#ffffff22');gr.addColorStop(.35,'#ffffff05');gr.addColorStop(.6,'#ffffff00');gr.addColorStop(1,'#ffffff0a');
  g.fillStyle=gr;g.fillRect(0,0,256,256);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
+const tvBody=new MeshStandardMaterial({color:'#121417',metalness:.35,roughness:.42});
+const tvEdge=new MeshStandardMaterial({color:'#4a4e55',metalness:.8,roughness:.28});   // anodised rim: the light catches it at an angle
+/** soft contact shadow of the TV on the plaster (bigger and softer below, as under a wall-hung screen) */
+let shadowTex:CanvasTexture|null=null;
+const wallShadow=()=>{if(shadowTex)return shadowTex;const c=document.createElement('canvas');c.width=320;c.height=200;const x=c.getContext('2d')!;
+ x.filter='blur(14px)';x.fillStyle='rgba(0,0,0,1)';x.fillRect(34,30,252,146);shadowTex=new CanvasTexture(c);return shadowTex;};
+/** the picture lights the wall a little round the screen — static, so it costs nothing per frame */
+const spill=(()=>{if(typeof document==='undefined')return null;const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d')!;
+ const g=x.createRadialGradient(128,128,40,128,128,128);g.addColorStop(0,'rgba(220,235,255,1)');g.addColorStop(.55,'rgba(200,220,255,.35)');g.addColorStop(1,'rgba(200,220,255,0)');
+ x.fillStyle=g;x.fillRect(0,0,256,256);const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;})();
 const ease=(t:number)=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 
 export default function GalleryDisplays({items,onOpen}:Props){
@@ -109,10 +121,15 @@ export default function GalleryDisplays({items,onOpen}:Props){
  const mapOf=(k:number)=>{const it=at(index+k);return it?tex[keyOf(it)]||null:null;};
  const current=((index%n)+n)%n;
  return <group position={[S.x,S.y,FACE_Z]} rotation={[0,Math.PI,0]}>
-  {/* walnut frame with a gold fillet, like the portrait frames */}
-  <mesh position={[0,0,-.012]}><planeGeometry args={[w+.16,h+.16]}/><meshBasicMaterial color="#4a3423" toneMapped={false}/></mesh>
-  <mesh position={[0,0,-.010]}><planeGeometry args={[w+.06,h+.06]}/><meshBasicMaterial color="#c9a45e" toneMapped={false}/></mesh>
-  <mesh position={[0,0,-.009]} onPointerDown={down} onPointerOver={hover(true)} onPointerOut={hover(false)}><planeGeometry args={[w+.03,h+.03]}/><meshBasicMaterial color="#081416" toneMapped={false}/></mesh>
+  {/* 17/11 (người dùng: “tivi trông như một bức tranh”): a wall-mounted display, not a picture frame — no wood, no gold.
+      Soft contact shadow + faint static light spill on the plaster (the baked wall knows nothing of the TV), a 4,8 cm
+      satin-black body standing off the wall, an anodised edge that catches the side light, a black glass border round the picture. */}
+  <mesh position={[0,-.035,-BODY_D-.011]}><planeGeometry args={[w+.62,h+.62]}/><meshBasicMaterial map={wallShadow()} transparent opacity={.55} depthWrite={false} color="#000"/></mesh>
+  {spill&&<mesh position={[0,0,-BODY_D-.010]}><planeGeometry args={[w*1.45,h*1.75]}/><meshBasicMaterial map={spill} transparent opacity={.07} blending={AdditiveBlending} depthWrite={false} toneMapped={false}/></mesh>}
+  <mesh position={[0,0,-.012-BODY_D/2]} material={tvBody}><boxGeometry args={[w+BEZEL*2,h+BEZEL*2,BODY_D]}/></mesh>
+  {[[0,(h/2+BEZEL),w+BEZEL*2+.004,.004],[0,-(h/2+BEZEL),w+BEZEL*2+.004,.004],[w/2+BEZEL,0,.004,h+BEZEL*2],[-(w/2+BEZEL),0,.004,h+BEZEL*2]].map(([x,y,bw,bh],i)=>
+   <mesh key={i} position={[x,y,-.012-BODY_D/2]} material={tvEdge}><boxGeometry args={[bw,bh,BODY_D+.002]}/></mesh>)}
+  <mesh position={[0,0,-.0095]} onPointerDown={down} onPointerOver={hover(true)} onPointerOut={hover(false)}><planeGeometry args={[w+BEZEL*1.4,h+BEZEL*1.4]}/><meshBasicMaterial color="#030405" toneMapped={false}/></mesh>
   {/* the strip: previous · current · next, clipped to the screen */}
   <group ref={strip} position={[0,0,-.008]}>
    {[-1,0,1].map(k=>{const m=mapOf(k);return <mesh key={k} position={[k*w,0,0]} onPointerDown={down}><planeGeometry args={[w,h]}/>

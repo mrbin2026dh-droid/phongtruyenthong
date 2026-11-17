@@ -43,7 +43,9 @@ test('17/11: arrangement places every teacher once, contiguously per tổ, leade
  const name=new Map(teachers.map(p=>[p.id,r.rename.get(p.id)??deptGroups(published).find(g=>g.key===deptKey(p.dept)).name]));
  const seq=[...r.slot.entries()].filter(([,s])=>s).sort((a,b)=>idx.get(a[1])-idx.get(b[1])).map(([id])=>name.get(id));
  const blocks=seq.filter((n,i)=>i===0||seq[i-1]!==n);assert.equal(blocks.length,new Set(blocks).size,'each tổ is one run in reading order');
- assert.ok(r.split.length<=1,'at most one tổ cut across walls with the current sizes');
+ // 17/11 16:42 data (tổ re-assigned by the school: KHTN 20 · Ngữ Văn 14 · Sử-Địa 14 · Tiếng Anh 10 · Toán-Tin 17 · Văn Thể Mỹ 15 · VP 5):
+ // three tổ have to cross a wall corner — the fewest possible is checked by “order search cuts as few tổ as possible”.
+ assert.ok(r.split.length<=3,'at most three tổ cut across walls with the current sizes');
  // tổ trưởng then tổ phó first inside their tổ
  for(const p of teachers.filter(p=>/Tổ trưởng/i.test(p.role))){
   const mates=teachers.filter(q=>name.get(q.id)===name.get(p.id));assert.equal(Math.min(...mates.map(q=>idx.get(r.slot.get(q.id)))),idx.get(r.slot.get(p.id)),'tổ trưởng opens the tổ');
