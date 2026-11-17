@@ -8,7 +8,7 @@ import {useFrame,useThree} from '@react-three/fiber';
 import {CanvasTexture,SRGBColorSpace,Group,MeshBasicMaterial} from 'three';
 import {FRONT_SCREEN} from './hallLayout.mjs';
 
-export type DisplayItem={id:string;url:string;caption:string;fit:'cover'|'contain'};
+export type DisplayItem={id:string;url:string;caption:string;fit:'cover'|'contain'|'bare'};
 type Props={items:DisplayItem[];onOpen:(index:number)=>void};
 
 const S=FRONT_SCREEN,FACE_Z=S.wallZ-.03;          // screen face 3 cm in front of the plaster (wall face z 8.0)
@@ -25,6 +25,7 @@ function slide(it:DisplayItem){
   const bg=g.createRadialGradient(W/2,H*.45,H*.1,W/2,H/2,W*.7);bg.addColorStop(0,'#163338');bg.addColorStop(1,'#091719');g.fillStyle=bg;g.fillRect(0,0,W,H);
   const iw=img.naturalWidth,ih=img.naturalHeight;g.imageSmoothingQuality='high';
   if(it.fit==='cover'){const s=Math.max(W/iw,H/ih);g.drawImage(img,(W-iw*s)/2,(H-ih*s)/2,iw*s,ih*s);}
+  else if(it.fit==='bare'){const s=Math.min(W/iw,H/ih);g.drawImage(img,(W-iw*s)/2,(H-ih*s)/2,iw*s,ih*s);}   // whole picture, no mat (a dark poster)
   else{const pad=it.caption?96:44,s=Math.min((W-88)/iw,(H-pad-40)/ih),w=iw*s,h=ih*s,x=(W-w)/2,y=(H-pad-h)/2+14;
    g.shadowColor='#000a';g.shadowBlur=26;g.shadowOffsetY=8;g.fillStyle='#f6f0e1';g.fillRect(x-10,y-10,w+20,h+20);g.shadowColor='transparent';g.drawImage(img,x,y,w,h);}
   if(it.caption){const band=g.createLinearGradient(0,H-170,0,H);band.addColorStop(0,'#05121400');band.addColorStop(.55,'#051214c8');band.addColorStop(1,'#051214ee');

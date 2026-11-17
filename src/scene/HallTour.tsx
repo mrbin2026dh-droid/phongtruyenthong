@@ -202,7 +202,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  // 17/11 (Phương án B): ảnh trình diễn khu tủ kỷ vật + bộ xem toàn màn hình khi chạm
  const gallerySnap=useSyncExternalStore(gallery.subscribe,gallery.getSnapshot);
  // 17/11 (A+): one large screen — activities first, then achievements, then documents
- const galleryShow=useMemo(()=>GALLERY_CATS.flatMap((c:any)=>gallerySnap.items.filter(i=>i.cat===c.id)).map(i=>({id:i.id,url:galleryURL(i),caption:captionLine(i),fit:(i.cat==='activity'?'cover':'contain') as 'cover'|'contain'})).filter(i=>i.url),[gallerySnap]);
+ // 17/11 (người dùng): while no picture is uploaded the screen shows the tri ân 20/11 mosaic (whole, never cropped);
+ // the school's own pictures replace it as soon as one is added in “Ảnh trình diễn…”
+ const galleryShow=useMemo(()=>{const list=GALLERY_CATS.flatMap((c:any)=>gallerySnap.items.filter(i=>i.cat===c.id)).map(i=>({id:i.id,url:galleryURL(i),caption:captionLine(i),fit:(i.cat==='activity'?'cover':'contain') as 'cover'|'contain'|'bare'})).filter(i=>i.url);
+  return list.length?list:[{id:'tri-an-20-11',url:import.meta.env.BASE_URL+'tri-an/tri-an-thay-co-20-11.jpg',caption:'',fit:'bare' as const}];},[gallerySnap]);
  const [viewer,setViewer]=useState<{index:number}|null>(null);
  // 17/11 (người dùng): vòng tròn/nhãn điểm dừng trên sàn tự ẩn — hiện 6 s sau khi dừng lại hoặc chạm màn hình, rồi mờ đi
  const [markersOn,setMarkersOn]=useState(true),markerTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
