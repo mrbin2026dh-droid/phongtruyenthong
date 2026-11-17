@@ -18,9 +18,11 @@ export function dprFor(levelId,deviceDpr=1){
 
 /** 16/11 (teacher photos soft on phones): while the camera stands still the scene renders on demand, so one
  * frame at the screen's own resolution costs nothing ongoing — the photos get the full sharpness of the display.
- * Phones run at 1.15× while moving although their screens are 2.5–3×. Capped at 2.5× (1.75× on “Tiết kiệm”). */
+ * Phones run at 1.15× while moving although their screens are 2.5–3×. Capped at 2.5× (1.75× on “Tiết kiệm”).
+ * 17/11 (user: “nét nhất”): ordinary 1× PC screens / projectors get a supersampled still frame (2× on “Cao”, 1.5× on
+ * “Trung bình”) — text, frame edges and photos are anti-aliased like an offline render; one frame, no ongoing cost. */
 export function stillDpr(levelId,deviceDpr=1){
- if(deviceDpr<=1)return 1;
+ if(deviceDpr<=1)return levelId==='high'?2:levelId==='medium'?1.5:1;
  return Math.max(dprFor(levelId,deviceDpr),Math.min(deviceDpr,levelId==='low'?1.75:2.5));
 }
 /** Milliseconds without camera motion before the sharp still frame is drawn. */

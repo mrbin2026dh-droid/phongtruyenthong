@@ -15,7 +15,7 @@ export function detailFor(meshName:string):DetailKind{
  if(n.includes('slats'))return 'slats';
  if(n.includes('floor'))return 'stone';
  if(n.includes('ceiling'))return 'ceiling';
- if(n.includes('walls')||n.includes('foyer'))return 'plaster';
+ if(n.includes('walls')||n.includes('foyer')||n.includes('stair'))return 'plaster';
  return 'none';
 }
 

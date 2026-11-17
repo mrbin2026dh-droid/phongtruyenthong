@@ -8,7 +8,10 @@ const subs=new Set<()=>void>();
 // Notify after the current render/task: images are registered while a component renders (HallPhoto’s cache),
 // and React forbids updating other components during render.
 let queued=false;
-const notify=()=>{version++;if(queued)return;queued=true;queueMicrotask(()=>{queued=false;subs.forEach(fn=>fn());});};
+// 17/11 (console: “Maximum update depth exceeded” while ~130 portraits start loading): a microtask notify runs inside
+// React's own sync flush, so each wave of new images re-rendered the tour in the same nested chain (> 50 → error).
+// One notification per macrotask coalesces the wave and keeps every update outside the commit chain.
+const notify=()=>{version++;if(queued)return;queued=true;setTimeout(()=>{queued=false;subs.forEach(fn=>fn());},0);};
 
 export function markAssetReady(name:string){if(!ready.has(name)){ready.add(name);notify();}}
 export function isAssetReady(name:string){return ready.has(name);}
