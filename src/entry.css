@@ -114,5 +114,7 @@
 @container visit (orientation:portrait){.visit-loading-late .visit-qr{width:min(30vw,128px)}}
 /* 17/11: tải xong chỉ còn nút → mã QR lên sát ngay dưới nút, cả cụm cân giữa khoảng trống dưới cột chữ */
 .visit-qr{transition:top .45s ease,width .3s ease}
-.visit-loading-ready .visit-qr{top:74%}
-@container stage (max-width:980px){.visit-loading-ready .visit-qr{top:78%;bottom:auto}}
+/* 17/11 (người dùng: “QR to và rộng thêm cho hài hòa”): tải xong → mã to hơn ~27 %, vẫn căn giữa cột chữ (x 0,75), cách nút một nhịp */
+.visit-loading-ready .visit-qr{top:72.5%;left:68%;width:14%}
+@container stage (max-width:980px){.visit-loading-ready .visit-qr{top:76%;bottom:auto;left:69.25%;width:11.5%}}
+@container visit (orientation:portrait){.visit-loading-ready .visit-qr{width:min(36vw,156px)}}
