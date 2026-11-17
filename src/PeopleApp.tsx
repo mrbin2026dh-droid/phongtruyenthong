@@ -13,7 +13,7 @@ import {isStaleModuleError} from './data/sceneFailure.mjs';
 import {webglAvailable} from './data/loadWatch.mjs';
 import {vietnameseVoice} from './data/narration.mjs';
 import {enterImmersive} from './data/immersive';
-import {primeHallSound} from './scene/hallAudio';
+import {startHallSound} from './scene/hallAudio';
 import {inAppBrowser,platformOf} from './data/browserEnv.mjs';
 import OpenInBrowser from './components/OpenInBrowser';
 import UpdateBar from './components/UpdateBar';
@@ -47,7 +47,8 @@ export default function PeopleApp(){
  useEffect(()=>()=>window.speechSynthesis?.cancel(),[]);
  useEffect(()=>{document.body.classList.toggle('public-site',minimal);},[]);
  /** The visitor's tap on “Bắt đầu tham quan”: fullscreen + landscape on phones, unlock the music, open the room. */
- function startVisit(){void enterImmersive();primeHallSound();navigate('room');}
+ // 17/11 (người dùng): nhạc mở ngay khi bấm “Bắt đầu tham quan” (chạy suốt màn chờ), không đợi vào phòng mới mở
+ function startVisit(){void enterImmersive();startHallSound();navigate('room');}
  // 16/11: link opened inside Zalo/Facebook on a phone → offer Chrome (Android) / Safari or Chrome (iPhone) first.
  // “Ở lại” is remembered for this tab only.
  const [openIn,setOpenIn]=useState(()=>{

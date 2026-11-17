@@ -93,3 +93,5 @@
 .hall-scene .visitor-controls.is-hidden{transform:translate(-50%,calc(100% + 28px));opacity:0;pointer-events:none}
 .hall-scene .visitor-controls.is-hidden *{pointer-events:none}
 @media (prefers-reduced-motion:reduce){.hall-scene .visitor-controls{transition:opacity .2s}.hall-scene .visitor-controls.is-hidden{transform:translateX(-50%)}}
+/* 17/11 (người dùng: ẩn chữ vị trí “Toàn cảnh phòng truyền thống”… để màn hình thoáng): ô vị trí chỉ còn cho trình đọc màn hình */
+.hall-scene .hall-version-bar .location-chip{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;background:none;box-shadow:none}
