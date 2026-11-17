@@ -1,3 +1,4 @@
+import {screenGrab} from './screenGrab';
 import {useEffect,useRef} from 'react';
 import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
@@ -107,7 +108,9 @@ export default function HallController({plan,command,paused,effects,input,loaded
    if(pointers.current.size>=2&&pinch.current>0&&!blocked()){
     const d=gap();view.current.targetFov=Math.max(45,Math.min(84,view.current.targetFov*pinch.current/Math.max(1,d)));pinch.current=d;invalidate();return;
    }
-   const p=drag.current;if(!p||p.id!==e.pointerId)return;view.current.targetYaw-=(e.clientX-p.x)*.0024;view.current.targetPitch=Math.max(-.60,Math.min(.60,view.current.targetPitch-(e.clientY-p.y)*.0024));p.x=e.clientX;p.y=e.clientY;invalidate();
+   const p=drag.current;if(!p||p.id!==e.pointerId)return;
+   if(screenGrab.active){p.x=e.clientX;p.y=e.clientY;return;}   // 17/11: swiping the slide screen, not looking around
+   view.current.targetYaw-=(e.clientX-p.x)*.0024;view.current.targetPitch=Math.max(-.60,Math.min(.60,view.current.targetPitch-(e.clientY-p.y)*.0024));p.x=e.clientX;p.y=e.clientY;invalidate();
   };
   const up=(e:PointerEvent)=>{pointers.current.delete(e.pointerId);if(pointers.current.size<2)pinch.current=0;if(drag.current?.id===e.pointerId)drag.current=null;};
   // Keyboard works without first clicking the scene (window level), except while typing in a field,

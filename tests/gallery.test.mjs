@@ -42,5 +42,8 @@ test('Wiring: displays in the scene, viewer on tap, admin dialog, sent with “X
  assert.ok(src('components/AdminPublish.tsx').includes('gallery:galleryPayload'));
  assert.ok(src('main.tsx').includes("data/gallery.json"));
  const vite=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');assert.ok(vite.includes('buildGalleryPublication(input.gallery'));
- const disp=src('scene/GalleryDisplays.tsx');assert.ok(disp.includes('if(!items.length)return null'),'no pictures → plain wall, nothing drawn');
+ const disp=src('scene/GalleryDisplays.tsx');assert.ok(disp.includes('if(!n)return null'),'no pictures at all → nothing drawn');
+ assert.ok(disp.includes('screenGrab.active=true')&&src('scene/HallController.tsx').includes('if(screenGrab.active)'),'17/11: swiping the screen does not turn the camera');
+ assert.ok(disp.includes('clippingPlanes={clip}')&&disp.includes("slideTo(-1)"),'touch-screen carousel: clipped strip, auto-advance');
+ assert.ok(tour.includes("fit:'bare' as const"),'17/11: tri ân 20/11 picture until the school uploads its own');
 });

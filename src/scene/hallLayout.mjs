@@ -23,7 +23,9 @@ export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',gr
  * activities, achievements and documents (gallery.mjs), tap → full-screen viewer. Kept as an (empty) list for the
  * Blender build script and old code paths. */
 export const CABINETS=[];
-export const FRONT_SCREEN={id:'memory-1',x:7.0,y:1.88,width:4.4,height:2.475,wallZ:8,title:'Dấu ấn nhà trường',description:'Hình ảnh hoạt động, thành tích và tư liệu của nhà trường.'};
+// 17/11 (người dùng: “tivi quá nhỏ”; khẩu hiệu đổi thành “HÀNH TRÌNH XÂY DỰNG VÀ PHÁT TRIỂN”): 5.2 × 2.925 m (16:9),
+// bottom 0.49 m, frame top 3.49 m — just under the sign line shared by both halves of the entrance wall (3.68 m).
+export const FRONT_SCREEN={id:'memory-1',x:7.0,y:1.95,width:5.2,height:2.925,wallZ:8,title:'Dấu ấn nhà trường',description:'Hình ảnh hoạt động, thành tích và tư liệu của nhà trường.'};
 export const CABINET_NICHE={width:2.12,bottom:.85,top:2.95,wallZ:8,depth:.48,frame:.035};
 /** Plaster of the entrance wall right of the door (x 2 → 12): one solid piece since the cabinets are gone. */
 export function cabinetWallPieces(){return [{x:7,y:HALL.height/2,width:10,height:HALL.height}];}
@@ -94,9 +96,10 @@ export function layoutHall(people,sort='service',page=0){
  {id:'teacher-back',text:'CÁC THẾ HỆ NHÀ GIÁO',x:-BACK_BAY.x,z:-7.79,yaw:0,width:5.6,y:3.32},
  {id:'teacher-left',text:TEACHER_MOTTO,x:-11.79,z:0,yaw:Math.PI/2,width:13.4,y:3.48,motto:true},
  {id:'teacher-right',text:'TẤT CẢ VÌ HỌC SINH THÂN YÊU',x:11.79,z:0,yaw:-Math.PI/2,width:13.4,y:3.48,motto:true,fontReference:TEACHER_MOTTO},
- {id:'memory-sign',text:'HIỀN TÀI LÀ NGUYÊN KHÍ CỦA MỘT QUỐC GIA',x:FRONT_SCREEN.x,z:7.78,yaw:Math.PI,width:6.4,y:3.5,motto:true},
  // 17/11 (A+): the new portrait bay on the entrance wall gets the same title as the back-wall bays
- {id:'teacher-front',text:'CÁC THẾ HỆ NHÀ GIÁO',x:FRONT_BAY.x,z:7.79,yaw:Math.PI,width:5.6,y:3.32}];
+ // 17/11: both halves of the entrance wall carry a title in the same style and at the same height (balanced across the door)
+ {id:'memory-sign',text:'HÀNH TRÌNH XÂY DỰNG VÀ PHÁT TRIỂN',x:FRONT_SCREEN.x,z:7.79,yaw:Math.PI,width:5.6,y:3.68},
+ {id:'teacher-front',text:'CÁC THẾ HỆ NHÀ GIÁO',x:FRONT_BAY.x,z:7.79,yaw:Math.PI,width:5.6,y:3.68}];
  return {slots,zones,stops:finalStops,signs,pages:1,page:0,total:people.length,displayed:slots.length,warnings,reserved:definitions.length-slots.length};
 }
 // A dedicated wide shot on portrait screens keeps all four principals visible.

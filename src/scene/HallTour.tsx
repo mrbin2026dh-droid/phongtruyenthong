@@ -1,3 +1,4 @@
+import {screenGrab} from './screenGrab';
 import {useSyncExternalStore} from 'react';
 import {Suspense,lazy,useMemo,useRef,useState,useEffect} from 'react';
 import {layoutHall,createHallPlan,fitHallStops,closeupStop,closeupOrder,FRONT_SCREEN,baseStopId} from './hallLayout.mjs';
@@ -195,7 +196,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   const busy=()=>{setNavBusy(true);clearTimeout(t);t=setTimeout(()=>setNavBusy(false),1600);};
   const poll=setInterval(()=>{const i=input.current;if(i.forward||i.strafe||i.turn||i.look)busy();},150);
   const key=(e:KeyboardEvent)=>{if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase()))busy();};
-  const drag=(e:PointerEvent)=>{if(e.buttons&&e.target instanceof HTMLCanvasElement)busy();};
+  const drag=(e:PointerEvent)=>{if(e.buttons&&e.target instanceof HTMLCanvasElement&&!screenGrab.active)busy();};
   window.addEventListener('keydown',key);window.addEventListener('pointermove',drag);
   return()=>{clearInterval(poll);clearTimeout(t);window.removeEventListener('keydown',key);window.removeEventListener('pointermove',drag);};},[]);
  const dockHidden=ready&&!panel&&(navBusy||(moving&&!automatic));

@@ -4,13 +4,13 @@ import {gallery,galleryURL,type GalleryItem} from '../data/repository';
 import {GALLERY_CATS,MAX_PER_CAT} from '../data/gallery.mjs';
 import {savePhoto,deletePhoto,isPhotoRef} from '../data/photoStore';
 
-/** Resize a picture for the display (long side ≤ 1600 px, JPEG) — offline, on this computer only. */
+/** Resize a picture for the display (long side ≤ 1920 px = the screen's 1920×1080, JPEG) — offline, on this computer only. */
 async function prepare(file:File){
  if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error(file.name+': chọn ảnh JPEG, PNG hoặc WebP.');
  if(file.size>20*1024*1024)throw new Error(file.name+': ảnh vượt 20 MB.');
  const url=URL.createObjectURL(file);
  try{const img=new Image();img.src=url;await img.decode();
-  const s=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');
+  const s=Math.min(1,1920/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');
   c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);
   const g=c.getContext('2d')!;g.imageSmoothingQuality='high';g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);
   return await new Promise<Blob>((ok,bad)=>c.toBlob(b=>b?ok(b):bad(new Error('Không nén được ảnh.')),'image/jpeg',.86));
