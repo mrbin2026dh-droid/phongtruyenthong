@@ -36,3 +36,27 @@
 .admin-arrange-table input,.admin-arrange-table select{width:100%;min-height:34px;box-sizing:border-box}
 .admin-arrange-table small{display:block;color:#7a6a4d;font-size:11px;margin-top:2px}
 .admin-arrange-plan{margin:0;padding-left:18px;font-size:14px;line-height:1.6}
+
+/* 17/11: hộp hồ sơ (khách xem) — trang trọng, gọn: ảnh khung vàng, chức danh dưới tên, thông tin dạng bảng nhẹ */
+.profile.profile-v2{display:grid;grid-template-columns:minmax(180px,250px) 1fr;gap:32px;align-items:start}
+.profile-v2 .profile-photo{padding:10px;background:linear-gradient(145deg,#e8cf95,#b48a47 55%,#d9bb7a);border-radius:4px;box-shadow:0 12px 30px #1c2e3a33}
+.profile-v2 .profile-photo img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;object-position:50% 25%;border:0;border-radius:2px;background:#eee6d6;box-shadow:inset 0 0 0 1px #0002}
+.profile-v2 .profile-body{min-width:0}
+.profile-v2 .profile-role{margin:2px 0 14px;padding-bottom:14px;border-bottom:1px solid #e3cf9f;font:600 13px/1.5 "Noto Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#a07a35}
+.profile-v2 dl{margin:0;font-size:15px}
+.profile-v2 dl div{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 0;border-bottom:1px dashed #e7d9c1}
+.profile-v2 dl div:last-child{border-bottom:0}
+.profile-v2 dt{color:#7a7f7c;font-size:13px;padding-top:1px}
+.profile-v2 dd{margin:0;font-weight:600;color:#14324a;white-space:pre-line}
+.profile-v2 .profile-desc{margin:16px 0 0;padding:12px 16px;border-left:3px solid #c9a45e;background:#fbf6ea;border-radius:0 8px 8px 0;font-size:14px;line-height:1.7;color:#2c4252}
+.profile-v2 .profile-listen{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:10px 18px;min-height:44px;border-radius:999px;background:#14324a;color:#f3e4c4;border:1px solid #14324a;font-weight:600}
+.profile-v2 .profile-listen:hover{background:#1f4a66}
+.profile-v2 .profile-listen svg{width:18px;height:18px}
+@media (max-width:640px){
+ .profile.profile-v2{grid-template-columns:1fr;gap:18px}
+ .profile-v2 .profile-photo{width:min(200px,60vw);margin:0 auto}
+ .profile-v2 .profile-role{text-align:center}
+ .profile-v2 dl div{grid-template-columns:120px 1fr;gap:10px;padding:9px 0}
+ .profile-v2 dl{font-size:14px}
+ .profile-v2 .profile-listen{width:100%;justify-content:center}
+}

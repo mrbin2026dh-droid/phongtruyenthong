@@ -14,7 +14,9 @@ import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
 import VirtualHost from '../components/VirtualHost';
 import {hallNarration} from '../data/narration.mjs';
-import {portraitPath,adminAvailable,publishedPeople,catalog} from '../data/repository';
+import {portraitPath,adminAvailable,publishedPeople,catalog,gallery,galleryURL} from '../data/repository';
+import GalleryViewer from '../components/GalleryViewer';
+import {GALLERY_CATS,captionLine} from '../data/gallery.mjs';
 import {neutralInput} from './VisitorController';
 import type {VisitorPose,RouteState} from './HallController';
 import YouAreHere from './YouAreHere';
@@ -191,6 +193,11 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   window.addEventListener('keydown',key);window.addEventListener('pointermove',drag);
   return()=>{clearInterval(poll);clearTimeout(t);window.removeEventListener('keydown',key);window.removeEventListener('pointermove',drag);};},[]);
  const dockHidden=ready&&!panel&&(navBusy||(moving&&!automatic));
+ // 17/11 (Phương án B): ảnh trình diễn khu tủ kỷ vật + bộ xem toàn màn hình khi chạm
+ const gallerySnap=useSyncExternalStore(gallery.subscribe,gallery.getSnapshot);
+ const galleryShow=useMemo(()=>{const by=(cat:string)=>gallerySnap.items.filter(i=>i.cat===cat).map(i=>({id:i.id,url:galleryURL(i),caption:captionLine(i)})).filter(i=>i.url);
+  return {activity:by('activity'),award:by('award'),memento:by('memento')};},[gallerySnap]);
+ const [viewer,setViewer]=useState<{cat:'activity'|'award'|'memento';index:number}|null>(null);
  // 17/11 (người dùng): vòng tròn/nhãn điểm dừng trên sàn tự ẩn — hiện 6 s sau khi dừng lại hoặc chạm màn hình, rồi mờ đi
  const [markersOn,setMarkersOn]=useState(true),markerTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  const showMarkers=()=>{setMarkersOn(true);clearTimeout(markerTimer.current);markerTimer.current=setTimeout(()=>setMarkersOn(false),6000);};
@@ -291,11 +298,13 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     layout={layout}
     plan={plan}
     command={command}
-    paused={p.paused||pause||Boolean(panel)||!ready||hostOpen}
+    paused={p.paused||pause||Boolean(panel)||!ready||hostOpen||Boolean(viewer)}
     moving={moving}
     effects={effects}
     controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}
     hideMarkers={navBusy||!markersOn}
+    gallery={galleryShow}
+    onGallery={(cat:'activity'|'award'|'memento',index:number)=>{setManual(false);setViewer({cat,index});}}
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
@@ -318,6 +327,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    />
   </Suspense>
 
+  {viewer&&<GalleryViewer title={GALLERY_CATS.find((c:any)=>c.id===viewer.cat)?.title||''} items={galleryShow[viewer.cat]} start={viewer.index} onClose={()=>setViewer(null)}/>}
   {!loadingGone&&!failed&&<HallLoading required={required} onList={p.onList} openedAt={openedAt.current} done={loadDone} leaving={ready} onEnter={()=>revealNow.current?.()}/>}
   {ready&&atDoor&&!panel&&(intro&&effects
    ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>

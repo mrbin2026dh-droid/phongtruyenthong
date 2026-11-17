@@ -44,7 +44,6 @@ export default function Welcome({minimal=false,count,onEnter,onModule,onList,onG
    <article className="welcome-choice welcome-planned"><div className="welcome-choice-head"><div className="welcome-choice-icon"><Emblem kind="cap"/></div><div><span className="welcome-choice-number">PHÂN HỆ 03</span><h2>Tôn vinh học sinh<br/>xuất sắc</h2></div></div><span className="welcome-status">ĐANG XÂY DỰNG</span><p>Không gian ghi nhận tinh thần học tập, rèn luyện và những thành tích nổi bật.</p><button onClick={()=>onModule(3)} aria-label="Xem thông báo phân hệ Tôn vinh học sinh xuất sắc">Xem giới thiệu <Emblem kind="arrow"/></button><span className="welcome-choice-motif" aria-hidden="true"><Emblem kind="cap"/></span></article>
   </section>
   <section className="welcome-facts" aria-label="Thông tin bản tham quan"><div><Emblem kind="people"/><p><b>{count} hồ sơ mẫu</b><span>Đội ngũ qua các thế hệ</span></p></div><div><Emblem kind="devices"/><p><b>Chuột và cảm ứng</b><span>Tự bước hoặc đi theo lối dẫn</span></p></div><button onClick={onList}><Emblem kind="book"/><p><b>Tra cứu nhanh</b><span>Tìm kiếm và xem hồ sơ 2D</span></p><Emblem kind="arrow"/></button></section>
-  <p className="welcome-sample-note">Bản trải nghiệm thử · Hồ sơ nhân sự giả lập{schoolPhoto?' · Ảnh khuôn viên do người dùng cung cấp':''}</p>
   </>}
  </div>;
 }

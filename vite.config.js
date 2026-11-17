@@ -4,7 +4,7 @@ import { cpSync, createReadStream,appendFileSync,mkdirSync,writeFileSync,readFil
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
-import { buildPublication, writePublication, existingPhotoFiles } from './scripts/publishData.mjs';
+import { buildPublication, writePublication, existingPhotoFiles, buildGalleryPublication, writeGalleryPublication, existingGalleryFiles } from './scripts/publishData.mjs';
 
 // GĐ4 benchmark results may come from a phone on the same Wi-Fi (private address ranges only).
 function privateClient(addr=''){const a=String(addr).replace(/^::ffff:/,'');return a==='::1'||/^127\./.test(a)||/^10\./.test(a)||/^192\.168\./.test(a)||/^172\.(1[6-9]|2\d|3[01])\./.test(a);}
@@ -37,10 +37,13 @@ function localAdmin(server){
    try{
     const input=JSON.parse(body);if(input.consent!==true)throw new Error('Cần xác nhận các thầy cô đã đồng ý công khai.');
     const before=existingPhotoFiles(ROOT),publication=buildPublication(input.people||[],before);
+    // 17/11: ảnh trình diễn khu tủ kỷ vật (gửi kèm khi có) — kiểm tra hết trước khi ghi bất cứ tệp nào
+    const gallery=Array.isArray(input.gallery)?buildGalleryPublication(input.gallery,existingGalleryFiles(ROOT)):null;
     writePublication(ROOT,publication);
+    if(gallery)writeGalleryPublication(ROOT,gallery);
     const gitResult=await pushPublication();
     res.setHeader('Content-Type','application/json');
-    res.end(JSON.stringify({written:publication.catalog.people.length,photos:publication.files.size,removedPhotos:publication.removed.length,git:gitResult,published:{people:publication.catalog.people}}));
+    res.end(JSON.stringify({written:publication.catalog.people.length,photos:publication.files.size,removedPhotos:publication.removed.length,git:gitResult,published:{people:publication.catalog.people,gallery:gallery?gallery.gallery.items:null}}));
    }catch(err){fail(400,err instanceof Error?err.message:'Không xuất bản được.');}
   });
  });

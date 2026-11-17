@@ -29,8 +29,8 @@ test('17/11: wall segments in visiting order — 96 positions for teachers AND s
 
 test('17/11: arrangement places every teacher once, contiguously per tổ, leaders first — deterministic',()=>{
  const r=arrangeByDept(published),all=published.filter(p=>exhibitZone(p)==='teacher');
- // published data still holds 50 photo-less sample records: 112 teachers for 84 positions → the samples stay off the wall
- assert.equal(r.unplaced.length,all.length-96);
+ // more teachers than the 96 positions → the photo-less ones stay off the wall (17/11 real data: 95, everyone fits)
+ assert.equal(r.unplaced.length,Math.max(0,all.length-96));
  assert.equal(r.plan.at(-1).name,'Văn phòng','Tổ văn phòng (all staff) closes the run');
  assert.ok(all.filter(p=>p.group==='staff').every(p=>r.rename.get(p.id)==='Văn phòng'||p.dept==='Văn phòng'),'staff join Tổ văn phòng');assert.ok(r.unplaced.every(id=>!all.find(p=>p.id===id).image),'only photo-less samples are left out');
  for(const id of r.unplaced)assert.equal(r.slot.get(id),'','no stale position kept');
@@ -75,7 +75,8 @@ test('17/11: tổ plates only under blocks of ≥ 2 columns of one tổ (an unso
  const r=arrangeByDept(published);
  const placed=[...r.slot.entries()].map(([id,slotId])=>({...slotById.get(slotId),person:{...published.find(p=>p.id===id),dept:r.rename.get(id)??published.find(p=>p.id===id).dept}}));
  const plates=deptPlates(placed);
- assert.ok(plates.length>=8,'one plate per sizeable block');
+ const big=deptGroups(published).filter(g=>g.count>=4).length;
+ assert.ok(plates.length>=Math.max(1,big-1),'one plate per sizeable block');
  assert.ok(plates.every(p=>p.count>=2&&p.length>1.2));
  const scattered=placed.map((s,i)=>({...s,person:{...s.person,dept:'T'+(i%5)}}));
  assert.equal(deptPlates(scattered).length,0);

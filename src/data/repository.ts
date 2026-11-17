@@ -1,5 +1,6 @@
 import seed from './legacy-seed.json';
 import {createCatalogStore} from './catalog.mjs';
+import {createGalleryStore,isGalleryPhoto} from './gallery.mjs';
 import {isPhotoRef,photoURL} from './photoStore';
 import {adminAllowed,isPublishedPhoto} from './photoRef.mjs';
 export type WorkSpell={id:string;startYear:number;endYear:number|null;role:string};
@@ -18,7 +19,15 @@ export const publishedPeople:Person[]|null=(globalThis as any).__MUSEUM_PUBLISHE
 export const adminAvailable=adminAllowed(import.meta.env.DEV,window.location.hostname);
 // Public visitors: read-only, never their own localStorage. Local admin: working copy in localStorage,
 // starting from the published data the first time.
-export const catalog=createCatalogStore(seed,{storage:adminAvailable?(storage||blockedStorage):null,published:publishedPeople}) as Store;
+export const catalog=createCatalogStore(seed,{storage:adminAvailable?(storage||blockedStorage):null,published:publishedPeople,resetToken:(globalThis as any).__MUSEUM_RESET__||''}) as Store;
 // Local inspection only: the supplied photo is never copied into dist.
 export const samplePortraitMode=['localhost','127.0.0.1','[::1]'].includes(window.location.hostname)&&new URLSearchParams(window.location.search).get('portrait')==='sample';
 export const portraitPath=(p:Person)=>isPublishedPhoto(p.image)?import.meta.env.BASE_URL+p.image:isPhotoRef(p.image)?(photoURL(p.image)||`${import.meta.env.BASE_URL}portraits/default.jpg`):/^data:image\/(jpeg|png|webp);base64,/.test(p.image||'')?p.image:samplePortraitMode?'/__local-preview/portrait.jpg':`${import.meta.env.BASE_URL}portraits/${/^GV00[1-9]$|^GV01[0-2]$/.test(p.id)?p.id:'default'}.jpg`;
+
+/** 17/11 (Phương án B): ảnh trình diễn khu tủ kỷ vật. Công khai: chỉ đọc gallery.json; máy quản trị: bản làm việc cục bộ. */
+export type GalleryItem={id:string;cat:'activity'|'award'|'memento';image:string;caption:string;year:number|null};
+export type GallerySnapshot={revision:number;items:GalleryItem[];storageError:string};
+type GalleryStore={getSnapshot:()=>GallerySnapshot;subscribe:(fn:()=>void)=>()=>void;add:(item:Partial<GalleryItem>&{cat:string;image:string})=>GalleryItem;update:(id:string,patch:Partial<GalleryItem>)=>void;remove:(id:string)=>GalleryItem|undefined;move:(id:string,dir:number)=>void;replaceAll:(items:GalleryItem[])=>void};
+export const gallery=createGalleryStore({storage:adminAvailable?(storage||blockedStorage):null,published:(globalThis as any).__MUSEUM_GALLERY__||null}) as GalleryStore;
+/** URL to draw a gallery picture: published file, or this computer's IndexedDB photo. */
+export const galleryURL=(it:GalleryItem)=>isGalleryPhoto(it.image)?import.meta.env.BASE_URL+it.image:isPhotoRef(it.image)?photoURL(it.image):'';

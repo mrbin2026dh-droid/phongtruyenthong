@@ -35,8 +35,12 @@ Promise.all([preloadPhotos().catch(err=>console.warn('Không đọc được kho
  * Missing file (not published yet) → the sample data is shown. */
 async function loadPublished(){
  try{const r=await fetch(import.meta.env.BASE_URL+'data/catalog.json',{cache:'no-cache'});
-  if(r.ok){const data=await r.json();if(data?.schemaVersion===1&&Array.isArray(data.people)&&data.people.length)(globalThis as any).__MUSEUM_PUBLISHED__=data.people;}}
+  if(r.ok){const data=await r.json();if(data?.schemaVersion===1&&Array.isArray(data.people)&&data.people.length){(globalThis as any).__MUSEUM_PUBLISHED__=data.people;(globalThis as any).__MUSEUM_RESET__=typeof data.resetLocal==='string'?data.resetLocal:'';}}}
  catch{/* offline or not published yet */}
+ // 17/11: ảnh trình diễn khu tủ kỷ vật (chưa xuất bản → tủ giữ hiện vật minh họa)
+ try{const r=await fetch(import.meta.env.BASE_URL+'data/gallery.json',{cache:'no-cache'});
+  if(r.ok){const data=await r.json();if(data?.schemaVersion===1&&Array.isArray(data.items))(globalThis as any).__MUSEUM_GALLERY__=data.items;}}
+ catch{/* not published yet */}
 }
 import './people.css';
 import './visitor.css';

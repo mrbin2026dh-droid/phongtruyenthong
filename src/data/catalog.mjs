@@ -83,12 +83,20 @@ export function moveToSlot(people,id,slotId){
 }
 /** @param {any} seed @param {{storage?:{getItem:(key:string)=>string|null,setItem:(key:string,value:string)=>void}|null,year?:number,published?:any[]|null}} options
  * published: people from public/data/catalog.json (cách 1). When present they replace the sample seed. */
-export function createCatalogStore(seed,{storage=null,year=new Date().getFullYear(),published=null}={}){
+/** @param {any} seed @param {{storage?:any,year?:number,published?:any[]|null,resetToken?:string}} [opts] */
+export function createCatalogStore(seed,{storage=null,year=new Date().getFullYear(),published=null,resetToken=''}={}){
  const key='school-museum-catalog-v1',listeners=new Set();
  const base=published&&published.length?parseCatalogBackup(JSON.stringify({schemaVersion:1,people:published}),year):attachExhibitSlots(migratePeople(seed));
  let snapshot={schemaVersion:1,revision:0,people:base,storageError:''},locked=false,persistedRaw=null;
  try{
-  const raw=storage?.getItem(key);
+  let raw=storage?.getItem(key);
+  // 17/11: the published data was rebuilt on purpose (resetLocal token) → this computer's old working copy is set
+  // aside once (kept as a backup key) and the admin starts from the new published data.
+  if(resetToken&&published&&published.length&&storage&&storage.getItem(key+'-reset')!==resetToken){
+   if(raw)storage.setItem(key+'-backup-'+resetToken,raw);
+   storage.setItem(key+'-reset',resetToken);
+   if(raw){storage.setItem(key,JSON.stringify({schemaVersion:1,people:base}));raw=storage.getItem(key);}
+  }
   persistedRaw=raw??null;
   if(raw){
    const saved=JSON.parse(raw);

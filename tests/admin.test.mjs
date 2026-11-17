@@ -105,3 +105,16 @@ test('17/11 “Xóa tất cả ảnh”: every photo removed in one save, names/
  const src=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  assert.ok(src.includes('title="Xóa tất cả ảnh?"')&&src.includes('Hoàn tác xóa ảnh'),'confirm dialog + undo button');
 });
+
+test('17/11: a rebuilt publication (resetLocal token) replaces the admin working copy once, keeping a backup',()=>{
+ const pub=createCatalogStore(seed,{storage:null,year:2026}).getSnapshot().people.slice(0,5);
+ const mem=memory();const first=createCatalogStore(seed,{storage:mem,year:2026,published:pub});
+ first.removePerson(pub[0].id);                       // admin edited locally → working copy saved
+ const old=mem.getItem('school-museum-catalog-v1');assert.ok(old);
+ const fresh=createCatalogStore(seed,{storage:mem,year:2026,published:pub,resetToken:'hinh-2026-11-17'});
+ assert.equal(fresh.getSnapshot().people.length,5,'starts from the new published data');
+ assert.equal(mem.getItem('school-museum-catalog-v1-backup-hinh-2026-11-17'),old,'old copy kept');
+ fresh.removePerson(pub[1].id);
+ const again=createCatalogStore(seed,{storage:mem,year:2026,published:pub,resetToken:'hinh-2026-11-17'});
+ assert.equal(again.getSnapshot().people.length,4,'only once: later local edits are kept');
+});
