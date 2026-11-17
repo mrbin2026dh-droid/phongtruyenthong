@@ -2,6 +2,9 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {preloadPhotos} from './data/photoStore';
 import {markNeedRefresh,setUpdater} from './data/pwa';
+import {track} from './data/analytics';
+// 17/11: one cookieless page view per visit (no-op until GOATCOUNTER_CODE is set; never on the admin computer)
+track('trang-chao',{once:true});
 import '@fontsource/noto-sans/latin-400.css';
 import '@fontsource/noto-sans/vietnamese-400.css';
 import '@fontsource/noto-sans/latin-600.css';

@@ -67,5 +67,12 @@ figure img{display:block;width:100%;height:auto;border-radius:10px;box-shadow:0 
  });
 })();
 </script>
+<script>
+// 17/11 Thống kê không cookie (GoatCounter): chỉ đếm 1 lượt mở trang này (quét mã QR). Không cookie, không gửi thông tin cá nhân.
+// Điền CÙNG mã với GOATCOUNTER_CODE trong src/data/analytics.ts; để trống = tắt.
+(function(){const CODE='';try{const n=navigator;if(!CODE||/^(localhost|127\.)/.test(location.hostname)||n.doNotTrack==='1'||n.globalPrivacyControl===true)return;
+const u='https://'+CODE+'.goatcounter.com/count?p='+encodeURIComponent('/tri-an/')+'&t='+encodeURIComponent('Trang lưu ảnh tri ân (quét mã QR)')+'&rnd='+Math.random().toString(36).slice(2,8);
+if(!(n.sendBeacon&&n.sendBeacon(u))){const i=new Image();i.referrerPolicy='no-referrer';i.src=u;}}catch(e){console.warn('Không gửi được thống kê lượt xem',e);}})();
+</script>
 </body>
 </html>

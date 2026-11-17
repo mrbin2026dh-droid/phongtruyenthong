@@ -41,7 +41,7 @@ test('Public site: welcome card only, fullscreen + landscape on the start tap, r
  const imm=readFileSync(new URL('../src/data/immersive.ts',import.meta.url),'utf8');
  const audio=readFileSync(new URL('../src/scene/hallAudio.ts',import.meta.url),'utf8');
  const loading=readFileSync(new URL('../src/components/VisitLoading.tsx',import.meta.url),'utf8');
- assert.ok(app.includes('const minimal=!adminAvailable;')&&app.includes('function startVisit(){void enterImmersive();startHallSound();navigate(\'room\');}'));
+ assert.ok(app.includes('const minimal=!adminAvailable;')&&app.includes('function startVisit(){void enterImmersive();startHallSound();track(\'bat-dau-tham-quan\');navigate(\'room\');}'));
  assert.ok(welcome.includes('{!minimal&&<>')&&app.includes("{view!=='room'&&!minimal&&<footer>"));
  assert.ok(imm.includes("requestFullscreen({navigationUI:'hide'})")&&imm.includes("o.lock('landscape')"));
  assert.ok(loading.includes('visit-rotate-hint')&&loading.includes('Xoay ngang điện thoại'));

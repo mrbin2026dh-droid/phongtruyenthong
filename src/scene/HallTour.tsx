@@ -40,6 +40,7 @@ import {isAssetReady,sceneAssetsLoaded,subscribeAssets} from './sceneAssets';
 import {TourIcon} from './VisitorDock';
 import type {Person} from '../data/repository';
 import '../hall.css';
+import {track} from '../data/analytics';
 
 const Scene=lazy(()=>import('./HallScene'));
 
@@ -314,7 +315,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}
     hideMarkers={navBusy||!markersOn}
     gallery={galleryShow}
-    onGallery={(index:number)=>{setManual(false);setViewer({index});}}
+    onGallery={(index:number)=>{setManual(false);(track('xem-trinh-chieu'),setViewer({index}));}}
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
