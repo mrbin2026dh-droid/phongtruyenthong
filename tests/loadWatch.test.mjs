@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {SLOW_MS,STALL_MS,loadProgress,loadStage,webglAvailable} from '../src/data/loadWatch.mjs';
+import {MIN_SHOW_MS,SLOW_MS,STALL_MS,shownProgress,loadProgress,loadStage,webglAvailable} from '../src/data/loadWatch.mjs';
 import {assetProgressKey,imageStarted,markAssetReady} from '../src/scene/sceneAssets.ts';
 
 const base={needRoom:true,roomReady:false,statueReady:false,imagesDone:0,imagesTotal:0};
@@ -45,10 +45,20 @@ test('No dead ends: slow/stalled loading, scene errors and missing WebGL all off
  assert.ok(SLOW_MS<=20000&&STALL_MS<=30000);
  const loading=src('components/VisitLoading.tsx'),app=src('PeopleApp.tsx'),hall=src('scene/HallTour.tsx');
  assert.ok(loading.includes('setTimeout(()=>setSlow(true),SLOW_MS)')&&loading.includes('Thử lại')&&loading.includes('Xem danh sách ảnh'));
- assert.ok(hall.includes('<HallLoading required={required} onList={p.onList}/>'));
+ assert.ok(hall.includes('<HallLoading required={required} onList={p.onList} '));
+ assert.ok(hall.includes('revealTimer.current=setTimeout(reveal,benchOn?')&&hall.includes('MIN_SHOW_MS-(performance.now()-openedAt.current)'),'17/11: picture shown ≥ MIN_SHOW_MS, bench unchanged');
  assert.ok(hall.includes('(assetsLoaded||(assetTimeout&&modelsReady))'),'timeout never reveals a scene without room + statue');
  assert.ok(app.includes('<VisitLoading onList={()=>navigate(\'list\')}/>'),'chunk download screen can also leave');
  assert.ok(app.includes('<SceneBoundary onList={()=>navigate(\'list\')}>')&&!app.includes('Tra cứu trên thanh đầu trang'),'public site has no header menu');
  assert.ok(app.includes("view==='room'&&!webgl&&")&&app.includes('webglAvailable(document)'));
  assert.ok(app.includes("minimal&&view==='list'?<div className=\"list-back\">"),'public list has a way back');
+});
+
+test('Loading screen stays long enough to look at the tri ân picture (17/11)',()=>{
+ assert.ok(MIN_SHOW_MS>=6000&&MIN_SHOW_MS<=10000,'đủ lâu để xem, không quá lâu');
+ assert.equal(shownProgress(99,0,true),0,'mạng nhanh: vẫn bắt đầu từ 0 %');
+ assert.equal(shownProgress(99,MIN_SHOW_MS/2,true),50,'chạy đều theo thời gian');
+ assert.equal(shownProgress(99,MIN_SHOW_MS,true),100,'đủ thời gian và đã tải xong → 100 %');
+ assert.equal(shownProgress(40,MIN_SHOW_MS*3,false),40,'mạng chậm: không vượt tiến độ thật');
+ assert.equal(shownProgress(99,MIN_SHOW_MS*3,false),99,'chưa xong thì không báo 100 %');
 });

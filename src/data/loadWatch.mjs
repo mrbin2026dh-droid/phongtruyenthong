@@ -6,6 +6,15 @@ export const SLOW_MS=20000;
 /** No asset finished for this long = the download is probably stuck (shown as “gián đoạn”). */
 export const STALL_MS=25000;
 
+/** 17/11 (người dùng: “loading nhanh quá, cho người xem kịp quan sát” tranh tri ân): màn hình tải
+ * hiện ít nhất chừng này dù mạng nhanh; luôn có nút “Vào tham quan” khi đã tải xong. */
+export const MIN_SHOW_MS=8000;
+/** Phần trăm hiển thị: không vượt tiến độ thật, và chạy đều tới 100 % trong MIN_SHOW_MS (không nhảy 0 → 99 ngay). */
+export function shownProgress(real,elapsedMs,done){
+ const cap=Math.floor(100*Math.max(0,elapsedMs)/MIN_SHOW_MS);
+ return Math.max(0,Math.min(done?100:Math.min(99,real),cap,100));
+}
+
 /** 0–99 % (100 is never shown: the scene appears instead). The room model is the largest download,
  * so it weighs more than one portrait: room 40 · statue 15 · portraits 45 (statue 40 · portraits 60 without the room). */
 export function loadProgress({needRoom,roomReady,statueReady,imagesDone,imagesTotal}){

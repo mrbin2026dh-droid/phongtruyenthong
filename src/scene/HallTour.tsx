@@ -12,6 +12,7 @@ const AdminArrange=import.meta.env.DEV?lazy(()=>import('../components/AdminArran
 import {isAdmin,signOut,subscribeAdmin} from '../data/adminAuth';
 import {exhibitSlots} from '../data/exhibitSlots.mjs';
 import HallLoading from './HallLoading';
+import {MIN_SHOW_MS} from '../data/loadWatch.mjs';
 import VirtualHost from '../components/VirtualHost';
 import {hallNarration} from '../data/narration.mjs';
 import {portraitPath,adminAvailable,publishedPeople,catalog} from '../data/repository';
@@ -158,13 +159,22 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   window.dispatchEvent(new Event('museum-navigation-input'));
   // 15/11 fix: the reveal timer must survive later asset-count changes (it used to be cleared by the next effect
   // run, which then returned early — the loading screen stayed forever). Only unmount cancels it.
-  revealTimer.current=setTimeout(()=>{
+  let done=false;
+  const reveal=()=>{if(done)return;done=true;clearTimeout(revealTimer.current);
    setReady(true);
    // 15/11: always wait at the closed door (repeat visits used to auto-open — looked like a bug to the user)
    // 16/11 (user): manual walking (Tự bước) is on from the foyer onwards, not only inside the room
    if(benchOn)openDoor();else{setAtDoor(true);setManual(true);}
-  },Math.max(400,700-(performance.now()-openedAt.current)));
+  };
+  // 17/11 (user): keep the tri ân picture on screen at least MIN_SHOW_MS even on fast networks;
+  // “Vào tham quan” (revealNow) lets anyone enter as soon as everything is loaded.
+  revealNow.current=reveal;setLoadDone(true);
+  revealTimer.current=setTimeout(reveal,benchOn?Math.max(400,700-(performance.now()-openedAt.current)):Math.max(400,MIN_SHOW_MS-(performance.now()-openedAt.current)));
   },[sceneReady,assetsLoaded,assetTimeout,modelsReady]);
+ const revealNow=useRef<(()=>void)|null>(null);
+ const [loadDone,setLoadDone]=useState(false),[loadingGone,setLoadingGone]=useState(false);
+ // fade the loading picture out over the first frames of the scene instead of cutting
+ useEffect(()=>{if(!ready||loadingGone)return;const t=setTimeout(()=>setLoadingGone(true),900);return()=>clearTimeout(t);},[ready,loadingGone]);
  // Touching a stick = walk on my own (also interrupts the automatic presentation).
  const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};
  const enterManual=()=>{if(manual&&!automatic)return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setPause(false);setArriving(false);setCommand(c=>({serial:c.serial+1,from:current,to:current,manual:true}));setManual(true);};
@@ -286,7 +296,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    />
   </Suspense>
 
-  {!ready&&!failed&&<HallLoading required={required} onList={p.onList}/>}
+  {!loadingGone&&!failed&&<HallLoading required={required} onList={p.onList} openedAt={openedAt.current} done={loadDone} leaving={ready} onEnter={()=>revealNow.current?.()}/>}
   {ready&&atDoor&&!panel&&(intro&&effects
    ?<button type="button" className="hall-door-prompt" onClick={()=>window.dispatchEvent(new Event('museum-intro-skip'))} aria-label="Bỏ qua cảnh mở đầu"><span className="hall-intro-skip">Chạm để bỏ qua</span></button>
    :null)}

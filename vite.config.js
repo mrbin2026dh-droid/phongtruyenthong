@@ -153,7 +153,7 @@ const pwa=VitePWA({
   globIgnores:['**/node_modules/**'],
   maximumFileSizeToCacheInBytes:3*1024*1024,
   navigateFallback:'index.html',
-  navigateFallbackDenylist:[/\/__/,/\/data\//],
+  navigateFallbackDenylist:[/\/__/,/\/data\//,/\/tri-an\//],   // 17/11: /tri-an/ = trang ảnh kỷ niệm (mã QR), không phải ứng dụng
   cleanupOutdatedCaches:true,
   runtimeCaching:[
    // published data: newest first (admin “Xuất bản”), cached copy when offline or after 3 s without network

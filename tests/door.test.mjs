@@ -154,7 +154,7 @@ test('Establishing shot: look over the schoolyard, then turn to the door; skippa
 test('Loading screen cannot get stuck: the reveal timer survives later asset changes; asset events never fire during render',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const assets=readFileSync(new URL('../src/scene/sceneAssets.ts',import.meta.url),'utf8');
- assert.ok(tour.includes('revealTimer.current=setTimeout(()=>{')&&!tour.includes('return()=>clearTimeout(timer);},[sceneReady,assetsLoaded,assetTimeout]);'));
+ assert.ok(tour.includes('revealTimer.current=setTimeout(reveal,')&&!tour.includes('return()=>clearTimeout(timer);},[sceneReady,assetsLoaded,assetTimeout]);'));
  assert.ok(tour.includes('useEffect(()=>()=>clearTimeout(revealTimer.current),[]);'),'only unmount cancels it');
  assert.ok(assets.includes('setTimeout(()=>{queued=false;subs.forEach(fn=>fn());},0)'),'17/11: subscribers notified once per macrotask, after render and outside React’s sync flush (no update-depth loop)');
 });

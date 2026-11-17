@@ -46,7 +46,7 @@
 @keyframes visit-info-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* khung 3D nhỏ (điện thoại ngang): khi chậm bỏ dòng phụ và % để đủ chỗ cho nút */
 @container stage (max-width:760px){
- .visit-loading-late .visit-loading-info>span,.visit-loading-late .visit-loading-info .visit-loading-pct{display:none}
+ .visit-loading-late .visit-loading-info>span,.visit-loading-late .visit-loading-info .visit-loading-pct,.visit-loading-ready .visit-loading-info>span,.visit-loading-ready .visit-loading-info .visit-loading-pct{display:none}
  .visit-loading-info{gap:4px;left:58.5%;width:39%}
  .visit-loading-info .visit-loading-actions{flex-wrap:nowrap;gap:6px;margin-top:2px}
  .visit-loading-info .visit-loading-actions button{min-height:28px;padding:.3em .95em;font-size:11px;white-space:nowrap}
@@ -61,5 +61,28 @@
  .visit-loading-info .visit-loading-actions{margin-top:10px;gap:10px}.visit-loading-info .visit-loading-actions button{min-height:44px;font-size:14px}
  .visit-loading-info .visit-loading-note{display:block}
  .visit-loading-late .visit-loading-info>span,.visit-loading-late .visit-loading-info .visit-loading-pct{display:revert}
+}
+/* 17/11: nút “Vào tham quan” khi đã tải xong; mờ dần khi vào cảnh */
+.visit-loading{transition:opacity .85s ease}
+.visit-loading-leaving{opacity:0;pointer-events:none}
+.visit-loading-info .visit-loading-enter button{display:inline-flex;align-items:center;gap:.5em;padding:.4em 1.3em;background:linear-gradient(180deg,#f0d18d,#d6b06a);border-color:#e9c97f;color:#122d38;box-shadow:0 4px 14px #0007;animation:visit-info-in .5s ease-out both}
+.visit-loading-info .visit-loading-enter button svg{width:1.1em;height:1.1em}
+/* 17/11: thẻ mã QR ở khoảng trống góc dưới trái tranh (cạnh mũi trái tim), cân với chữ tải bên phải */
+.visit-qr{position:absolute;left:8%;bottom:4%;width:12.5%;display:flex;flex-direction:column;align-items:center;gap:.55cqw;text-decoration:none;color:#e1c286;animation:visit-info-in .8s .3s ease-out both}
+.visit-qr-card{display:block;width:100%;aspect-ratio:1;padding:7%;background:linear-gradient(160deg,#fbf5e6,#efe3c6);border-radius:10%;box-shadow:0 0 0 1px #b8924f,0 0 0 .3cqw #0e2b2f,0 0 0 calc(.3cqw + 1px) #d2b37699,0 10px 26px #0009;transition:transform .2s ease}
+.visit-qr-card img{display:block;width:100%;height:100%}
+.visit-qr:hover .visit-qr-card{transform:translateY(-2px)}
+.visit-qr-cap{font:500 clamp(9px,.78cqw,13px)/1.35 "Noto Serif",serif;letter-spacing:.06em;text-transform:uppercase;text-align:center;white-space:nowrap;text-shadow:0 1px 4px #0009}
+.visit-qr-cap b{font-weight:700;color:#f0d18d}
+.visit-qr-tap{display:none}
+/* màn cảm ứng: chính máy này không quét được mã của nó → nút mở trang lưu ảnh */
+@media (pointer:coarse){
+ .visit-qr{width:auto;left:6%;bottom:6%}
+ .visit-qr-card,.visit-qr-cap{display:none}
+ .visit-qr-tap{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 14px;border:1px solid #d2b37699;border-radius:999px;background:#0e2b2fcc;color:#f3e4c4;font:600 12px/1.2 "Noto Sans",sans-serif;white-space:nowrap}
+ .visit-qr-tap svg{width:15px;height:15px;color:#e1c286}
+}
+@container visit (orientation:portrait){
+ .visit-qr{position:static;margin:14px auto 0;width:150px}
 }
 @media (prefers-reduced-motion:reduce){.visit-loading-info{animation:none}}
