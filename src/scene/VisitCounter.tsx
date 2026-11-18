@@ -9,7 +9,8 @@ import {FACADE_Z} from './hallArrival.mjs';
 import {PHONE} from './device';
 
 /** Centre of the left facade stone panel (x −2.21 … −4.54), eye height, 3 cm proud of the stone. */
-export const COUNTER_PANEL={x:-3.375,y:1.78,z:FACADE_Z+.03,w:1.5,h:.66};
+// 18/11 (người dùng: gọn hơn, cân với công tắc): 1,1 × 0,48 m; tâm ở 1,62 m = tâm công tắc bên kia cửa (đối xứng)
+export const COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:1.1,h:.48};
 export const COUNTER_URL=GOATCOUNTER_CODE?'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/TOTAL.json':'';
 /** “1,234” / “1 234” / 1234 → 1234 (GoatCounter formats the number with the account's separator). */
 export function parseCount(json:any):number|null{const s=String(json?.count??'').replace(/[^0-9]/g,'');return s?Number(s):null;}

@@ -44,6 +44,7 @@ test('Anti-flicker: wall headings stay visible, portraits use hysteresis and kee
  assert.match(photo,/if\(target\.loaded\|\|!shown\.current\.e\.loaded\)shown\.current=/);
  assert.ok(hall.includes('<EntranceDoors door={p.door} waiting={Boolean(p.atDoor&&!p.intro)} onOpen={p.onOpenDoor} canClose={Boolean(p.canCloseDoor)} onClose={p.onCloseDoor}/>'));
  assert.ok(readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8').includes("onCloseDoor={()=>go('gate')}"),'18/11: the wall switch takes the visitor back to the door, which closes');
+ assert.ok(readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8').includes("mode={waiting&&onOpen?'open':canClose&&onClose?'close':'off'}"),'18/11: one switch opens a closed door and closes an open one');
  assert.ok(!/rotation=\{\[0,side\*1\.50,0\]\}/.test(hall),'static open leaves removed');
 });
 
