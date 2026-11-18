@@ -26,7 +26,7 @@ test('Mọi điểm dừng của127ảnh nối được, đường tự đi và 
   for(let i=1;i<path.points.length;i++)assert.ok(segmentWalkable(path.points[i-1],path.points[i]));
  }
  const route=routeFromPosition(plan,[-3.7,1.7,-.8],l.stops.at(-1).id);assert.ok(route.points.length>=2);
- assert.equal(isWalkable([-3.7,1.7,1.5]),false);
+ assert.equal(isWalkable([-3.7,1.7,1.5]),true,'18/11: the benches left the hall (a rug lies there now)');
  assert.ok(isWalkable(slideStep([11,1.7,0],[100,0,0],1,[0])));
  assert.ok(isWalkable(slideStep([-3.7,1.7,-1],[0,0,100],1,[0])));
 });

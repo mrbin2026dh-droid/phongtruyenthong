@@ -63,6 +63,43 @@ function pushPlateTexture(side:number){
  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
 }
 
+/** 18/11 (người dùng): công tắc đóng cửa trên mảng tường đá bên phải cửa (phía sảnh) — mặt kính đen trên tấm đồng chải,
+ * biểu tượng hai cánh cửa khép vào, chữ “ĐÓNG CỬA”, vòng đèn vàng sáng khi cửa đang mở (bấm được). */
+export const DOOR_SWITCH={x:3.375,y:1.35,w:.24,h:.38};   // visible from the waiting spot
+function switchFaceTexture(){
+ const W=PHONE?200:400,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/400;
+ const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14191c');bg.addColorStop(1,'#07090a');g.fillStyle=bg;g.fillRect(0,0,W,H);
+ const sh=g.createLinearGradient(0,0,W,H*.6);sh.addColorStop(0,'rgba(255,255,255,.10)');sh.addColorStop(.4,'rgba(255,255,255,0)');g.fillStyle=sh;g.fillRect(0,0,W,H);
+ // ring
+ const cx=W/2,cy=H*.40,r=118*u;g.lineWidth=7*u;g.strokeStyle='#e9c47c';g.shadowColor='rgba(255,190,90,.9)';g.shadowBlur=22*u;
+ g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();g.shadowBlur=0;
+ // two door leaves closing: |▸ ◂|
+ g.strokeStyle='#f3dcaa';g.fillStyle='#f3dcaa';g.lineWidth=8*u;g.lineCap='round';g.lineJoin='round';
+ for(const s of [-1,1]){g.strokeRect(cx+s*58*u-(s<0?0:-0)-(s<0?26*u:0),cy-62*u,26*u,124*u);}
+ for(const s of [-1,1]){const x0=cx+s*90*u,x1=cx+s*16*u;g.beginPath();g.moveTo(x0,cy);g.lineTo(x1,cy);g.stroke();
+  g.beginPath();g.moveTo(x1+s*20*u,cy-16*u);g.lineTo(x1,cy);g.lineTo(x1+s*20*u,cy+16*u);g.stroke();}
+ g.font=`700 ${Math.round(50*u)}px "Noto Sans",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#e6c98a';
+ (g as any).letterSpacing=Math.round(6*u)+'px';g.fillText('ĐÓNG CỬA',cx+3*u,H*.80);(g as any).letterSpacing='0px';
+ const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
+}
+function DoorSwitch({enabled,onPress}:{enabled:boolean;onPress?:()=>void}){
+ const invalidate=useThree(s=>s.invalidate);
+ const face=useMemo(()=>switchFaceTexture(),[]);
+ const mats=useMemo(()=>({plate:new MeshStandardMaterial({color:'#c9a560',roughness:.32,metalness:.8}),
+  face:new MeshStandardMaterial({map:face,roughness:.18,metalness:.1,emissive:'#ffffff',emissiveMap:face,emissiveIntensity:.25})}),[face]);
+ useEffect(()=>()=>{face.dispose();mats.plate.dispose();mats.face.dispose();},[face,mats]);
+ const pad=useRef<Group>(null);
+ // glow brighter while it can be pressed (doors open)
+ useEffect(()=>{mats.face.emissiveIntensity=enabled?.55:.12;invalidate();},[enabled,mats,invalidate]);
+ const S=DOOR_SWITCH;
+ const press=(e:any)=>{e.stopPropagation();if(!enabled||!onPress)return;if(pad.current){pad.current.position.z=-.004;invalidate();setTimeout(()=>{if(pad.current){pad.current.position.z=0;invalidate();}},180);}onPress();};
+ return <group position={[S.x,S.y,FACADE_Z+.006]}>
+  <mesh position={[0,0,.004]} material={mats.plate}><boxGeometry args={[S.w+.03,S.h+.03,.008]}/></mesh>
+  <group ref={pad}><mesh position={[0,0,.0095]} material={mats.face} onClick={press}
+   onPointerOver={()=>{if(enabled)document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}><boxGeometry args={[S.w,S.h,.004]}/></mesh></group>
+ </group>;
+}
+
 /** One material set per leaf: each clips away whatever has slid past its jamb (into the wall). */
 function leafMaterials(side:number,grain:CanvasTexture,fabric:CanvasTexture){
  // Right leaf keeps x ≤ jamb, left leaf keeps x ≥ −jamb.
@@ -99,7 +136,7 @@ function Leaf({side,m}:{side:number;m:ReturnType<typeof leafMaterials>}){
 
 /** Two-leaf sliding entrance door + the school sign above it. Closed while the visitor waits in the foyer;
  * opens on a tap. Doors and sign are not part of the baked shell, so they stay sharp and can move. */
-export default function EntranceDoors({door,waiting=false,onOpen}:{door?:MutableRefObject<DoorState>;waiting?:boolean;onOpen?:()=>void}){
+export default function EntranceDoors({door,waiting=false,onOpen,canClose=false,onClose}:{door?:MutableRefObject<DoorState>;waiting?:boolean;onOpen?:()=>void;canClose?:boolean;onClose?:()=>void}){
  const gl=useThree(s=>s.gl),invalidate=useThree(s=>s.invalidate);
  useEffect(()=>{if(!waiting)document.body.style.cursor='';},[waiting]);
  // While the visitor waits at the closed door nothing moves, so the demand frameloop would stop drawing:
@@ -143,6 +180,7 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
  });
  return <>
   <GildedSign spec={DOOR_SIGN_SPEC} position={[0,DOOR_SIGN.y,FACADE_Z]}/>
+  <DoorSwitch enabled={canClose} onPress={onClose}/>
   {/* 16/11 (user): only the door opens the door — tap a leaf or the label attached to it (not the whole screen). */}
   <group onClick={e=>{if(!waiting||!onOpen||e.delta>8)return;e.stopPropagation();onOpen();}}
    onPointerOver={()=>{if(waiting)document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}>

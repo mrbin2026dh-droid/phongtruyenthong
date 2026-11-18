@@ -27,11 +27,12 @@ test('Foyer: glazed back wall with the blurred schoolyard view, walkable foyer f
  const f=src('FoyerView.tsx'),hall=src('HallScene.tsx');
  assert.ok(hall.includes('{baked&&<FoyerView/>}'));assert.ok(f.includes("'textures/san-truong-qua-kinh.webp'"));
  const size=statSync(new URL('../public/textures/san-truong-qua-kinh.webp',import.meta.url)).size;assert.ok(size<1.2e6,'backdrop stays light');
- assert.ok(isWalkable([3.5,1.7,12.5])&&isWalkable([-3.8,1.7,10]),'whole foyer floor');
+ assert.ok(isWalkable([3.5,1.7,11.2])&&isWalkable([-3.8,1.7,10])&&isWalkable([0,1.7,12.9]),'whole foyer floor (18/11: aisle between the benches to the glass)');
+ assert.ok(!isWalkable([2.15,1.7,12.85])&&!isWalkable([-2.15,1.7,12.85]),'18/11: the two benches by the glass are obstacles');
  assert.ok(!isWalkable([3.5,1.7,8.6]),'facade/door zone stays narrow');assert.ok(!isWalkable([0,1.7,13.6]),'not into the glass');
  // The Blender source lives outside the website repo (not on GitHub CI).
  const B=new URL('../../08-MO-HINH-3D/museum-hall-24x16/v3-baked/build_hall_v3.py',import.meta.url);
- if(existsSync(B)){const build=readFileSync(B,'utf8');assert.ok(build.includes("box(f'foyer-step-a{i}'")&&build.includes("box('foyer-glass-sill'"));}
+ if(existsSync(B)){const build=readFileSync(B,'utf8');assert.ok(build.includes("box(f'foyer-step-a{i}'")&&build.includes("box('foyer-glass-sill'")&&build.includes("for (x, z) in L['benches']:")&&build.includes('def slab(nm, cx, cz, w, d, top, mat):'),'18/11: benches are built; rug layers are flat slabs (no z-fighting)');}
 });
 
 test('Bước 1: real-room reflection probes (floor, glass, environment) and quality-gated post-processing',()=>{

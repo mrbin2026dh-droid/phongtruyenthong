@@ -320,6 +320,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     atDoor={atDoor}
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
+    canCloseDoor={ready&&!atDoor&&!moving&&!doorOpening&&!arriving}
+    onCloseDoor={()=>go('gate')}
     input={input}
     pose={pose}
     route={route}
