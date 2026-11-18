@@ -37,6 +37,7 @@ const profile=(name,wall,pt,move=2.6)=>{const n=NORMAL[wall],eye=[pt[0]+n[0]*2,1
  return [{cam:[null,[eye,pt,54]],t:move},{hold:.6},{click:'centre',note:'hồ sơ '+name},{app:3.6},{press:'Escape'},{app:.7,keep:true}];};
 const TO_NGU_VAN=[6.15,2.64,-7.86],TO_TOAN_TIN=[11.86,2.64,-6],TO_VAN_THE_MY=[11.86,1.44,2],TO_SU_DIA=[-11.86,1.44,-1],
  TO_TIENG_ANH=[-11.86,1.44,-2],TO_KHTN=[-4.35,1.44,-7.86],TO_VAN_PHONG=[-8.35,2.64,7.86];
+const TV_SLIDES=11;   // số ảnh trình diễn đang có trên tivi (18/11) — thêm/bớt ảnh thì sửa số này
 const SHOT=[
  // Sảnh: từ vách kính nhìn về cửa phòng, đi tới, liếc bảng THAM QUAN, dừng trước công tắc
  {cam:[[[0,1.7,16.2],[0,1.75,8.56],66],[[0,1.7,15.6],[0,1.75,8.56],66]],t:2},
@@ -50,9 +51,10 @@ const SHOT=[
  // Toàn cảnh rồi Ban Giám hiệu
  {cam:['here',[[0,1.85,6.6],[0,1.6,-7.8],70]],t:3.5},
  {cam:[null,[[0,1.72,-3.4],[0,1.85,-7.78],62]],t:6},
- {cam:[null,[[0,1.72,-4.4],[0,1.8,-7.73],50]],t:2.5},
- {click:'centre',note:'mở hồ sơ thầy Hiệu trưởng'},
- {app:4.5},{press:'Escape'},{app:.7,keep:true},
+ // 18/11 (lần 3, người dùng): mở hồ sơ cả 3 người Ban Giám hiệu — Hiệu trưởng giữa, hai Phó Hiệu trưởng hai bên
+ ...profile('Hiệu trưởng','back',[0,1.8,-7.73],2.5),
+ ...profile('Phó Hiệu trưởng (trái)','back',[-1.486,1.8,-7.73],1.8),
+ ...profile('Phó Hiệu trưởng (phải)','back',[1.486,1.8,-7.73],2.2),
  // Tường sau bên phải — Tổ Ngữ Văn
  {cam:[null,[[3.6,1.7,-4.4],[3.6,2.0,-7.86],62]],t:3},
  {cam:[null,[[8.4,1.7,-4.4],[8.4,2.0,-7.86],62]],t:5},
@@ -67,9 +69,8 @@ const SHOT=[
  // Tivi cảm ứng “Dấu ấn nhà trường”: vuốt qua lại, rồi chạm mở trình chiếu
  {cam:[null,[[7,1.72,3.4],[7,1.95,7.95],62]],t:4},
  {hold:1},
- {swipe:-.32,t:.55,note:'vuốt tivi sang ảnh sau'},{app:1.6,keep:true},
- {swipe:-.32,t:.55},{app:1.6,keep:true},
- {swipe:.32,t:.55,note:'vuốt về ảnh trước'},{app:1.6,keep:true},
+ // 18/11 (lần 3, người dùng): lướt hết tất cả ảnh trên tivi (11 ảnh → 11 lần vuốt, quay lại ảnh đầu) để tạo điểm nhấn
+ ...Array.from({length:TV_SLIDES},(_,i)=>[{swipe:-.32,t:.5,note:i?undefined:`vuốt tivi qua ${TV_SLIDES} ảnh`},{app:1.35,keep:true}]).flat(),
  {tap:true,note:'chạm mở trình chiếu'},
  {app:5},{press:'Escape'},{app:.7,keep:true},
  // Sang tường trái — Tổ Sử-Địa, Tổ Tiếng Anh
