@@ -3,7 +3,7 @@ import {Canvas,useFrame,useThree} from '@react-three/fiber';
 import {AdditiveBlending,BoxGeometry,InstancedMesh,Matrix4,MeshStandardMaterial,SRGBColorSpace,CanvasTexture,ACESFilmicToneMapping,Object3D,Group,Vector3} from 'three';
 
 import {Texture,GalleryEnvironment} from './BlenderMuseum';
-import {workHistoryText} from '../data/catalog.mjs';
+import {workHistoryText,displayName} from '../data/catalog.mjs';
 import HallController from './HallController';
 import HallPhoto,{type PhotoTier} from './HallPhoto';
 import ChuVanAnStatue from './ChuVanAnStatue';
@@ -87,7 +87,7 @@ export const LIGHT_POOL={width:1.6,height:1.4,opacity:.26};   // 17/11: softer â
 function LeaderDressing({slot}:{slot:any}){
  const [ew,eh]=leaderOpening(slot),top=eh+LEADER_MOULDING,L=PICTURE_LIGHT,ly=top+L.above,P=PLAQUE,py=-(top+P.gap+P.height/2);
  const plaque=useMemo(()=>{const c=document.createElement('canvas');c.width=1200;c.height=260;const x=c.getContext('2d')!;x.textAlign='center';x.fillStyle='#2a1f18';
-  x.font='700 76px "Noto Serif"';x.fillText(slot.person.name,600,108,1120);x.font='500 44px "Noto Sans"';
+  x.font='700 76px "Noto Serif"';x.fillText(displayName(slot.person),600,108,1120);x.font='500 44px "Noto Sans"';
   x.fillText([slot.person.role,workHistoryText(slot.person)].filter(Boolean).join(' Â· '),600,196,1120);
   const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;},[slot.person]);
  useEffect(()=>()=>plaque.dispose(),[plaque]);

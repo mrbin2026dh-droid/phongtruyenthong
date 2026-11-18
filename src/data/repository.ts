@@ -4,7 +4,7 @@ import {createGalleryStore,isGalleryPhoto} from './gallery.mjs';
 import {isPhotoRef,photoURL} from './photoStore';
 import {adminAllowed,isPublishedPhoto} from './photoRef.mjs';
 export type WorkSpell={id:string;startYear:number;endYear:number|null;role:string};
-export type Person={displaySlot?:string;id:string;name:string;role:string;dept:string;status:string;startYear:number;endYear:number|null;description:string;image:string;photoRatio:number;group:string;birthYear:number|null;workHistory:WorkSpell[]};
+export type Person={displaySlot?:string;id:string;honorific?:''|'Thầy'|'Cô';name:string;role:string;dept:string;status:string;startYear:number;endYear:number|null;description:string;image:string;photoRatio:number;group:string;birthYear:number|null;workHistory:WorkSpell[]};
 export type Period=typeof seed.periods[number];
 export type CatalogSnapshot={schemaVersion:number;revision:number;people:Person[];storageError:string};
 export type PersonInput=Omit<Person,'id'|'startYear'|'endYear'>;

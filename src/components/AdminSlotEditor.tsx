@@ -24,7 +24,7 @@ const withCurrent=(list:string[],v:string)=>list.includes(v)?list:[v,...list];
 export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{slot:{slotId:string;group:string};person?:Person;onClose:()=>void;onSaved:(msg:string)=>void;onMove?:()=>void}){
  const defaults=slotDefaults(slot.group)!;
  const single=person?person.workHistory.length===1:true;
- const [name,setName]=useState(person?.name||''),[role,setRole]=useState(person?.role||defaults.role),[dept,setDept]=useState(person?.dept||'');
+ const [honorific,setHonorific]=useState<string>(person?.honorific||''),[name,setName]=useState(person?.name||''),[role,setRole]=useState(person?.role||defaults.role),[dept,setDept]=useState(person?.dept||'');
  const [start,setStart]=useState(String(person?person.workHistory[0].startYear:year())),[birth,setBirth]=useState(person?.birthYear?String(person.birthYear):'');
  const [status,setStatus]=useState(person?.status||'Đang công tác'),[description,setDescription]=useState(person?.description||'');
  const [file,setFile]=useState<{blob:Blob;url:string;width:number;height:number;small:boolean}|null>(null),[removePhoto,setRemovePhoto]=useState(false);
@@ -61,7 +61,7 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{sl
    const photoRatio=file?storedRatio(file.width,file.height):(person?.photoRatio||3/4);
    const history=person?(single?[{...person.workHistory[0],startYear,role:defaults.roleLocked?defaults.role:role.trim(),endYear:status==='Đang công tác'?null:person.workHistory[0].endYear??year()}]:person.workHistory)
     :[{id:crypto.randomUUID(),startYear,endYear:status==='Đang công tác'?null:year(),role:defaults.roleLocked?defaults.role:role.trim()}];
-   const saved=catalog.savePerson({name:name.trim(),role:defaults.roleLocked?defaults.role:role.trim(),dept:dept.trim(),group:defaults.roleLocked?defaults.group:(role==='Nhân viên'||dept==='Văn Phòng'?'staff':'teacher'),status,birthYear,description,image,photoRatio,workHistory:history,displaySlot:slot.slotId},{id:person?.id||'',allowSameName});
+   const saved=catalog.savePerson({honorific:honorific as Person['honorific'],name:name.trim(),role:defaults.roleLocked?defaults.role:role.trim(),dept:dept.trim(),group:defaults.roleLocked?defaults.group:(role==='Nhân viên'||dept==='Văn Phòng'?'staff':'teacher'),status,birthYear,description,image,photoRatio,workHistory:history,displaySlot:slot.slotId},{id:person?.id||'',allowSameName});
    if(oldRef&&oldRef!==image&&isPhotoRef(oldRef))void deletePhoto(oldRef);
    onSaved((person?'Đã cập nhật ':'Đã thêm ')+saved.name+' ('+saved.id+')'+(saved.displaySlot===slot.slotId?'':' — lưu ý: chưa đặt được vào ô này, kiểm tra chức danh.'));
   }catch(err){
@@ -88,6 +88,8 @@ export default function AdminSlotEditor({slot,person,onClose,onSaved,onMove}:{sl
     <p className="fine">Ảnh 4×6 vừa khít khung; ảnh 3×4 sẽ được cắt bớt hai bên vai. Vị trí: {slot.slotId}</p>
    </div>
    <div className="admin-slot-fields">
+    {/* 18/11: xưng hô hiện trước họ tên ở hồ sơ, bảng tên, biển BGH */}
+    <label>Xưng hô<select value={honorific} onChange={e=>setHonorific(e.target.value)}><option value="">— Chọn —</option><option value="Thầy">Thầy</option><option value="Cô">Cô</option></select></label>
     <label>Họ và tên<input value={name} onChange={e=>setName(e.target.value)} maxLength={120} required autoFocus/></label>
     {/* 17/11 (người dùng): chọn nhanh chức danh và tổ; giá trị cũ không có trong danh sách vẫn được giữ làm một lựa chọn */}
     <label>Chức danh{defaults.roleLocked?<input value={defaults.role} disabled/>:<select value={role} onChange={e=>setRole(e.target.value)}>{withCurrent(ROLES,role).map(r=><option key={r} value={r}>{r||'— Chọn —'}</option>)}</select>}</label>

@@ -35,6 +35,10 @@ export function galleryRooms(people,sort='service'){
 }
 export function findPeople(people,query){const key=nameKey(query);return people.filter(p=>nameKey([p.id,p.name,p.dept,p.role].join(' ')).includes(key));}
 export function duplicateCandidates(people,candidate,excludeId=''){return people.filter(p=>p.id!==excludeId&&nameKey(p.name)===nameKey(candidate.name));}
+/** 18/11 (người dùng: hiển thị “Thầy …”, “Cô …” cho trang trọng): xưng hô lưu trong hồ sơ, chọn trong quản trị. */
+export const HONORIFICS=['Thầy','Cô'];
+/** Name as shown to visitors: “Thầy Phan Văn Tuấn”, “Cô Phùng Thị Thu” (just the name when no form of address is set). */
+export const displayName=p=>(HONORIFICS.includes(p?.honorific)?p.honorific+' ':'')+String(p?.name||'');
 export function validatePerson(p,year=new Date().getFullYear()){
  if(!p.id||!/^[A-Za-z0-9_-]+$/.test(p.id))throw new Error('Mã hồ sơ không hợp lệ.');
  for(const field of ['name','role','dept'])if(typeof p[field]!=='string'||!p[field].trim())throw new Error('Cần nhập họ tên, chức danh và tổ/bộ phận.');
@@ -52,7 +56,7 @@ export function validatePerson(p,year=new Date().getFullYear()){
  const last=history.at(-1);
  if(p.status==='Đang công tác'&&last.endYear!==null)throw new Error('Đang công tác: để trống năm kết thúc của đợt mới nhất.');
  if(p.birthYear!==null&&(!Number.isInteger(p.birthYear)||p.birthYear<1800||p.birthYear>history[0].startYear))throw new Error('Năm sinh không hợp lệ.');
- return {...p,name:p.name.trim(),role:p.role.trim(),dept:p.dept.trim(),description:String(p.description||''),workHistory:history,startYear:history[0].startYear,endYear:last.endYear};
+ return {...p,honorific:HONORIFICS.includes(p.honorific)?p.honorific:'',name:p.name.trim(),role:p.role.trim(),dept:p.dept.trim(),description:String(p.description||''),workHistory:history,startYear:history[0].startYear,endYear:last.endYear};
 }
 export class DuplicatePersonError extends Error{constructor(candidates){super('Có hồ sơ trùng họ tên. Kiểm tra người từng công tác trước khi thêm mới.');this.candidates=candidates;this.name='DuplicatePersonError';}}
 export function parseCatalogBackup(text,year=new Date().getFullYear()){
@@ -70,7 +74,7 @@ export function parseCatalogBackup(text,year=new Date().getFullYear()){
   if(typeof p.image!=='string'||p.image.length>2000000||(p.image&&!isPhotoRef(p.image)&&!isPublishedPhoto(p.image)&&!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p.image)))throw new Error('Ảnh trong bản sao phải là JPEG/PNG/WebP cục bộ hợp lệ.');
   if(![2/3,3/4].some(r=>Math.abs(r-p.photoRatio)<.001))throw new Error('Tỷ lệ ảnh phải là 2:3 hoặc 3:4.');
   if(!Array.isArray(p.workHistory)||p.workHistory.some(h=>!h||typeof h.id!=='string'||typeof h.role!=='string'))throw new Error('Đợt công tác không hợp lệ.');
-  return validatePerson({id:p.id,name:p.name,role:p.role,dept:p.dept,group:p.group,status:p.status,birthYear:p.birthYear,description:p.description,image:p.image,photoRatio:p.photoRatio,displaySlot:slot,workHistory:p.workHistory.map(h=>({id:h.id,startYear:h.startYear,endYear:h.endYear,role:h.role}))},year);
+  return validatePerson({id:p.id,honorific:p.honorific,name:p.name,role:p.role,dept:p.dept,group:p.group,status:p.status,birthYear:p.birthYear,description:p.description,image:p.image,photoRatio:p.photoRatio,displaySlot:slot,workHistory:p.workHistory.map(h=>({id:h.id,startYear:h.startYear,endYear:h.endYear,role:h.role}))},year);
  });
  return attachExhibitSlots(people);
 }
@@ -108,7 +112,10 @@ export function createCatalogStore(seed,{storage=null,year=new Date().getFullYea
    if(saved.schemaVersion!==1||!Array.isArray(saved.people))throw new Error('Sai phiên bản dữ liệu');
    // 17/11 (A+): a copy saved for the 99-position wall moves to the 103-position wall in the same reading order
    const stale=saved.layout!==LAYOUT_VERSION;
-   const people=attachExhibitSlots((stale?migrateSlotsV1(saved.people):saved.people).map(p=>fixGroup(validatePerson(p,year))));
+   // 18/11: a working copy saved before “xưng hô” existed takes it from the published data (same id)
+   const pub=new Map(base.map(b=>[b.id,b.honorific||'']));
+   const withTitle=saved.people.map(p=>p.honorific!==undefined?p:{...p,honorific:pub.get(p.id)||''});
+   const people=attachExhibitSlots((stale?migrateSlotsV1(withTitle):withTitle).map(p=>fixGroup(validatePerson(p,year))));
    if(new Set(people.map(p=>p.id)).size!==people.length)throw new Error('Trùng mã hồ sơ');
    snapshot={schemaVersion:1,revision:0,people,storageError:''};
    if(stale){const migrated=JSON.stringify({schemaVersion:1,layout:LAYOUT_VERSION,people});storage.setItem(key,migrated);persistedRaw=migrated;}
