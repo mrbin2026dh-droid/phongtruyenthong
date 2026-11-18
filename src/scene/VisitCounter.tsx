@@ -16,7 +16,15 @@ export const COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:.62,h:.30};
 // 18/11 (người dùng: “đếm lượt vào phòng”): one visit = one “vao-phong” event (TOTAL also summed every click → 3–4 per
 // visitor). Always with ?start=: without a range GoatCounter served a stale cached 0 for hours.
 export const COUNTER_START='2026-11-01';
-export const COUNTER_URL=GOATCOUNTER_CODE?'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/vao-phong.json?start='+COUNTER_START:'';
+/** 18/11 (người dùng: “bộ đếm cứ là 3”): GoatCounter giữ kết quả theo đúng cặp start/end của địa chỉ hỏi hàng giờ liền
+ * (đo: Age 22 731 s, trả 3 trong khi số thật là 6). Mọi ngày bắt đầu trước khi mở web (17/11) cho cùng một tổng, nên mỗi 10 phút
+ * hỏi bằng một ngày bắt đầu khác trong năm 2025, và ngày kết thúc = ngày mai → địa chỉ luôn mới, số chậm tối đa ~10 phút. */
+const ymd=(d:Date)=>d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
+export function counterUrl(now=Date.now()){
+ if(!GOATCOUNTER_CODE)return '';
+ const bucket=Math.floor(now/600000)%300,start=new Date(Date.UTC(2025,0,1)+bucket*86400000),end=new Date(now+86400000);
+ return 'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/vao-phong.json?start='+ymd(start)+'&end='+ymd(end);
+}
 /** “1,234” / “1 234” / 1234 → 1234 (GoatCounter formats the number with the account's separator). */
 export function parseCount(json:any):number|null{const s=String(json?.count??'').replace(/[^0-9]/g,'');return s?Number(s):null;}
 export const formatCount=(n:number)=>n.toLocaleString('vi-VN');   // 12.458
@@ -56,8 +64,8 @@ export default function VisitCounter(){
   draw(c,'—');const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return {canvas:c,tex:t};},[P.h,P.w]);
  useEffect(()=>()=>tex.dispose(),[tex]);
  // read once per visit (the number changes slowly); never blocks or breaks the room
- useEffect(()=>{if(!COUNTER_URL)return;const ctl=new AbortController();
-  fetch(COUNTER_URL,{signal:ctl.signal,referrerPolicy:'no-referrer',credentials:'omit'}).then(r=>r.ok?r.json():null).then(j=>{const n=parseCount(j);if(n!==null)setCount(n);}).catch(()=>undefined);
+ useEffect(()=>{const url=counterUrl();if(!url)return;const ctl=new AbortController();
+  fetch(url,{signal:ctl.signal,referrerPolicy:'no-referrer',credentials:'omit'}).then(r=>r.ok?r.json():null).then(j=>{const n=parseCount(j);if(n!==null)setCount(n);}).catch(()=>undefined);
   return()=>ctl.abort();},[]);
  // count up to the number like an airport board (≈1.4 s), then rest — a few frames only
  useEffect(()=>{if(count===null)return;let raf=0;const t0=performance.now(),from=Math.max(0,Math.floor(count*.9));
