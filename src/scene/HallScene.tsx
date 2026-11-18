@@ -25,6 +25,7 @@ import RoomProbes from './RoomProbes';
 import PostFX from './PostFX';
 import EmptySlots from './EmptySlots';
 import type {DoorState} from './EntranceDoors';
+import {PHONE} from './device';
 import type {QualityControl} from './PerfProbe';
 
 type Props={gallery?:import('./GalleryDisplays').DisplayItem[];onGallery?:(index:number)=>void;hideMarkers?:boolean;layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
@@ -109,7 +110,7 @@ function Box({p,s,color,metal=0}:{p:number[];s:number[];color:string;metal?:numb
 
 function Inscription({text,width=5,height=.38,light=false,centered=false,fontReference,hires=false}:{text:string;width?:number;height?:number;light?:boolean;centered?:boolean;fontReference?:string;hires?:boolean}){
  const map=useMemo(()=>{
-  const c=document.createElement('canvas');c.width=width>10||hires?4096:2048;c.height=Math.round(c.width*height/width);const ctx=c.getContext('2d')!;
+  const c=document.createElement('canvas');c.width=(width>10||hires?4096:2048)/(PHONE?2:1);c.height=Math.round(c.width*height/width);const ctx=c.getContext('2d')!;
   ctx.clearRect(0,0,c.width,c.height);ctx.font=`${light?700:600} ${Math.round(c.height*(light?.51:.54))}px "${light?'Noto Serif':'Noto Sans'}"`;
   ctx.textAlign='center';ctx.textBaseline='middle';
   if(light){const gold=ctx.createLinearGradient(0,0,0,c.height*.7);gold.addColorStop(0,'#fff1c8');gold.addColorStop(.5,'#e5c786');gold.addColorStop(1,'#ba9659');ctx.fillStyle=gold;ctx.shadowColor='#061e2580';ctx.shadowBlur=3;ctx.shadowOffsetY=2;}else ctx.fillStyle='#233e44';
@@ -326,7 +327,7 @@ export const STATUE_SIGN_SPEC:SignSpec={frame:{w:2.9,h:.46,d:.035},face:{w:2.78,
  * corners, a little warmer on the rim-light side) painted smoothly, with a regular fine weave instead of noise. */
 function TealBackdrop(){
  const R=STATUE_ROOM,M=MONUMENT,W=2.5,map=useMemo(()=>{
-  const N=2048,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!;
+  const N=PHONE?1024:2048,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!;
   const v=g.createLinearGradient(0,0,0,N);v.addColorStop(0,'rgb(52,104,94)');v.addColorStop(.45,'rgb(33,81,70)');v.addColorStop(1,'rgb(19,55,47)');
   g.fillStyle=v;g.fillRect(0,0,N,N);
   const wash=g.createRadialGradient(N*.5,0,0,N*.5,0,N*.55);wash.addColorStop(0,'rgba(128,172,160,.75)');wash.addColorStop(.5,'rgba(80,130,118,.25)');wash.addColorStop(1,'rgba(80,130,118,0)');

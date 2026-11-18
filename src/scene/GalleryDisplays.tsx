@@ -12,6 +12,7 @@ import {CanvasTexture,SRGBColorSpace,Group,Plane,Vector3,AdditiveBlending,MeshSt
 import type {WebGLRenderer} from 'three';
 import {FRONT_SCREEN} from './hallLayout.mjs';
 import {screenGrab} from './screenGrab';
+import {PHONE} from './device';
 
 export type DisplayItem={id:string;url:string;caption:string;fit:'cover'|'contain'|'bare'};
 type Props={items:DisplayItem[];onOpen:(index:number)=>void};
@@ -24,8 +25,9 @@ const CENTER=new Vector3(),DIR=new Vector3(),LOOK=new Vector3();
 /** The screen is really being looked at: within 15 m and less than ~40° off the view direction. */
 function inView(camera:any){CENTER.set(S.x,S.y,FACE_Z);DIR.copy(CENTER).sub(camera.position);const d=DIR.length();if(d>15)return false;
  camera.getWorldDirection(LOOK);return LOOK.dot(DIR.normalize())>.76;}
-const phone=(()=>{try{return Math.min(screen.width,screen.height)<600&&matchMedia('(pointer:coarse)').matches;}catch{return false;}})();
-const W=phone?1600:1920,H=W*9/16;   // 17/11: = the source pictures (1920×1080); larger only upscaled and cost memory/upload time
+const phone=PHONE;
+const W=phone?1280:1920,H=W*9/16;   // 18/11: phones 1280×720 (iPhone memory)
+//   // 17/11: = the source pictures (1920×1080); larger only upscaled and cost memory/upload time
 const keyOf=(it:DisplayItem)=>it.id+'|'+it.url+'|'+it.caption+'|'+it.fit;
 const AUTO_MS=7000,PAUSE_AFTER_TOUCH_MS=15000,SLIDE_MS=900;
 

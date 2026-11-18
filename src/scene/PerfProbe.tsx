@@ -1,6 +1,7 @@
 import {useEffect,useRef} from 'react';
 import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
+import {PHONE} from './device';
 import {dprFor,motionDelta,nextLevel,stillDpr,STILL_DELAY} from './quality.mjs';
 
 export type QualityControl={choice:string;level:string;onLevel:(level:string)=>void;record?:MutableRefObject<number[]|null>};
@@ -14,7 +15,7 @@ export default function PerfProbe({choice,level,onLevel,record}:QualityControl){
  const win=useRef({sum:0,n:0,streak:0});
  // moving: the level's resolution (smooth); standing still: one sharp frame at the screen's resolution
  const still=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
- const sharpen=()=>{still.current=true;setDpr(stillDpr(live.current.level,window.devicePixelRatio||1));invalidate();};
+ const sharpen=()=>{still.current=true;setDpr(Math.min(stillDpr(live.current.level,window.devicePixelRatio||1),PHONE?2:9));invalidate();};
  useEffect(()=>{setDpr(dprFor(level,window.devicePixelRatio||1));still.current=false;win.current={sum:0,n:0,streak:win.current.streak};invalidate();
   clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);return()=>clearTimeout(timer.current);},[level,setDpr,invalidate]);
  // 17/11 (user: “giật lag” near the slide screen): only CAMERA motion counts. The slide screen animates on its own
