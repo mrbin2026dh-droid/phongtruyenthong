@@ -6,7 +6,7 @@
  * Chỉ chạy trên website công khai (bản build), không chạy trên máy quản trị / localhost; tôn trọng “Do Not Track” và GPC.
  *
  * Bật: điền mã trang GoatCounter (vd 'thcs-chuvanan-ptt') vào GOATCOUNTER_CODE — và cùng mã trong public/tri-an/index.html. */
-export const GOATCOUNTER_CODE='';
+export const GOATCOUNTER_CODE='thcs-chuvanan-ptt';
 
 export const EVENTS={
  'trang-chao':'Mở trang chào',

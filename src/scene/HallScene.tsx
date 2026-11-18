@@ -18,6 +18,7 @@ import {StopMarkers,RouteDots} from './Wayfinding';
 import GalleryDisplays from './GalleryDisplays';
 import PerfProbe from './PerfProbe';
 import EntranceDoors from './EntranceDoors';
+import VisitCounter from './VisitCounter';
 import GildedSign,{type SignSpec} from './GildedSign';
 import {deptPlates} from '../data/arrangeByDept.mjs';
 import FoyerView from './FoyerView';
@@ -426,6 +427,7 @@ export default function HallScene(p:Props){
   {baked&&<RoomProbes level={p.quality?.level||'high'}/>}
   {baked&&p.quality&&p.quality.level!=='low'&&<PostFX level={p.quality.level}/>}
   <EntranceDoors door={p.door} waiting={Boolean(p.atDoor&&!p.intro)} onOpen={p.onOpenDoor}/>
+  {baked&&<VisitCounter/>}
   {baked&&<FoyerView/>}
  </Canvas>;
 }
