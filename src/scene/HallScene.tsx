@@ -29,7 +29,7 @@ import type {DoorState} from './EntranceDoors';
 import {PHONE} from './device';
 import type {QualityControl} from './PerfProbe';
 
-type Props={gallery?:import('./GalleryDisplays').DisplayItem[];onGallery?:(index:number)=>void;hideMarkers?:boolean;layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;canCloseDoor?:boolean;onCloseDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
+type Props={gallery?:import('./GalleryDisplays').DisplayItem[];onGallery?:(index:number)=>void;hideMarkers?:boolean;layout:any;plan:any;command:any;atDoor?:boolean;intro?:boolean;onOpenDoor?:()=>void;canCloseDoor?:boolean;closedHere?:boolean;onCloseDoor?:()=>void;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onSelect:(id:string)=>void;onGo:(id:string)=>void;onReady:()=>void;onLost:()=>void;moving:boolean;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>;quality?:QualityControl;door?:MutableRefObject<DoorState>;emptySlots?:any[];onEmpty?:(slotId:string)=>void};
 
 const cube=new BoxGeometry(1,1,1);
 // Portrait frames (15/11): satin brass, less mirror-like, so every frame reads the same tone from any angle.
@@ -419,7 +419,7 @@ export default function HallScene(p:Props){
   <StopMarkers stops={p.layout.stops} onGo={p.onGo} disabled={p.moving||p.paused||Boolean(p.controlsLocked)||Boolean(p.hideMarkers)}/>
   {p.emptySlots&&p.onEmpty&&<EmptySlots slots={p.emptySlots} onEmpty={p.onEmpty} disabled={p.moving||p.paused}/>}
   {p.route&&<RouteDots route={p.route}/>}
-  <HallController plan={p.plan} command={p.command} atDoor={Boolean(p.atDoor)} intro={Boolean(p.intro)} paused={p.paused} effects={p.effects} input={p.input} loadedRooms={[0]} onArrive={p.onArrive} onMotion={p.onMotion} onRegion={()=>{}} controlsLocked={p.controlsLocked} pose={p.pose} route={p.route}/>
+  <HallController plan={p.plan} command={p.command} atDoor={Boolean(p.atDoor)} intro={Boolean(p.intro)} stayPut={Boolean(p.closedHere)} paused={p.paused} effects={p.effects} input={p.input} loadedRooms={[0]} onArrive={p.onArrive} onMotion={p.onMotion} onRegion={()=>{}} controlsLocked={p.controlsLocked} pose={p.pose} route={p.route}/>
   <Ready onReady={p.onReady} onLost={p.onLost}/>
   {statsEnabled()&&<SceneStats/>}
   {p.quality&&<PerfProbe {...p.quality}/>}

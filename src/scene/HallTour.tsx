@@ -222,7 +222,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  const [intro,setIntro]=useState(()=>!reducedMotion());
  useEffect(()=>{const done=()=>setIntro(false);window.addEventListener('museum-intro-done',done);return()=>window.removeEventListener('museum-intro-done',done);},[]);
  function openDoor(){
-  setIntro(false);
+  setIntro(false);setClosedHere(false);
   // 15/11: the tap that opens the door also starts the music (browsers only allow sound after a gesture).
   startHallSound();
   setAtDoor(false);setArriving(true);setChooseMode(false);try{sessionStorage.setItem(DOOR_KEY,'1');}catch{/* private mode */}
@@ -239,7 +239,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},Math.max(wait,DOOR_SECONDS*1000+250));
  }
  // 18/11: the wall switch closes the doors where the visitor stands (camera still); the next tap opens them again.
- const closeDoorHere=()=>{if(!ready||atDoor||moving||doorOpening)return;clearTimeout(walkTimer.current);door.current.target=0;doorSound(DOOR_SECONDS);
+ const [closedHere,setClosedHere]=useState(false);
+ const closeDoorHere=()=>{if(!ready||atDoor||moving||doorOpening)return;setClosedHere(true);clearTimeout(walkTimer.current);door.current.target=0;doorSound(DOOR_SECONDS);
   setAutomatic(false);setChooseMode(false);setPanel(null);setAtDoor(true);setManual(true);window.dispatchEvent(new Event('museum-navigation-input'));};
  // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
  useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);setManual(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
@@ -325,6 +326,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     onOpenDoor={openDoor}
     canCloseDoor={ready&&!atDoor&&!moving&&!doorOpening&&!arriving}
     onCloseDoor={closeDoorHere}
+    closedHere={closedHere}
     input={input}
     pose={pose}
     route={route}

@@ -78,7 +78,7 @@ test('Waiting at the door can never show an empty frame (user report 15/11)',()=
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
  assert.ok(tour.includes('controlsLocked={automatic||(atDoor&&intro&&effects)||doorOpening}'),'16/11: foyer walkable — locked only during the opening shot and the door turn');
  assert.ok(!tour.includes('className="hall-intro"'),'16/11: no mode chooser at all');
- assert.ok(ctl.includes('if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}'),'gate pose re-asserted');assert.ok(ctl.includes("addEventListener('museum-door-reframe',fn)"),'dev reframe hook');
+ assert.ok(ctl.includes('if(!atDoor||stayPut||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}'),'gate pose re-asserted (18/11: except after the wall switch closed the doors in place)');assert.ok(ctl.includes("addEventListener('museum-door-reframe',fn)"),'dev reframe hook');
  assert.ok(ctl.includes('Number.isFinite(camera.position.x+camera.position.y+camera.position.z'),'NaN safety net');
  assert.ok(!doors.includes('11.11'),'temporary end wall removed (the baked foyer has its own end wall)');
  assert.ok(doors.includes('d.target===0&&d.value===0&&performance.now()-t0<15000)invalidate();'),'refresh frames while waiting');

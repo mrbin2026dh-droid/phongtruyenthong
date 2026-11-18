@@ -26,7 +26,7 @@ const INTRO_LOOK:[number,number,number]=[.8,.9,22],INTRO_HOLD=1.2;
 // slowly to the statue and stays there (the door is reached by tapping “mở cửa”).
 const INTRO_PAN=3.6;
 
-export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,atDoor=false,intro=false,pose,route}:{plan:Plan;command:TourCommand;atDoor?:boolean;intro?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
+export default function HallController({plan,command,paused,effects,input,loadedRooms,onArrive,onMotion,onRegion,controlsLocked=false,atDoor=false,intro=false,stayPut=false,pose,route}:{plan:Plan;command:TourCommand;atDoor?:boolean;intro?:boolean;stayPut?:boolean;paused:boolean;effects:boolean;input:MutableRefObject<NavigationInput>;loadedRooms:number[];onArrive:(id:string)=>void;onMotion:(v:boolean)=>void;onRegion:(id:string)=>void;controlsLocked?:boolean;pose?:MutableRefObject<VisitorPose>;route?:MutableRefObject<RouteState>}){
  const {camera,gl,invalidate,size}=useThree();
  const motion=useRef({running:false,orienting:false,settling:false,wallTravel:false,distance:0,speed:0,path:roundedPath([[0,1.7,5.05]],1),to:'lobby',goal:[0,1.85,-5.5]});
  const view=useRef({yaw:0,pitch:0,targetYaw:0,targetPitch:0,fov:62,targetFov:62,vx:0,vz:0,region:-1,reset:0});
@@ -39,7 +39,7 @@ export default function HallController({plan,command,paused,effects,input,loaded
  function readLook(){const e=new Euler().setFromQuaternion(camera.quaternion,'YXZ');view.current.yaw=view.current.targetYaw=e.y;view.current.pitch=view.current.targetPitch=e.x;}
  useEffect(()=>{if(!initialized.current){camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(size.width/Math.max(1,size.height)) as [number,number,number]);readLook();initialized.current=true;invalidate();}},[camera,invalidate,plan]);
  // 16/11 H2: a little wider while waiting in the foyer (door + niche + schoolyard in one view); back to 62° once walking in
- useEffect(()=>{const a=size.width/Math.max(1,size.height);view.current.targetFov=atDoor?arrivalFov(a):(a<1.1?78:62);invalidate();},[size,invalidate,atDoor]);
+ useEffect(()=>{const a=size.width/Math.max(1,size.height);view.current.targetFov=atDoor&&!stayPut?arrivalFov(a):(a<1.1?78:62);invalidate();},[size,invalidate,atDoor,stayPut]);
  // 15/11: waiting at the door always shows the doors (keys/drag are locked there, see controlsLocked).
  const frameDoor=()=>{const a=size.width/Math.max(1,size.height);camera.position.fromArray(ARRIVAL_START);camera.lookAt(...gateLook(a) as [number,number,number]);readLook();view.current.fov=view.current.targetFov=arrivalFov(a);keys.current.clear();view.current.vx=view.current.vz=0;invalidate();};
  // 15/11 establishing shot: the visitor first looks out over the schoolyard, then the camera turns slowly to the door.
@@ -55,7 +55,8 @@ export default function HallController({plan,command,paused,effects,input,loaded
   pan.current.from.copy(camera.quaternion);camera.lookAt(0,1.75,FACADE_Z);pan.current.to.copy(camera.quaternion);camera.quaternion.copy(pan.current.from);
   Object.assign(pan.current,{hold:0,dur:FACE_DOOR_MS/1000*.95,intro:false,active:true,t:0,start:performance.now()});invalidate();};
  const endIntro=()=>{if(!pan.current.active)return;pan.current.active=false;(window as any).__museumIntro=false;camera.quaternion.copy(pan.current.to);readLook();invalidate();window.dispatchEvent(new Event('museum-intro-done'));};
- useEffect(()=>{if(!atDoor||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}},[atDoor,intro,size.width>=size.height]);
+ // 18/11: doors closed with the wall switch → the visitor stays exactly where they stand (no re-framing, no zoom)
+ useEffect(()=>{if(!atDoor||stayPut||motion.current.running)return;if(intro)startIntro();else{pan.current.active=false;frameDoor();}},[atDoor,intro,size.width>=size.height]);
  // safety net: the shot always ends even if no frame is drawn (background tab, very slow phone)
  useEffect(()=>{if(!(atDoor&&intro))return;const id=setTimeout(()=>endIntro(),(INTRO_HOLD+INTRO_PAN+1.5)*1000);return()=>clearTimeout(id);},[atDoor,intro]);
  // QA only (dev server + ?stats=1): put the camera at an exact pose to check details on the walls
