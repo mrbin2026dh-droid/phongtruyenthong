@@ -107,7 +107,9 @@ export default function GalleryDisplays({items,onOpen}:Props){
    if(p>=1){c.anim=false;const to=c.to;c.offset=to;if(to!==0)setIndex(i=>(((i-to)%n)+n)%n);}else invalidate();}
   if(strip.current)strip.current.position.x=c.offset*w;});
  // swipe / drag on the screen (window listeners: the finger may leave the screen while swiping)
- const down=(e:any)=>{if(!n)return;e.stopPropagation();const c=car.current;screenGrab.active=true;c.dragging=true;c.anim=false;
+ // 18/11 (người dùng: bấm ảnh 2 cô ở góc tường phải lại mở trình chiếu): the neighbouring slides are clipped only when
+ // DRAWN — the ray still hits them beyond the screen (through the corner wall). Accept a press only inside the frame.
+ const down=(e:any)=>{if(!n)return;const pt=e.point;if(pt&&(Math.abs(pt.x-S.x)>w/2+.04||Math.abs(pt.y-S.y)>h/2+.04))return;e.stopPropagation();const c=car.current;screenGrab.active=true;c.dragging=true;c.anim=false;
   c.startX=e.clientX??e.nativeEvent?.clientX??0;c.startT=performance.now();c.lastTouch=c.startT;c.base=c.offset;
   const {camera,size}=get(),a=new Vector3(S.x-w/2,S.y,FACE_Z).project(camera),b=new Vector3(S.x+w/2,S.y,FACE_Z).project(camera);
   c.pxWidth=Math.max(80,Math.abs(a.x-b.x)/2*size.width);   // screen width in CSS pixels → drag as a fraction of one picture

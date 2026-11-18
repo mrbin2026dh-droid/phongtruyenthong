@@ -58,4 +58,5 @@ test('17/11 (giật lag): the slide screen never drops the still resolution and 
  assert.ok(disp.includes("key={m?m.uuid:'empty'}"),'17/11 white screen: a new material when the picture arrives (shader with a map)');
  assert.ok(disp.includes('c.offset=to;if(to!==0)setIndex')&&disp.includes('useLayoutEffect(()=>{const c=car.current;if(c.anim||c.dragging)return;c.offset=0;'),'17/11 nhấp nháy: the strip re-centres in the same commit as the new pictures, never a frame of the old one');
  assert.ok(disp.includes('material={tvBody}')&&disp.includes('wallShadow()')&&!disp.includes('#4a3423'),'17/11: a wall-mounted display (black body, contact shadow), not a walnut picture frame');
+ assert.ok(disp.includes('if(pt&&(Math.abs(pt.x-S.x)>w/2+.04||Math.abs(pt.y-S.y)>h/2+.04))return;'),'18/11: presses on the invisible neighbour slides (beyond the frame, behind the corner wall) are ignored');
 });
