@@ -1,5 +1,5 @@
 import {useEffect,useMemo} from 'react';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 import {BoxGeometry,CanvasTexture,MeshBasicMaterial,MeshStandardMaterial,SRGBColorSpace} from 'three';
 
 /** One line of a gilded sign: text, cap size and centre as fractions of the face height, letter spacing (px). */
@@ -9,7 +9,7 @@ export type SignSpec={lines:SignLine[];rule?:number;frame:{w:number;h:number;d:n
 /** 16/11: the school's signs share the “Tiên học lễ, hậu học văn” style — walnut frame, deep-teal face, thin gold
  * double rule, gilded Noto Serif capitals (drawn at 4096 px: ~880 px per metre, no blur glow → crisp edges). */
 export function gildedSignTexture({lines,rule,face}:SignSpec){
- const W=4096,H=Math.round(W*face.h/face.w),c=document.createElement('canvas'),k=PHONE?.5:1;c.width=W*k;c.height=Math.round(H*k);   // 18/11: phones draw at half size (memory)
+ const W=4096,H=Math.round(W*face.h/face.w),c=document.createElement('canvas'),k=SMALL_TEX?.5:1;c.width=W*k;c.height=Math.round(H*k);   // 18/11: phones draw at half size (memory)
  const g=c.getContext('2d')!;g.scale(k,k);
  let seed=20261116;const rand=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
  g.fillStyle='#17383e';g.fillRect(0,0,W,H);

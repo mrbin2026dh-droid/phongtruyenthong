@@ -7,7 +7,7 @@ import {FACADE_Z,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
 import {Html} from '@react-three/drei';
 import {DOOR_GATE} from './hallMotion.mjs';
 import GildedSign,{type SignSpec} from './GildedSign';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
 export type DoorState={target:number;value:number};
@@ -49,7 +49,7 @@ const PALM=['M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2','M14 10V4a2 2 0 0 0-2-2a2 2 0
  'M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'];
 export const PUSH_PLATE={w:.26,h:.46,y:1.32,inset:1.50,z:.066};   // readable from the waiting spot (~3 m away)
 function pushPlateTexture(side:number){
- const W=PHONE?170:340,H=Math.round(W*PUSH_PLATE.h/PUSH_PLATE.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/340;
+ const W=SMALL_TEX?170:340,H=Math.round(W*PUSH_PLATE.h/PUSH_PLATE.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/340;
  const r=26*u;g.beginPath();g.roundRect(2*u,2*u,W-4*u,H-4*u,r);g.clip();
  const metal=g.createLinearGradient(0,0,W,H);metal.addColorStop(0,'#f3dca2');metal.addColorStop(.45,'#cfae6a');metal.addColorStop(1,'#a8843f');g.fillStyle=metal;g.fillRect(0,0,W,H);
  for(let y=0;y<H;y+=2){g.fillStyle=`rgba(255,255,255,${.03+.04*((y*7919)%13)/13})`;g.fillRect(0,y,W,1);}   // brushed lines
@@ -71,7 +71,7 @@ export const DOOR_SWITCH={x:3.375,y:1.62,w:.62,h:.30};
 /** pulse of the glow while the door waits to be opened: period (s) and emissive range */
 export const SWITCH_PULSE={period:1.8,low:.4,high:1.15};
 function switchFaceTexture(open:boolean){
- const W=PHONE?480:960,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/480;
+ const W=SMALL_TEX?480:960,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/480;
  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14191c');bg.addColorStop(1,'#07090a');g.fillStyle=bg;g.fillRect(0,0,W,H);
  const sh=g.createLinearGradient(0,0,W*.6,H);sh.addColorStop(0,'rgba(255,255,255,.10)');sh.addColorStop(.5,'rgba(255,255,255,0)');g.fillStyle=sh;g.fillRect(0,0,W,H);
  // icon in a glowing ring on the left

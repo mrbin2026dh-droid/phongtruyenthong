@@ -6,14 +6,14 @@ import {useEffect,useMemo,useRef} from 'react';
 import {useThree} from '@react-three/fiber';
 import {AdditiveBlending,CanvasTexture,MeshBasicMaterial,MeshStandardMaterial,SRGBColorSpace} from 'three';
 import {FEEDBACK_LECTERN} from './hallLayout.mjs';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 
 export const FEEDBACK_URL='https://zalo.me/0818810007';
 /** pulse of the medallion's glow (s, emissive range) — the same calm breathing as the door switch */
 export const FEEDBACK_PULSE={period:2.2,low:.35,high:1};
 
 function medallionTexture(){
- const N=PHONE?512:1024,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!,u=N/200;
+ const N=SMALL_TEX?512:1024,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!,u=N/200;
  g.fillStyle='#17383e';g.beginPath();g.arc(N/2,N/2,N/2,0,Math.PI*2);g.fill();
  g.strokeStyle='#c9a560';g.lineWidth=6*u;g.beginPath();g.arc(N/2,N/2,N/2-6*u,0,Math.PI*2);g.stroke();
  g.lineWidth=1.6*u;g.beginPath();g.arc(N/2,N/2,N/2-15*u,0,Math.PI*2);g.stroke();

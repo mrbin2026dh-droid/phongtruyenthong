@@ -37,7 +37,8 @@ test('Foyer: glazed back wall with the blurred schoolyard view, walkable foyer f
 
 test('Bước 1: real-room reflection probes (floor, glass, environment) and quality-gated post-processing',()=>{
  const hall=src('HallScene.tsx'),probes=src('RoomProbes.tsx'),shared=src('probeShared.mjs'),fx=src('PostFX.tsx'),detail=src('bakedDetail.ts'),foyer=src('FoyerView.tsx');
- assert.ok(hall.includes("{baked&&p.quality&&p.quality.level!=='low'&&<PostFX level={p.quality.level}/>}"),'no post-processing on low');
+ assert.ok(hall.includes("{baked&&p.quality&&p.quality.level!=='low'&&!PHONE&&<PostFX level={p.quality.level}/>}"),'no post-processing on low, none on phones (18/11 đo: dựng lại + 2–3 lượt toàn màn hình)');
+ assert.ok(hall.includes('toneMapping:baked?NoToneMapping:ACESFilmicToneMapping'),'same colours with or without post-processing (the bake is already tone-mapped)');
  assert.ok(shared.includes('vec3 boxProject(')&&detail.includes('probeReflect(vDWorld,R,1.6)')&&foyer.includes('probeReflect(vGWorld'));
  assert.ok(probes.includes('PROBE_UNIFORMS.uRoomCube.value=null;PROBE_UNIFORMS.uFoyerCube.value=null;'),'no feedback loop while capturing');
  assert.ok(probes.includes("addEventListener('museum-doors-open',reopen)"),'hall probe re-captured once the doors are open');
@@ -56,4 +57,11 @@ test('18/11 (người dùng): bục góp ý ở sảnh — mở Zalo, không có
  const {DOOR_SWITCH}={DOOR_SWITCH:{x:3.375}};assert.ok(Math.abs(L.x-DOOR_SWITCH.x)<1e-9&&L.z-.15>8.56&&L.yaw===0,'centred under the door switch, back to the stone wall, facing the foyer');
  for(const [bx,bz] of BENCHES)assert.ok(Math.abs(L.z-bz)>.6||Math.abs(L.x-bx)>1.6,'clear of the benches');
  assert.equal(isWalkable([0,1.7,13]),true,'foyer centre still walkable');
+});
+
+test('18/11 (đo điện thoại, CPU 6×: getProgramInfoLog ≈ 1 s): shaders compiled ahead, no synchronous shader check in the public build',()=>{
+ const w=readFileSync(new URL('../src/scene/ShaderWarmup.tsx',import.meta.url),'utf8'),hall=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
+ assert.ok(w.includes('gl.debug.checkShaderErrors=Boolean(import.meta.env.DEV)')&&w.includes('r.compileAsync?r.compileAsync(scene,camera)'));
+ assert.ok(w.includes('useSyncExternalStore(subscribeAssets,assetsVersion)'),'again whenever new objects / pictures arrive');
+ assert.ok(hall.includes('<ShaderWarmup/>'));
 });

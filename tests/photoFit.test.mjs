@@ -21,7 +21,7 @@ test('Every portrait overlaps its frame bars on all four sides (no gap), never p
 test('Standing right in front of a frame uses the full 900×1350 upload; tiers have hysteresis',()=>{
  const hall=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
  const photo=readFileSync(new URL('../src/scene/HallPhoto.tsx',import.meta.url),'utf8');
- assert.ok(photo.includes('TIER_SIZE:[number,number][]=PHONE?[[120,180],[360,540],[600,900]]:[[160,240],[600,900],[900,1350]]'));
+ assert.ok(photo.includes('TIER_SIZE:[number,number][]=SMALL_TEX?[[120,180],[360,540],[600,900]]:[[160,240],[600,900],[900,1350]]'));
  assert.ok(hall.includes('if(d<(cur===2?3:2.4))return 2;')&&hall.includes('return d<(cur>=1?8.5:6.5)?1:0;'));
  // same rule as photoTier(), evaluated here
  const tier=(cur,d)=>d<(cur===2?3:2.4)?2:(d<(cur>=1?8.5:6.5)?1:0);
@@ -47,4 +47,21 @@ test('Public site: welcome card only, fullscreen + landscape on the start tap, r
  assert.ok(loading.includes('visit-rotate-hint')&&loading.includes('Xoay ngang điện thoại'));
  assert.ok(!audio.includes('ctx.createMediaElementSource('),'music is a plain media element (silent on some phones through Web Audio)');
  assert.ok(audio.includes('export function primeHallSound()'));
+});
+
+test('18/11 (người dùng: máy mạnh phải sắc nét): strong Android phones get the computer textures; iPhone stays light',async()=>{
+ const {isStrongPhone}=await import('../src/scene/device.ts').catch(()=>({}));
+ const src=readFileSync(new URL('../src/scene/device.ts',import.meta.url),'utf8');
+ assert.ok(src.includes("if(/iPhone|iPad|iPod|Macintosh/.test(ua))return false;")&&src.includes('return (memory??0)>=6&&(cores??0)>=8;'));
+ assert.ok(src.includes('export const STILL_DPR_CAP=!PHONE?9:STRONG_PHONE?3:2;'));
+ const probe=readFileSync(new URL('../src/scene/PerfProbe.tsx',import.meta.url),'utf8');
+ assert.ok(probe.includes("STRONG_PHONE&&live.current.level==='low'?2:STILL_DPR_CAP"),'falls back to 2× when the auto level drops to Tiết kiệm');
+ const baked=readFileSync(new URL('../src/scene/BakedHall.tsx',import.meta.url),'utf8');
+ assert.ok(baked.includes('(small&&!STRONG_PHONE)'),'strong phones load the full 4096 room');
+ if(isStrongPhone){
+  assert.equal(isStrongPhone({phone:true,ua:'Android 14',memory:8,cores:8}),true);
+  assert.equal(isStrongPhone({phone:true,ua:'Android 14',memory:4,cores:8}),false);
+  assert.equal(isStrongPhone({phone:true,ua:'iPhone OS 18',memory:8,cores:8}),false);
+  assert.equal(isStrongPhone({phone:false,ua:'Android',memory:8,cores:8}),false);
+ }
 });

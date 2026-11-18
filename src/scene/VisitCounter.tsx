@@ -6,7 +6,7 @@ import {useThree} from '@react-three/fiber';
 import {CanvasTexture,SRGBColorSpace,MeshStandardMaterial,AdditiveBlending} from 'three';
 import {GOATCOUNTER_CODE} from '../data/analytics';
 import {FACADE_Z} from './hallArrival.mjs';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 
 /** Centre of the left facade stone panel (x −2.21 … −4.54), eye height, 3 cm proud of the stone. */
 // 18/11 (người dùng: gọn hơn, cân với công tắc): 1,1 × 0,48 m; tâm ở 1,62 m = tâm công tắc bên kia cửa (đối xứng)
@@ -52,7 +52,7 @@ export default function VisitCounter(){
  const invalidate=useThree(s=>s.invalidate);
  const [count,setCount]=useState<number|null>(null);
  const P=COUNTER_PANEL;
- const {canvas,tex}=useMemo(()=>{const c=document.createElement('canvas');c.width=PHONE?750:1500;c.height=Math.round(c.width*P.h/P.w);
+ const {canvas,tex}=useMemo(()=>{const c=document.createElement('canvas');c.width=SMALL_TEX?750:1500;c.height=Math.round(c.width*P.h/P.w);
   draw(c,'—');const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return {canvas:c,tex:t};},[P.h,P.w]);
  useEffect(()=>()=>tex.dispose(),[tex]);
  // read once per visit (the number changes slowly); never blocks or breaks the room

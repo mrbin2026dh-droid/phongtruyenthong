@@ -2,7 +2,7 @@ import {useEffect,useMemo,useReducer,useRef} from 'react';
 import {CanvasTexture,SRGBColorSpace,ShaderChunk} from 'three';
 import {useThree} from '@react-three/fiber';
 import {portraitPath,type Person} from '../data/repository';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 import {imageStarted} from './sceneAssets';
 type Entry={texture:CanvasTexture;users:number;loaded:boolean;cancel?:ReturnType<typeof setTimeout>;listeners:Set<()=>void>};
 const cache=new Map<string,Entry>();
@@ -10,7 +10,7 @@ const cache=new Map<string,Entry>();
  * right in front of a frame the photo covers ~1000 screen px — the 600 px copy was magnified and looked soft). */
 export type PhotoTier=0|1|2;
 // 17/11 (người dùng: ảnh tường cuối hơi mờ): bản xa 96×144 → 160×240 (ở 7–9 m một ảnh chiếm ~60–110 điểm ảnh màn hình)
-export const TIER_SIZE:[number,number][]=PHONE?[[120,180],[360,540],[600,900]]:[[160,240],[600,900],[900,1350]];   // 18/11: phones — iPhone memory
+export const TIER_SIZE:[number,number][]=SMALL_TEX?[[120,180],[360,540],[600,900]]:[[160,240],[600,900],[900,1350]];   // 18/11: phones — iPhone memory
 function entry(path:string,tier:PhotoTier){
  const key=path+'|'+tier;if(cache.has(key))return cache.get(key)!;
  const canvas=document.createElement('canvas');[canvas.width,canvas.height]=TIER_SIZE[tier];

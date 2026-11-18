@@ -1,3 +1,4 @@
+import {STRONG_PHONE} from './device';
 import {useEffect,useMemo} from 'react';
 import {useGLTF} from '@react-three/drei';
 import {markAssetReady} from './sceneAssets';
@@ -17,7 +18,8 @@ export function bakedVariant(){
  try{
   const nav=navigator as Navigator&{deviceMemory?:number};
   const small=Math.min(screen.width,screen.height)<900&&matchMedia('(pointer: coarse)').matches;
-  if(small||(nav.deviceMemory!==undefined&&nav.deviceMemory<=4))return 'hall-baked-mobile.glb';
+  // 18/11: strong Android phones (device.ts STRONG_PHONE) load the full 4096 room like a computer
+  if((small&&!STRONG_PHONE)||(nav.deviceMemory!==undefined&&nav.deviceMemory<=4))return 'hall-baked-mobile.glb';
  }catch{/* default to full quality */}
  return 'hall-baked.glb';
 }

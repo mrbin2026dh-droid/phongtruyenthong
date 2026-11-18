@@ -50,7 +50,7 @@ test('Wiring: displays in the scene, viewer on tap, admin dialog, sent with “X
 
 test('17/11 (giật lag): the slide screen never drops the still resolution and only animates when looked at',()=>{
  const src=f=>readFileSync(new URL('../src/'+f,import.meta.url),'utf8');
- const probe=src('scene/PerfProbe.tsx');assert.ok(probe.includes('if(!cameraMoved||!motionDelta(dt))return;'),'only camera motion lowers the resolution / is measured');
+ const probe=src('scene/PerfProbe.tsx');assert.ok(probe.includes('if(!cameraMoved)return;')&&probe.indexOf('clearTimeout(timer.current);timer.current=setTimeout(sharpen,STILL_DELAY);')>0&&probe.indexOf('if(!motionDelta(dt))return;')>probe.indexOf('timer.current=setTimeout(sharpen,STILL_DELAY);',probe.indexOf('if(!cameraMoved)return;')),'only camera motion lowers the resolution; every moving frame (even a slow one) postpones the sharp still frame; slow frames are not measured');
  const disp=src('scene/GalleryDisplays.tsx');
  assert.ok(disp.includes('renderer?.initTexture(tex)')&&disp.includes('requestIdleCallback'),'GPU upload while idle');
  assert.ok(disp.includes('!inView(get().camera)'),'auto-advance only when the screen is in view');

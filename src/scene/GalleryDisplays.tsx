@@ -12,7 +12,7 @@ import {CanvasTexture,SRGBColorSpace,Group,Plane,Vector3,AdditiveBlending,MeshSt
 import type {WebGLRenderer} from 'three';
 import {FRONT_SCREEN} from './hallLayout.mjs';
 import {screenGrab} from './screenGrab';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 
 export type DisplayItem={id:string;url:string;caption:string;fit:'cover'|'contain'|'bare'};
 type Props={items:DisplayItem[];onOpen:(index:number)=>void};
@@ -25,7 +25,7 @@ const CENTER=new Vector3(),DIR=new Vector3(),LOOK=new Vector3();
 /** The screen is really being looked at: within 15 m and less than ~40° off the view direction. */
 function inView(camera:any){CENTER.set(S.x,S.y,FACE_Z);DIR.copy(CENTER).sub(camera.position);const d=DIR.length();if(d>15)return false;
  camera.getWorldDirection(LOOK);return LOOK.dot(DIR.normalize())>.76;}
-const phone=PHONE;
+const phone=SMALL_TEX;   // 18/11: strong Android phones keep the 1920 slides
 const W=phone?1280:1920,H=W*9/16;   // 18/11: phones 1280×720 (iPhone memory)
 //   // 17/11: = the source pictures (1920×1080); larger only upscaled and cost memory/upload time
 const keyOf=(it:DisplayItem)=>it.id+'|'+it.url+'|'+it.caption+'|'+it.fit;

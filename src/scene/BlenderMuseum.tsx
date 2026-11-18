@@ -6,14 +6,14 @@ import {CanvasTexture,SRGBColorSpace,Vector3,PerspectiveCamera,Mesh,PointLight,A
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import {portraitPath,type Person} from '../data/repository';
 import {workHistoryText,displayName} from '../data/catalog.mjs';
-import {PHONE} from './device';
+import {SMALL_TEX} from './device';
 import GalleryHeader from './GalleryHeader';
 export type TourStop='lobby'|'gallery'|'left'|'right';
 const url=import.meta.env.BASE_URL+'models/museum-signage-v2.glb';
 export function Texture({person,label=false}:{person:Person;label?:boolean}){
  const invalidate=useThree(s=>s.invalidate);
  const disposal=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
- const map=useMemo(()=>{const c=document.createElement('canvas');const k=label&&PHONE?.5:1;c.width=(label?768:384)*k;c.height=(label?160:512)*k;const ctx=c.getContext('2d')!;ctx.scale(k,k);   // 18/11: phone labels at half size (memory)
+ const map=useMemo(()=>{const c=document.createElement('canvas');const k=label&&SMALL_TEX?.5:1;c.width=(label?768:384)*k;c.height=(label?160:512)*k;const ctx=c.getContext('2d')!;ctx.scale(k,k);   // 18/11: phone labels at half size (memory)
  ctx.fillStyle=label?'#182c42':'#eee6d6';ctx.fillRect(0,0,c.width,c.height);ctx.textAlign='center';ctx.fillStyle=label?'#ffe3a2':'#60778a';ctx.font=label?'700 38px "Noto Sans"':'700 36px "Noto Sans"';ctx.fillText(label?displayName(person):person.id,c.width/2,label?63:260,c.width-24);if(label){ctx.font='400 28px "Noto Sans"';ctx.fillText(person.id+' · '+workHistoryText(person),c.width/2,118,c.width-20);}const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;return t;},[person,label]);
  useEffect(()=>{if(label)return;const c=map.image as HTMLCanvasElement,ctx=c.getContext('2d')!;let active=true,fallback=false;const img=new Image();img.onload=()=>{if(!active)return;ctx.fillStyle='#eee6d6';ctx.fillRect(0,0,384,512);const s=Math.min(384/img.width,512/img.height);ctx.drawImage(img,(384-img.width*s)/2,(512-img.height*s)/2,img.width*s,img.height*s);map.needsUpdate=true;invalidate();};img.onerror=()=>{if(!fallback){fallback=true;img.src=import.meta.env.BASE_URL+'portraits/default.jpg';}};img.src=portraitPath(person);return ()=>{active=false;img.onload=null;img.onerror=null;};},[map,person,label,invalidate]);
  useEffect(()=>{clearTimeout(disposal.current);return ()=>{disposal.current=setTimeout(()=>map.dispose(),0);};},[map]);
