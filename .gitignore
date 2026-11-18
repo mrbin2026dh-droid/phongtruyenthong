@@ -26,3 +26,5 @@ tools-models/
 
 # Original downloaded audio (web uses the compressed copy in public/audio)
 audio-src/
+# Bản web riêng để quay video (scripts/quay-video.mjs)
+dist-video/
