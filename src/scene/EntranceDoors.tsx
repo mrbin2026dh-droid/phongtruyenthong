@@ -1,7 +1,7 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {MutableRefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
-import {BoxGeometry,CanvasTexture,Frustum,Group,Matrix4,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
+import {AdditiveBlending,BoxGeometry,CanvasTexture,Frustum,Group,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Plane,PlaneGeometry,RepeatWrapping,SRGBColorSpace,Vector3} from 'three';
 import {DOOR_JAMB,doorOffset,doorStep} from './doorMotion.mjs';
 import {FACADE_Z,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
 import {Html} from '@react-three/drei';
@@ -65,9 +65,13 @@ function pushPlateTexture(side:number){
 
 /** 18/11 (người dùng): công tắc cửa trên mảng tường đá bên phải cửa, đối xứng với bảng THAM QUAN (cùng tâm 1,62 m).
  * Cửa đóng → “MỞ CỬA” (mũi tên ra hai bên); cửa mở → “ĐÓNG CỬA” (mũi tên khép vào). Vòng đèn vàng sáng khi bấm được. */
-export const DOOR_SWITCH={x:3.375,y:1.62,w:.34,h:.17};   // 18/11 (lần 2): nằm ngang, gọn như công tắc cảm ứng
+// 18/11 (lần 3, người dùng: “quá mỏng, không ai để ý” — chỉ 11–17 px ở khung chờ): bằng bảng THAM QUAN 0,62 × 0,30 m
+// (đối xứng hai bên cửa) + vòng đèn nhấp nháy nhẹ khi cửa đang đóng (SWITCH_PULSE).
+export const DOOR_SWITCH={x:3.375,y:1.62,w:.62,h:.30};
+/** pulse of the glow while the door waits to be opened: period (s) and emissive range */
+export const SWITCH_PULSE={period:1.8,low:.4,high:1.15};
 function switchFaceTexture(open:boolean){
- const W=PHONE?240:480,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/480;
+ const W=PHONE?480:960,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/480;
  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14191c');bg.addColorStop(1,'#07090a');g.fillStyle=bg;g.fillRect(0,0,W,H);
  const sh=g.createLinearGradient(0,0,W*.6,H);sh.addColorStop(0,'rgba(255,255,255,.10)');sh.addColorStop(.5,'rgba(255,255,255,0)');g.fillStyle=sh;g.fillRect(0,0,W,H);
  // icon in a glowing ring on the left
@@ -93,9 +97,18 @@ function DoorSwitch({mode,onPress}:{mode:'open'|'close'|'off';onPress:(m:'open'|
  const [shown,setShown]=useState<'open'|'close'>('close');
  useEffect(()=>{if(mode!=='off')setShown(mode);},[mode]);
  useEffect(()=>{const t=shown==='open'?faces.open:faces.close;mats.face.map=t;mats.face.emissiveMap=t;mats.face.emissiveIntensity=mode==='off'?.12:.55;mats.face.needsUpdate=true;invalidate();},[shown,mode,faces,mats,invalidate]);
+ // B: while the door is closed and can be opened, the switch breathes (≈30 fps, only then — the room stays on demand frames)
+ const halo=useMemo(()=>new MeshBasicMaterial({color:'#ffc46a',transparent:true,opacity:0,blending:AdditiveBlending,depthWrite:false,toneMapped:false}),[]);
+ useEffect(()=>()=>halo.dispose(),[halo]);
+ useEffect(()=>{if(mode!=='open'){halo.opacity=0;invalidate();return;}let raf=0,last=0;const t0=performance.now();
+  const tick=(now:number)=>{raf=requestAnimationFrame(tick);if(now-last<33)return;last=now;
+   const k=.5-.5*Math.cos((now-t0)/1000*2*Math.PI/SWITCH_PULSE.period);
+   mats.face.emissiveIntensity=SWITCH_PULSE.low+(SWITCH_PULSE.high-SWITCH_PULSE.low)*k;halo.opacity=.06+.16*k;invalidate();};
+  raf=requestAnimationFrame(tick);return()=>{cancelAnimationFrame(raf);halo.opacity=0;};},[mode,mats,halo,invalidate]);
  const S=DOOR_SWITCH;
  const press=(e:any)=>{e.stopPropagation();if(mode==='off')return;if(pad.current){pad.current.position.z=-.004;invalidate();setTimeout(()=>{if(pad.current){pad.current.position.z=0;invalidate();}},180);}onPress(mode);};
  return <group position={[S.x,S.y,FACADE_Z+.006]}>
+  <mesh position={[0,0,.001]} material={halo}><planeGeometry args={[S.w*1.6,S.h*2.2]}/></mesh>
   <mesh position={[0,0,.004]} material={mats.plate}><boxGeometry args={[S.w+.03,S.h+.03,.008]}/></mesh>
   <group ref={pad}><mesh position={[0,0,.0095]} material={mats.face} onClick={press}
    onPointerOver={()=>{if(mode!=='off')document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='';}}><boxGeometry args={[S.w,S.h,.004]}/></mesh></group>

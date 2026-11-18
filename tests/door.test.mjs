@@ -24,7 +24,7 @@ test('Visitor waits for the doors unless reduced motion, bench or effects off',(
 test('Entry waits for a tap ON THE DOOR; the sign above it names the school; Về cổng vào closes the doors',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
- assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<13.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
+ assert.ok(ARRIVAL_START[2]>8.9&&ARRIVAL_START[2]<16.3&&Math.abs(ARRIVAL_START[0])<4.1,'stands in the foyer (16/11: in front of the statue niche)');
  const has=(src,s)=>assert.ok(src.includes(s),'missing: '+s);
  has(tour,'if(benchOn)openDoor();else{setAtDoor(true);setManual(true);}');assert.ok(!tour.includes('seen)openDoor'),'no auto-open on repeat visits');
  assert.ok(!tour.includes('className="hall-door-prompt" onClick={openDoor}'),'16/11: no full-screen tap area opens the door (tapping the statue opened it)');
@@ -99,7 +99,7 @@ test('Foyer: school sign above the door; the visit starts at the H2 view — doo
  assert.ok(isWalkable(ARRIVAL_START)&&ARRIVAL_START[0]<-3,'waits on the left side of the foyer');
  const bearing=(aspect,p)=>{const t=gateLook(aspect),yaw=Math.atan2(t[2]-ARRIVAL_START[2],t[0]-ARRIVAL_START[0]);let b=Math.atan2(p[2]-ARRIVAL_START[2],p[0]-ARRIVAL_START[0])-yaw;return Math.atan2(Math.sin(b),Math.cos(b));};
  const half=(a,v)=>Math.atan(Math.tan(v/2*Math.PI/180)*a);
- const niche=[MONUMENT.niche.wallX,1.4,MONUMENT.z],glass=[4.54,1.5,13.6];
+ const niche=[MONUMENT.niche.wallX,1.4,MONUMENT.z],glass=[4.54,1.5,16.6];   // 18/11: glass now at z 16.86
  assert.equal(arrivalFov(1.6),70,'H2 was solved at 70° (rms 12 px)');assert.equal(arrivalFov(.57),78);
  for(const [a,v] of [[1.19,70],[1.6,70],[2.2,70],[2.5,70]]){
   for(const [n,p] of [['door',DOOR_CENTER],['niche',niche],['glass corner',glass]])assert.ok(Math.abs(bearing(a,p))<half(a,v),n+' in view at '+a);
@@ -173,10 +173,11 @@ test('16/11 (user): statue room — sign over the portal, clean teal backdrop, c
  const scene=readFileSync(new URL('../src/scene/HallScene.tsx',import.meta.url),'utf8');
  const {STATUE_ROOM:R}=await import('../src/scene/hallLayout.mjs');
  assert.ok(scene.includes("{text:'PHÒNG TRƯNG BÀY TƯỢNG PHÁC THẢO'")&&scene.includes("{text:'THẦY GIÁO CHU VĂN AN'"),'sign text');
- const y=3.32,h=.46;assert.ok(y-h/2>R.opening.height+.14+.1&&y+h/2<3.95-.2,'between the portal head (2.94 m) and the foyer ceiling');
- assert.ok(scene.includes('<GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.32,M.z]} rotation={-Math.PI/2}/>'),'on the foyer face of the wall, facing the foyer');
+ const y=3.42,h=.46;   // 18/11: portal 2.9 m → sign raised 10 cm
+ assert.ok(y-h/2>R.opening.height+.14+.1&&y+h/2<3.95-.2,'between the portal head (2.94 m) and the foyer ceiling');
+ assert.ok(scene.includes('<GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.42,M.z]} rotation={-Math.PI/2}/>'),'on the foyer face of the wall, facing the foyer');
  // layers in front of the baked teal face (x1 − 0.06): fabric 8 mm, titles 18 mm — never coplanar
- assert.ok(scene.includes('<mesh position={[R.x1-.068,1.62,M.z]}')&&scene.includes('<group position={[R.x1-.078,2.62,M.z]}'));
+ assert.ok(scene.includes('<mesh position={[R.x1-.068,1.70,M.z]}')&&scene.includes('<group position={[R.x1-.078,2.68,M.z]}'));
  assert.ok(!/TealBackdrop[\s\S]{0,1500}rand\(\)/.test(scene),'no random noise in the backdrop (regular weave only)');
  assert.ok(scene.includes('text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires'),'title drawn at 4096 px, no glow');
 });
@@ -207,4 +208,12 @@ test('17/11: floor stop markers and the control dock step aside while the visito
  assert.ok(way.includes('.sort((a,b)=>a.d-b.d).slice(0,3)'),'only the 3 nearest stops');
  assert.ok(tour.includes("'visitor-controls'+(dockHidden?' is-hidden':'')"),'dock slides away while moving');
  assert.ok(!readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8').includes('>Chạm để mở cửa</button>'),'door shows an icon, not text');
+});
+
+test('18/11 (user: công tắc quá mỏng): switch as large as the THAM QUAN board, mirrored; glow breathes only while it can open',()=>{
+ const doors=readFileSync(new URL('../src/scene/EntranceDoors.tsx',import.meta.url),'utf8');
+ const v=readFileSync(new URL('../src/scene/VisitCounter.tsx',import.meta.url),'utf8');
+ assert.ok(doors.includes('export const DOOR_SWITCH={x:3.375,y:1.62,w:.62,h:.30};')&&v.includes('COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:.62,h:.30}'),'same size, mirrored across the door');
+ assert.ok(doors.includes("if(mode!=='open'){halo.opacity=0;invalidate();return;}"),'pulse only while the door is closed and can be opened');
+ assert.ok(doors.includes('if(now-last<33)return;'),'~30 fps, no full-rate render loop');
 });

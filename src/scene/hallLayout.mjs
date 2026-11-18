@@ -5,7 +5,8 @@ const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ 
 export const HALL={width:24,depth:16,height:4.2,capacity:103,pitch:.9};
 // 18/11 (người dùng): 2 ghế ra sảnh, song song vách kính cuối sảnh, quay mặt ra sân trường (lối giữa 1,6 m; không chắn
 // cửa phòng tượng z 10,0–12,2 ở tường phải). Giữa phòng: thảm lớn RUG thay chỗ ghế, nối lối thảm từ cửa.
-export const BENCHES=[[-2.15,12.85],[2.15,12.85]];
+// 18/11 (phương án A): sảnh sâu thêm 3 m — ghế lùi theo vách kính (z 16,86)
+export const BENCHES=[[-2.15,15.85],[2.15,15.85]];
 export const RUG={x:0,z:1.5,width:10,depth:6,border:.14};   // 18/11: 10×6 m (≈1,7:1), viền = viền lối thảm
 const benchHit=(x,z)=>BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72);
 /** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
@@ -17,11 +18,13 @@ export const BACK_BAY={x:7.5,width:7.2};
 // 16/11 (user: “tượng quá mờ — mở rộng ra như một phòng thu nhỏ trưng bày”): the niche becomes a small exhibition
 // room behind the foyer's right wall (nothing is built there: x 4.66 → 8.06, z 9.4 → 12.8). The visitor walks in
 // through a 2.2 m portal and stands 1.7 m from the statue, which then fills the view. Exported to Blender.
-export const STATUE_ROOM={x0:4.66,x1:8.06,z0:9.4,z1:12.8,height:3.2,opening:{wallX:4.54,width:2.2,height:2.8}};
-export const MONUMENT={x:7.05,z:11.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestalHeight:.88,clearance:1.05,
- niche:{wallX:4.54,width:2.2,height:2.8,depth:STATUE_ROOM.x1-4.54},room:STATUE_ROOM};
+// 18/11 (người dùng: nới rộng phòng tượng — sảnh đã dài thêm 3 m): 4,0 × 5,4 m, trần 3,4; cổng 3,2 × 2,9; tâm z 12,1
+// (ngay trước khung chờ z 12,6: cổng ở giữa khung nhìn).
+export const STATUE_ROOM={x0:4.66,x1:8.66,z0:9.4,z1:14.8,height:3.4,opening:{wallX:4.54,width:3.2,height:2.9}};
+export const MONUMENT={x:7.7,z:12.1,yaw:-Math.PI/2,width:1.0,depth:.62,pedestalHeight:.88,clearance:1.05,
+ niche:{wallX:4.54,width:3.2,height:2.9,depth:STATUE_ROOM.x1-4.54},room:STATUE_ROOM};
 /** Where the visitor stands in the statue room (1.7 m from the statue: it fills the view, sharp). */
-export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[5.35,1.6,11.1],target:[7.05,1.45,11.1],dwell:9000};
+export const STATUE_STOP={id:'statue',title:'Tượng nhà giáo Chu Văn An',group:'statue',eye:[5.75,1.6,12.1],target:[7.7,1.55,12.1],dwell:9000};
 /** 17/11 (A+, user): the three memory cabinets were removed (sample objects only, small and dark from the room).
  * The entrance wall left of the door (seen from inside, x 4.8 → 9.2) carries one large slide screen instead: school
  * activities, achievements and documents (gallery.mjs), tap → full-screen viewer. Kept as an (empty) list for the
@@ -153,7 +156,7 @@ export function isWalkable([x,y,z]){
  // 15/11 (b): doorway strip, then the whole foyer floor (stay clear of the glass, stair opening and facade).
  if(z>7.45){
   if(z<=8.9)return Math.abs(x)<1.8;
-  if(x<4.1)return x>-4.1&&z<=13.3&&!benchHit(x,z);
+  if(x<4.1)return x>-4.1&&z<=16.3&&!benchHit(x,z);
   // 16/11: the statue room — through the portal (≥ 42 cm from each jamb), then the room floor (≥ 35–40 cm off the
   // walls), never onto the pedestal.
   const R=STATUE_ROOM,inPortal=x<=R.x0+.3&&Math.abs(z-MONUMENT.z)<R.opening.width/2-.42;

@@ -7,7 +7,7 @@ import {Vector3} from 'three';
 
 export const PROBES={
  room:{center:new Vector3(0,1.6,0),min:new Vector3(-12,0,-8),max:new Vector3(12,4.2,8.16)},
- foyer:{center:new Vector3(0,1.6,11),min:new Vector3(-4.6,0,8.16),max:new Vector3(4.6,3.95,13.86)},
+ foyer:{center:new Vector3(0,1.6,12.5),min:new Vector3(-4.6,0,8.16),max:new Vector3(4.6,3.95,16.86)},   // 18/11: deeper foyer
 };
 
 /** Shared shader uniforms (same objects in every program). uReflect: 0 = off (low quality), 1 = on. */

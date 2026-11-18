@@ -3,7 +3,8 @@
 // 16/11 (user, screenshot “H2”): the visit starts from the left side of the foyer looking across it — the entrance
 // door on the left, the statue niche ahead, the schoolyard glazing on the right. Pose solved from that screenshot
 // (niche centre, door jamb and glass corner bearings + niche width). The door is opened only by tapping the door.
-export const ARRIVAL_START=[-3.9,1.7,10.85];
+// 18/11 (phương án A, sảnh sâu thêm 3 m): khung chờ lùi 1,75 m (z 12,6 — cách cửa ~4 m) để thấy trọn cửa, đỡ chật.
+export const ARRIVAL_START=[-3.9,1.7,12.6];
 /** Door leaves' centre on the facade — the “Chạm để mở cửa” label is attached here. */
 export const DOOR_CENTER=[0,1.7,8.45];
 /** Front face of the stone facade beside the door (foyer side). */
@@ -16,7 +17,9 @@ export const DOOR_SIGN={y:3.705,frame:{w:4.72,h:.44,d:.035},face:{w:4.6,h:.36}};
  * glass right); −20° on portrait phones so the door — the only thing that opens it — stays in view.
  * 16/11 H2: pose solved from the user's screenshot landmarks (rms 12 px at 70°). */
 export function arrivalFov(aspect){return aspect<1.1?78:70;}
-export function gateLook(aspect){const yaw=(aspect<1?-20:-9.5)*Math.PI/180;return [ARRIVAL_START[0]+5*Math.cos(yaw),1.6,ARRIVAL_START[2]+5*Math.sin(yaw)];}
+// 18/11: from z 12.6 the door is at −47°, the statue-room portal −10°, the glass corner +27° → −10° keeps the three
+// framed on wide screens; portrait phones turn −38° so the door (the only thing that opens it) stays well inside.
+export function gateLook(aspect){const yaw=(aspect<1?-38:-10)*Math.PI/180;return [ARRIVAL_START[0]+5*Math.cos(yaw),1.6,ARRIVAL_START[2]+5*Math.sin(yaw)];}
 
 export function arrivalRoute(destination){
  return {points:[ARRIVAL_START.slice(),destination.eye.slice()],destination};

@@ -18,7 +18,7 @@ test('Statue room (16/11): reached through the portal, visitors kept off the ped
  assert.ok(M.x-M.depth/2>R.x0+1&&M.x+M.depth/2<R.x1-.25&&Math.abs(M.z-(R.z0+R.z1)/2)<1e-9,'pedestal stands inside the room, centred on its axis');
  assert.ok(isWalkable(STATUE_STOP.eye)&&isWalkable([4.6,1.7,M.z]),'walk in through the portal');
  assert.ok(!isWalkable([4.6,1.7,M.z-R.opening.width/2+.2])&&!isWalkable([4.6,1.7,9.6]),'jambs and the wall beside the portal stay solid');
- assert.ok(!isWalkable([M.x-M.depth/2-.2,1.7,M.z])&&!isWalkable([7.9,1.7,11.1])&&!isWalkable([6,1.7,12.6]),'off the pedestal and the room walls');
+ assert.ok(!isWalkable([M.x-M.depth/2-.2,1.7,M.z])&&!isWalkable([8.5,1.7,M.z])&&!isWalkable([6,1.7,R.z1-.2])&&!isWalkable([6,1.7,R.z0+.1]),'off the pedestal and the room walls');
  const d=Math.hypot(STATUE_STOP.eye[0]-M.x,STATUE_STOP.eye[2]-M.z);assert.ok(d>=1.5&&d<=2,'viewed from 1.5–2 m: the statue fills the frame (user: “quá mờ”)');
  for(const from of ['entrance','principal-0','gate'])assert.doesNotThrow(()=>findPath(plan,from,'statue'));
  assert.ok(Math.abs(M.yaw+Math.PI/2)<1e-9,'faces −x, towards the portal');

@@ -289,7 +289,7 @@ function ZoneNames({layout}:{layout:any}){return <>{layout.signs.map((s:any)=><W
 /** 16/11 (user: “tượng quá mờ… mở rộng ra như một phòng thu nhỏ trưng bày”): the statue stands in a small exhibition
  * room behind the foyer's right wall. Room shell, pedestal and their light are baked (hall-baked.glb); the statue,
  * the inscriptions and the short biography stay live (sharp text). A live warm key + fill light the bronze. */
-export const STATUE_KEY:[number,number,number]=[5.45,3.05,10.25];
+export const STATUE_KEY:[number,number,number]=[6.0,3.25,11.1];
 /** Short, well-documented facts only (Đại Việt sử ký toàn thư; school textbooks) — no invented quotations. */
 export const STATUE_STORY=['Chu Văn An (1292 – 1370), quê làng Văn Thôn, Thanh Trì (Hà Nội).',
  'Nhà giáo tiêu biểu đời Trần, từng dạy ở Quốc Tử Giám.',
@@ -315,7 +315,7 @@ function StatueStory(){
  },[]);
  useEffect(()=>()=>map.dispose(),[map]);
  // on the room's left wall (z = z1, facing −z), between the portal and the statue
- return <group position={[5.95,1.6,STATUE_ROOM.z1]} rotation={[0,Math.PI,0]}>
+ return <group position={[6.6,1.6,STATUE_ROOM.z1]} rotation={[0,Math.PI,0]}>
   <Box p={[0,0,.02]} s={[W+.1,H+.1,.04]} color="#4f362a"/>
   <Box p={[0,0,.045]} s={[W+.02,H+.02,.01]} color="#bda36b" metal={.4}/>
   <mesh position={[0,0,.056]}><planeGeometry args={[W,H]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>
@@ -327,7 +327,7 @@ export const STATUE_SIGN_SPEC:SignSpec={frame:{w:2.9,h:.46,d:.035},face:{w:2.78,
 /** Clean teal fabric for the statue backdrop: the bake's light falloff (bright wash at the top centre, darker lower
  * corners, a little warmer on the rim-light side) painted smoothly, with a regular fine weave instead of noise. */
 function TealBackdrop(){
- const R=STATUE_ROOM,M=MONUMENT,W=2.5,map=useMemo(()=>{
+ const R=STATUE_ROOM,M=MONUMENT,W=3.2,H=2.7,map=useMemo(()=>{   // 18/11: = baked teal field (3.4 − 0.2) × (2.9 − 0.2)
   const N=PHONE?1024:2048,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d')!;
   const v=g.createLinearGradient(0,0,0,N);v.addColorStop(0,'rgb(52,104,94)');v.addColorStop(.45,'rgb(33,81,70)');v.addColorStop(1,'rgb(19,55,47)');
   g.fillStyle=v;g.fillRect(0,0,N,N);
@@ -342,7 +342,7 @@ function TealBackdrop(){
   const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=16;return t;
  },[]);
  useEffect(()=>()=>map.dispose(),[map]);
- return <mesh position={[R.x1-.068,1.62,M.z]} rotation={[0,-Math.PI/2,0]}><planeGeometry args={[W,W]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>;
+ return <mesh position={[R.x1-.068,1.70,M.z]} rotation={[0,-Math.PI/2,0]}><planeGeometry args={[W,H]}/><meshBasicMaterial map={map} toneMapped={false}/></mesh>;
 }
 function MonumentReservation({baked=false}:{baked?:boolean}){
  const M=MONUMENT,front=M.depth/2+.003,R=STATUE_ROOM;
@@ -359,14 +359,14 @@ function MonumentReservation({baked=false}:{baked?:boolean}){
  {/* 16/11 (user: is the teal sharp?): the baked teal carried ~5 % lightmap/webp grain — a clean live fabric layer
    (8 mm in front of the baked panel face at x1 − 0.06) replaces it; gilded titles 1 cm in front, drawn at 4096 px, no glow */}
  <TealBackdrop/>
- <group position={[R.x1-.078,2.62,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires/></group>
- <group position={[R.x1-.078,2.36,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="NGƯỜI THẦY CỦA MUÔN ĐỜI" width={1.5} height={.13} light centered hires/></group>
+ <group position={[R.x1-.078,2.68,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="VẠN THẾ SƯ BIỂU" width={2.0} height={.26} light centered hires/></group>
+ <group position={[R.x1-.078,2.42,M.z]} rotation={[0,-Math.PI/2,0]}><Inscription text="NGƯỜI THẦY CỦA MUÔN ĐỜI" width={1.5} height={.13} light centered hires/></group>
  {/* 16/11 (user): sign above the portal, same style as the school sign over the main door */}
- <GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.32,M.z]} rotation={-Math.PI/2}/>
+ <GildedSign spec={STATUE_SIGN_SPEC} position={[R.opening.wallX,3.42,M.z]} rotation={-Math.PI/2}/>
  <StatueStory/>
  <primitive object={key}/>
  <spotLight position={STATUE_KEY} target={key} color="#ffe2b8" intensity={7} distance={6} angle={.5} penumbra={.8} decay={2}/>
- <pointLight position={[5.6,1.7,11.7]} color="#ffeedd" intensity={.8} distance={3} decay={2}/>
+ <pointLight position={[6.2,1.7,12.8]} color="#ffeedd" intensity={.8} distance={3} decay={2}/>
  </>;}
 
 function MemoryCabinets({baked=false}:{baked?:boolean}){const n=CABINET_NICHE,mid=(n.bottom+n.top)/2,h=n.top-n.bottom;return <>{CABINETS.map((c:any,i:number)=><group key={c.id} position={[c.x,0,n.wallZ]} rotation={[0,Math.PI,0]}>

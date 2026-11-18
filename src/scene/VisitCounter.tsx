@@ -13,7 +13,10 @@ import {PHONE} from './device';
 // 18/11 (lần 2: “bằng viên gạch”): the stone tiles of the facade are 0,78 m wide (2,33 m panel / 3) → a 0,62 × 0,30 m
 // display centred in the middle tile, same centre height as the switch on the other side of the door.
 export const COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:.62,h:.30};
-export const COUNTER_URL=GOATCOUNTER_CODE?'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/TOTAL.json':'';
+// 18/11 (người dùng: “đếm lượt vào phòng”): one visit = one “vao-phong” event (TOTAL also summed every click → 3–4 per
+// visitor). Always with ?start=: without a range GoatCounter served a stale cached 0 for hours.
+export const COUNTER_START='2026-11-01';
+export const COUNTER_URL=GOATCOUNTER_CODE?'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/vao-phong.json?start='+COUNTER_START:'';
 /** “1,234” / “1 234” / 1234 → 1234 (GoatCounter formats the number with the account's separator). */
 export function parseCount(json:any):number|null{const s=String(json?.count??'').replace(/[^0-9]/g,'');return s?Number(s):null;}
 export const formatCount=(n:number)=>n.toLocaleString('vi-VN');   // 12.458

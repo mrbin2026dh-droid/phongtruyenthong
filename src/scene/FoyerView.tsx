@@ -30,7 +30,8 @@ function glassMaterial(){
  * At this aerial distance each person is a few pixels — faces are not recognisable. */
 /** Plane width: the photo covers the central 60 m; mirrored copies extend it for oblique views. */
 const YARD_W=150;
-export const GLASS_Z=13.86,YARD_URL='textures/san-truong-qua-kinh.webp';
+export const GLASS_Z=16.86,   // 18/11: foyer 3 m deeper (phương án A)
+ YARD_URL='textures/san-truong-qua-kinh.webp';
 
 export default function FoyerView(){
  const invalidate=useThree(s=>s.invalidate);
