@@ -5,6 +5,7 @@ import {layoutHall,createHallPlan,fitHallStops,closeupStop,closeupOrder,FRONT_SC
 import {nextPresentationStop,presentationDwell} from './hallPresentation.mjs';
 import {hallPreview} from './hallPreview.mjs';
 import Dialog from '../components/Dialog';
+import {FEEDBACK_URL,FEEDBACK_PHONE} from './FeedbackLectern';
 // Admin tools are compiled only into the local dev server; the public build contains none of them.
 const AdminLogin=import.meta.env.DEV?lazy(()=>import('../components/AdminLogin')):null;
 const AdminSlotEditor=import.meta.env.DEV?lazy(()=>import('../components/AdminSlotEditor')):null;
@@ -50,6 +51,9 @@ type AdminProps={onPublish?:()=>void;admin?:boolean;adminEmpties?:any[];onEmpty?
 
 export default function HallTour(p:Props){
  const [page,setPage]=useState(0),[demo,setDemo]=useState<Person|null>(null);
+ // 18/11: khung mã QR góp ý (máy tính bấm bục góp ý ở sảnh — FeedbackLectern phát sự kiện museum-feedback)
+ const [feedback,setFeedback]=useState(false);
+ useEffect(()=>{const on=()=>setFeedback(true);window.addEventListener('museum-feedback',on);return()=>window.removeEventListener('museum-feedback',on);},[]);
  const admin=useSyncExternalStore(subscribeAdmin,isAdmin);
  // Admin sees the real data with empty positions; visitors keep the layout preview.
  // Layout preview (DEMO fill) only while nothing has been published yet; never for the admin.
@@ -116,6 +120,7 @@ export default function HallTour(p:Props){
   {AdminSlotEditor&&editor&&<Suspense fallback={null}><AdminSlotEditor key={editor.slot.slotId+(editor.person?.id||'')} slot={editor.slot} person={editor.person} onClose={()=>setEditor(null)} onSaved={msg=>{setEditor(null);setAdminMessage(msg);}}
    onMove={editor.person?()=>{const e=editor;setEditor(null);setAdminMessage('');setMover({id:e.person!.id,name:e.person!.name,slotId:e.slot.slotId});}:undefined}/></Suspense>}
   {confirmClear&&<Dialog title="Xóa tất cả ảnh?" onClose={()=>setConfirmClear(false)}><div className="admin-clear"><p>Gỡ ảnh của <b>{photoCount}</b> người trên tường. Tên, chức vụ, tổ và vị trí giữ nguyên để tải ảnh mới lên.</p><p>Trang công khai chỉ thay đổi khi bấm “Xuất bản lên website”. Trước đó có thể Hoàn tác.</p><div className="admin-clear-actions"><button onClick={()=>setConfirmClear(false)}>Hủy</button><button className="danger" disabled={!photoCount} onClick={()=>{try{const before=catalog.clearPhotos();setClearUndo(before as Person[]);setAdminMessage('Đã xóa ảnh của '+photoCount+' người · chưa xuất bản');}catch(err){setAdminMessage(err instanceof Error?err.message:'Không xóa được ảnh.');}setConfirmClear(false);}}>Xóa tất cả ảnh</button></div></div></Dialog>}
+  {feedback&&<Dialog title="Góp ý qua Zalo" onClose={()=>setFeedback(false)}><div className="feedback-qr"><img src={import.meta.env.BASE_URL+'gop-y/zalo-qr.svg'} width={220} height={220} alt={'Mã QR Zalo '+FEEDBACK_PHONE}/><p>Mở Zalo trên điện thoại, quét mã để nhắn cho nhà trường.</p><p className="feedback-phone">Zalo: {FEEDBACK_PHONE}</p><a className="gold" href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer">Mở Zalo web</a></div></Dialog>}
   {demo&&<Dialog title="Hồ sơ minh họa bố cục" onClose={()=>setDemo(null)}><div className="profile"><div><img src={portraitPath(demo)} alt="Chân dung minh họa lặp để xem bố cục"/></div><div><p className="eyebrow">{demo.id}</p><h3>{demo.name}</h3><p>{demo.description}</p><p>Vị trí: {demo.displaySlot}</p><p>Ảnh chỉ dùng thử; không phải chân dung hiệu trưởng hay giáo viên thật được xác nhận.</p><button onClick={()=>setDemo(null)}>Đóng hồ sơ minh họa</button></div></div></Dialog>}
  </>;
 }

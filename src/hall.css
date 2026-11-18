@@ -102,3 +102,11 @@
 .door-open-label.door-open-sr{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;overflow:hidden;clip:rect(0 0 0 0);padding:0;border:0;box-shadow:none}
 .door-open-label.door-open-sr::before,.door-open-label.door-open-sr::after{display:none}
 .door-open-label.door-open-sr:focus-visible{width:64px!important;height:64px!important;clip:auto;overflow:visible;border:1.5px solid #e0bd74}
+
+/* 18/11: khung mã QR góp ý qua Zalo (máy tính) */
+.feedback-qr{display:grid;justify-items:center;gap:.6rem;text-align:center;padding-top:.4rem}
+.feedback-qr img{width:220px;height:220px;border-radius:12px;border:1px solid rgba(23,56,62,.18);background:#fff;padding:8px;box-sizing:content-box}
+.feedback-qr p{margin:0;max-width:30ch}
+.feedback-qr .feedback-phone{font-weight:600;letter-spacing:.04em}
+.feedback-qr a.gold{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 1.4rem;border-radius:999px;text-decoration:none}
+dialog:has(.feedback-qr){width:min(420px,94vw)}

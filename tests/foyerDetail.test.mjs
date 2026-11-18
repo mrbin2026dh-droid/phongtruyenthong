@@ -65,3 +65,10 @@ test('18/11 (đo điện thoại, CPU 6×: getProgramInfoLog ≈ 1 s): shaders c
  assert.ok(w.includes('useSyncExternalStore(subscribeAssets,assetsVersion)'),'again whenever new objects / pictures arrive');
  assert.ok(hall.includes('<ShaderWarmup/>'));
 });
+
+test('18/11 (người dùng: máy tính bấm Zalo ra trang đăng nhập): máy tính hiện mã QR, màn cảm ứng mở thẳng Zalo',()=>{
+ const l=readFileSync(new URL('../src/scene/FeedbackLectern.tsx',import.meta.url),'utf8'),t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ assert.ok(l.includes("if(!matchMedia('(pointer:coarse)').matches){window.dispatchEvent(new Event('museum-feedback'));return;}"));
+ assert.ok(t.includes("window.addEventListener('museum-feedback',on)")&&t.includes("'gop-y/zalo-qr.svg'")&&t.includes('>Mở Zalo web</a>'));
+ assert.ok(existsSync(new URL('../public/gop-y/zalo-qr.svg',import.meta.url)));
+});
