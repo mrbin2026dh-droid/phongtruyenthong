@@ -8,7 +8,10 @@ export const HALL={width:24,depth:16,height:4.2,capacity:103,pitch:.9};
 // 18/11 (phương án A): sảnh sâu thêm 3 m — ghế lùi theo vách kính (z 16,86)
 export const BENCHES=[[-2.15,15.85],[2.15,15.85]];
 export const RUG={x:0,z:1.5,width:10,depth:6,border:.14};   // 18/11: 10×6 m (≈1,7:1), viền = viền lối thảm
-const benchHit=(x,z)=>BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72);
+const benchHit=(x,z)=>BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72)||(Math.abs(x-FEEDBACK_LECTERN.x)<.6&&Math.abs(z-FEEDBACK_LECTERN.z)<.55);
+/** 18/11 (người dùng): bục góp ý (Zalo) sát mặt tường đá có công tắc cửa, thẳng tâm dưới công tắc (x 3,375 = DOOR_SWITCH.x,
+ * đối xứng với bảng THAM QUAN bên kia cửa), lưng bục cách tường 5 cm, quay ra sảnh (FeedbackLectern.tsx). */
+export const FEEDBACK_LECTERN={x:3.375,z:8.56+.05+.15,yaw:0};
 /** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
  * pier caps (x 3.02) and to the corners (x 12). Exported to Blender (slats + wall washers). */
 export const BACK_BAY={x:7.5,width:7.2};

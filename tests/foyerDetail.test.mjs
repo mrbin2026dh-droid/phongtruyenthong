@@ -45,3 +45,15 @@ test('Bước 1: real-room reflection probes (floor, glass, environment) and qua
  // 16/11: bloom and SMAA blurred the portraits (measured −22 % / −13 % detail on a face) — must not come back
  assert.ok(!fx.includes('new UnrealBloomPass')&&!fx.includes('new SMAAPass'),'no soft post effects over the portraits');
 });
+
+test('18/11 (người dùng): bục góp ý ở sảnh — mở Zalo, không có chữ, không đi xuyên, chỉ “thở” ở sảnh',async()=>{
+ const {FEEDBACK_LECTERN:L,isWalkable,BENCHES}=await import('../src/scene/hallLayout.mjs');
+ const src=readFileSync(new URL('../src/scene/FeedbackLectern.tsx',import.meta.url),'utf8');
+ assert.ok(src.includes("FEEDBACK_URL='https://zalo.me/0818810007'")&&src.includes("'noopener,noreferrer'"));
+ assert.ok(!/fillText|Inscription|GildedSign/.test(src),'no text in 3D — icon only');
+ assert.ok(src.includes('if(get().camera.position.z<8.6)return;'),'pulse only while in the foyer');
+ assert.equal(isWalkable([L.x,1.7,L.z]),false,'cannot walk through the lectern');
+ const {DOOR_SWITCH}={DOOR_SWITCH:{x:3.375}};assert.ok(Math.abs(L.x-DOOR_SWITCH.x)<1e-9&&L.z-.15>8.56&&L.yaw===0,'centred under the door switch, back to the stone wall, facing the foyer');
+ for(const [bx,bz] of BENCHES)assert.ok(Math.abs(L.z-bz)>.6||Math.abs(L.x-bx)>1.6,'clear of the benches');
+ assert.equal(isWalkable([0,1.7,13]),true,'foyer centre still walkable');
+});

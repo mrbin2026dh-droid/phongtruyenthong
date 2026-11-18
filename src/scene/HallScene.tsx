@@ -19,6 +19,7 @@ import GalleryDisplays from './GalleryDisplays';
 import PerfProbe from './PerfProbe';
 import EntranceDoors from './EntranceDoors';
 import VisitCounter from './VisitCounter';
+import FeedbackLectern from './FeedbackLectern';
 import GildedSign,{type SignSpec} from './GildedSign';
 import {deptPlates} from '../data/arrangeByDept.mjs';
 import FoyerView from './FoyerView';
@@ -428,6 +429,7 @@ export default function HallScene(p:Props){
   {baked&&p.quality&&p.quality.level!=='low'&&<PostFX level={p.quality.level}/>}
   <EntranceDoors door={p.door} waiting={Boolean(p.atDoor&&!p.intro)} onOpen={p.onOpenDoor} canClose={Boolean(p.canCloseDoor)} onClose={p.onCloseDoor}/>
   {baked&&<VisitCounter/>}
+  {baked&&<FeedbackLectern/>}
   {baked&&<FoyerView/>}
  </Canvas>;
 }
