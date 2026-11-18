@@ -118,7 +118,7 @@ function localPortrait(server){
 }
 // 16/11: phones kept an old hall-baked-mobile.glb in cache after an update (no glass wall / stairs). Same file
 // names on GitHub Pages → add a content hash of the heavy assets to their URLs, so a new upload is always fetched.
-const ASSETS=['models/hall-baked.glb','models/hall-baked-mobile.glb','models/chu-van-an-seated-web-v3.glb','textures/san-truong-qua-kinh.webp','audio/nhac-nen-piano-strings.m4a'];
+const ASSETS=['models/hall-baked.glb','models/hall-baked-mobile.glb','models/chu-van-an-seated-web-v3.glb','textures/san-truong-qua-kinh.webp','audio/nhac-nen-lien-mach.m4a'];
 const assetHash=createHash('md5');for(const a of ASSETS){const f=fileURLToPath(new URL('./public/'+a,import.meta.url));if(existsSync(f))assetHash.update(readFileSync(f));}
 const ASSET_V=assetHash.digest('hex').slice(0,10);
 

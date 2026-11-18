@@ -65,22 +65,22 @@ function pushPlateTexture(side:number){
 
 /** 18/11 (người dùng): công tắc cửa trên mảng tường đá bên phải cửa, đối xứng với bảng THAM QUAN (cùng tâm 1,62 m).
  * Cửa đóng → “MỞ CỬA” (mũi tên ra hai bên); cửa mở → “ĐÓNG CỬA” (mũi tên khép vào). Vòng đèn vàng sáng khi bấm được. */
-export const DOOR_SWITCH={x:3.375,y:1.62,w:.24,h:.38};
+export const DOOR_SWITCH={x:3.375,y:1.62,w:.34,h:.17};   // 18/11 (lần 2): nằm ngang, gọn như công tắc cảm ứng
 function switchFaceTexture(open:boolean){
- const W=PHONE?200:400,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/400;
+ const W=PHONE?240:480,H=Math.round(W*DOOR_SWITCH.h/DOOR_SWITCH.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/480;
  const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14191c');bg.addColorStop(1,'#07090a');g.fillStyle=bg;g.fillRect(0,0,W,H);
- const sh=g.createLinearGradient(0,0,W,H*.6);sh.addColorStop(0,'rgba(255,255,255,.10)');sh.addColorStop(.4,'rgba(255,255,255,0)');g.fillStyle=sh;g.fillRect(0,0,W,H);
- const cx=W/2,cy=H*.40,r=118*u;g.lineWidth=7*u;g.strokeStyle='#e9c47c';g.shadowColor='rgba(255,190,90,.9)';g.shadowBlur=22*u;
+ const sh=g.createLinearGradient(0,0,W*.6,H);sh.addColorStop(0,'rgba(255,255,255,.10)');sh.addColorStop(.5,'rgba(255,255,255,0)');g.fillStyle=sh;g.fillRect(0,0,W,H);
+ // icon in a glowing ring on the left
+ const cx=H*.5+14*u,cy=H/2,r=H*.36;g.lineWidth=5*u;g.strokeStyle='#e9c47c';g.shadowColor='rgba(255,190,90,.9)';g.shadowBlur=16*u;
  g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();g.shadowBlur=0;
- g.strokeStyle='#f3dcaa';g.lineWidth=8*u;g.lineCap='round';g.lineJoin='round';
- // the two door leaves (thin rectangles) meeting at the centre
- for(const s of [-1,1])g.strokeRect(s<0?cx-30*u:cx+4*u,cy-60*u,26*u,120*u);
- // arrows: closing → from outside towards the leaves; opening → from the leaves outwards
- for(const s of [-1,1]){const a=cx+s*92*u,b2=cx+s*44*u,[from,to]=open?[b2,a]:[a,b2];
+ g.strokeStyle='#f3dcaa';g.lineWidth=5*u;g.lineCap='round';g.lineJoin='round';const k=r/118;
+ for(const s of [-1,1])g.strokeRect(s<0?cx-30*k:cx+4*k,cy-60*k,26*k,120*k);
+ for(const s of [-1,1]){const a=cx+s*92*k,b2=cx+s*44*k,[from,to]=open?[b2,a]:[a,b2];
   g.beginPath();g.moveTo(from,cy);g.lineTo(to,cy);g.stroke();const d=Math.sign(to-from);
-  g.beginPath();g.moveTo(to-d*18*u,cy-15*u);g.lineTo(to,cy);g.lineTo(to-d*18*u,cy+15*u);g.stroke();}
- g.font=`700 ${Math.round(50*u)}px "Noto Sans",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#e6c98a';
- (g as any).letterSpacing=Math.round(6*u)+'px';g.fillText(open?'MỞ CỬA':'ĐÓNG CỬA',cx+3*u,H*.80);(g as any).letterSpacing='0px';
+  g.beginPath();g.moveTo(to-d*18*k,cy-15*k);g.lineTo(to,cy);g.lineTo(to-d*18*k,cy+15*k);g.stroke();}
+ // label on the right
+ g.font=`700 ${Math.round(46*u)}px "Noto Sans",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#e6c98a';
+ (g as any).letterSpacing=Math.round(5*u)+'px';g.fillText(open?'MỞ CỬA':'ĐÓNG CỬA',(cx+r+W)/2+2*u,cy+2*u);(g as any).letterSpacing='0px';
  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
 }
 function DoorSwitch({mode,onPress}:{mode:'open'|'close'|'off';onPress:(m:'open'|'close')=>void}){

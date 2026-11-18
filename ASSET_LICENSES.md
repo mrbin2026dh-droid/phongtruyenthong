@@ -8,7 +8,7 @@
 
 
 # Âm thanh (15/11/2026)
-- `public/audio/nhac-nen-piano-strings.m4a`: “Ambient Piano and Strings” — Good_B_Music, Pixabay
+- `public/audio/nhac-nen-lien-mach.m4a`: “Ambient Piano and Strings” — Good_B_Music, Pixabay (18/11: bỏ 3,3 s im lặng cuối bài, nối đuôi vào đầu 4 s để phát lặp liền mạch)
   (https://pixabay.com/music/beautiful-plays-ambient-piano-and-strings-10711/), **Pixabay Content License**
   (dùng miễn phí, kể cả thương mại, không bắt buộc ghi công; không bán/phân phối riêng file nhạc). Tải ngày 15/11/2026;
   bản gốc MP3 256 kbps (3:37) lưu cục bộ ở `audio-src/` (không đưa lên git). Bản web: chuẩn hóa âm lượng −20 LUFS,

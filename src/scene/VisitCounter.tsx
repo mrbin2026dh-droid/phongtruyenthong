@@ -10,7 +10,9 @@ import {PHONE} from './device';
 
 /** Centre of the left facade stone panel (x −2.21 … −4.54), eye height, 3 cm proud of the stone. */
 // 18/11 (người dùng: gọn hơn, cân với công tắc): 1,1 × 0,48 m; tâm ở 1,62 m = tâm công tắc bên kia cửa (đối xứng)
-export const COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:1.1,h:.48};
+// 18/11 (lần 2: “bằng viên gạch”): the stone tiles of the facade are 0,78 m wide (2,33 m panel / 3) → a 0,62 × 0,30 m
+// display centred in the middle tile, same centre height as the switch on the other side of the door.
+export const COUNTER_PANEL={x:-3.375,y:1.62,z:FACADE_Z+.03,w:.62,h:.30};
 export const COUNTER_URL=GOATCOUNTER_CODE?'https://'+GOATCOUNTER_CODE+'.goatcounter.com/counter/TOTAL.json':'';
 /** “1,234” / “1 234” / 1234 → 1234 (GoatCounter formats the number with the account's separator). */
 export function parseCount(json:any):number|null{const s=String(json?.count??'').replace(/[^0-9]/g,'');return s?Number(s):null;}
@@ -60,9 +62,9 @@ export default function VisitCounter(){
   raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);},[count,canvas,tex,invalidate]);
  return <group position={[P.x,P.y,P.z]}>
   {/* soft contact shadow on the stone (the bake knows nothing of the panel) */}
-  <mesh position={[0,-.03,-.028]}><planeGeometry args={[P.w+.5,P.h+.5]}/><meshBasicMaterial map={shadowTex()} color="#000" transparent opacity={.5} depthWrite={false}/></mesh>
-  <mesh position={[0,0,-.012]} material={frame}><boxGeometry args={[P.w+.08,P.h+.08,.03]}/></mesh>
-  <mesh position={[0,0,.0035]} material={gold}><boxGeometry args={[P.w+.022,P.h+.022,.004]}/></mesh>
+  <mesh position={[0,-.03,-.028]}><planeGeometry args={[P.w+.3,P.h+.3]}/><meshBasicMaterial map={shadowTex()} color="#000" transparent opacity={.5} depthWrite={false}/></mesh>
+  <mesh position={[0,0,-.012]} material={frame}><boxGeometry args={[P.w+.05,P.h+.05,.025]}/></mesh>
+  <mesh position={[0,0,.0035]} material={gold}><boxGeometry args={[P.w+.016,P.h+.016,.004]}/></mesh>
   <mesh position={[0,0,.006]}><planeGeometry args={[P.w,P.h]}/><meshBasicMaterial map={tex} toneMapped={false}/></mesh>
   {/* faint amber light the display throws on the stone */}
   <mesh position={[0,0,-.026]}><planeGeometry args={[P.w*1.7,P.h*2]}/><meshBasicMaterial color="#ffb25a" transparent opacity={.05} blending={AdditiveBlending} depthWrite={false} toneMapped={false}/></mesh>

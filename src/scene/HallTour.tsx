@@ -28,7 +28,7 @@ import type {BenchResult} from './BenchPanel';
 import {QUALITY_CHOICES,QUALITY_LEVELS,initialLevel,benchRoute,benchSummary} from './quality.mjs';
 import {bakedEnabled,bakedVariant} from './BakedHall';
 import type {DoorState} from './EntranceDoors';
-import {entryDelayMs,DOOR_SECONDS,FACE_DOOR_MS} from './doorMotion.mjs';
+import {entryDelayMs,DOOR_SECONDS} from './doorMotion.mjs';
 import {startHallSound,stopHallSound,resumeHallSound,duckHallMusic,doorSound,soundEnabled,setSoundEnabled,subscribeSound} from './hallAudio';
 const DOOR_KEY='museum-door-opened';
 import {statsEnabled} from './SceneStats';
@@ -231,13 +231,16 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   // Doors slide open first; the visitor glides in once the opening is wide enough.
   // 16/11: the visitor waits facing the statue — turn to the door first (FACE_DOOR_MS), then the leaves slide open
   // (with their sound) in full view, then the visitor walks in.
-  setDoorOpening(true);window.dispatchEvent(new Event('museum-face-door'));
+  // 18/11 (người dùng: “khi mở cửa camera phải đứng yên”): the visitor already looks at the door (the push plates /
+  // the switch beside it) — no turn any more. The leaves slide fully open with the camera still, THEN the visitor walks in.
+  setDoorOpening(true);
   clearTimeout(walkTimer.current);
-  walkTimer.current=setTimeout(()=>{
-   door.current.target=1;doorSound(DOOR_SECONDS);window.dispatchEvent(new Event('museum-navigation-input'));
-   walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},wait);
-  },FACE_DOOR_MS);
+  door.current.target=1;doorSound(DOOR_SECONDS);window.dispatchEvent(new Event('museum-navigation-input'));
+  walkTimer.current=setTimeout(()=>{setDoorOpening(false);setCommand(c=>({serial:c.serial+1,from:'arrival',to:'entrance'}));},Math.max(wait,DOOR_SECONDS*1000+250));
  }
+ // 18/11: the wall switch closes the doors where the visitor stands (camera still); the next tap opens them again.
+ const closeDoorHere=()=>{if(!ready||atDoor||moving||doorOpening)return;clearTimeout(walkTimer.current);door.current.target=0;doorSound(DOOR_SECONDS);
+  setAutomatic(false);setChooseMode(false);setPanel(null);setAtDoor(true);setManual(true);window.dispatchEvent(new Event('museum-navigation-input'));};
  // Back at the gate ("Về cổng vào"): the doors close and wait for the next tap.
  useEffect(()=>{if(ready&&!moving&&current==='gate'&&!atDoor){door.current.target=0;doorSound(DOOR_SECONDS);setAutomatic(false);setAtDoor(true);setManual(true);window.dispatchEvent(new Event('museum-navigation-input'));}},[ready,moving,current]);
  const skipEntry=()=>{clearTimeout(walkTimer.current);door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
@@ -321,7 +324,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     intro={atDoor&&intro&&effects}
     onOpenDoor={openDoor}
     canCloseDoor={ready&&!atDoor&&!moving&&!doorOpening&&!arriving}
-    onCloseDoor={()=>go('gate')}
+    onCloseDoor={closeDoorHere}
     input={input}
     pose={pose}
     route={route}

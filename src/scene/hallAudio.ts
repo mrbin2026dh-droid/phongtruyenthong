@@ -4,7 +4,7 @@
 // (browsers block it anyway); music ducks while the MC speaks; the choice is remembered per browser.
 
 const KEY='museum-sound';
-const MUSIC_URL=import.meta.env.BASE_URL+'audio/nhac-nen-piano-strings.m4a?v='+__ASSET_V__;
+const MUSIC_URL=import.meta.env.BASE_URL+'audio/nhac-nen-lien-mach.m4a?v='+__ASSET_V__;
 const MUSIC_LEVEL=.34,DUCKED=.09,ROOM_LEVEL=.010;
 
 type Engine={ctx:AudioContext;music:HTMLAudioElement;room:GainNode;master:GainNode};
@@ -32,6 +32,8 @@ function build():Engine|null{
  // Room tone: looping brown noise, low-passed — the faint "air" of a quiet hall.
  const room=ctx.createGain();room.gain.value=0;const src=ctx.createBufferSource();src.buffer=brownNoise(ctx,4);src.loop=true;
  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=320;src.connect(lp).connect(room).connect(master);src.start();
+ // 18/11: if a browser ever stops at the end instead of looping, start again at once (no silent gap)
+ music.addEventListener('ended',()=>{if(musicOn){music.currentTime=0;void music.play().catch(()=>{});}});
  engine={ctx,music,room,master};
  document.addEventListener('visibilitychange',()=>{if(!engine)return;if(document.hidden)engine.music.pause();else if(musicOn)void engine.music.play().catch(()=>{});});
  return engine;
