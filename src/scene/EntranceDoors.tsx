@@ -7,6 +7,7 @@ import {FACADE_Z,DOOR_SIGN,ARRIVAL_START,DOOR_CENTER} from './hallArrival.mjs';
 import {Html} from '@react-three/drei';
 import {DOOR_GATE} from './hallMotion.mjs';
 import GildedSign,{type SignSpec} from './GildedSign';
+import {PHONE} from './device';
 
 /** Door state shared with HallTour: target 0 = closed, 1 = open; value animates towards target. */
 export type DoorState={target:number;value:number};
@@ -42,6 +43,26 @@ function fabricTexture(){
  const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.repeat.set(6,9);t.anisotropy=8;return t;
 }
 
+/** 18/11 (người dùng: “icon dán thẳng lên cửa như cửa ngân hàng, dạng đẩy/kéo” thay nút bàn tay nổi): a brushed-brass
+ * push plate on each leaf — open-palm icon, an arrow the way the leaf slides, “ĐẨY” engraved. Drawn once per leaf. */
+const PALM=['M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2','M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2','M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8',
+ 'M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'];
+export const PUSH_PLATE={w:.26,h:.46,y:1.32,inset:1.50,z:.066};   // readable from the waiting spot (~3 m away)
+function pushPlateTexture(side:number){
+ const W=PHONE?170:340,H=Math.round(W*PUSH_PLATE.h/PUSH_PLATE.w),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d')!,u=W/340;
+ const r=26*u;g.beginPath();g.roundRect(2*u,2*u,W-4*u,H-4*u,r);g.clip();
+ const metal=g.createLinearGradient(0,0,W,H);metal.addColorStop(0,'#f3dca2');metal.addColorStop(.45,'#cfae6a');metal.addColorStop(1,'#a8843f');g.fillStyle=metal;g.fillRect(0,0,W,H);
+ for(let y=0;y<H;y+=2){g.fillStyle=`rgba(255,255,255,${.03+.04*((y*7919)%13)/13})`;g.fillRect(0,y,W,1);}   // brushed lines
+ g.strokeStyle='rgba(70,48,18,.55)';g.lineWidth=4*u;g.beginPath();g.roundRect(12*u,12*u,W-24*u,H-24*u,r*.7);g.stroke();
+ const ink='#1d3a3a';g.strokeStyle=ink;g.fillStyle=ink;g.lineCap='round';g.lineJoin='round';
+ g.save();g.translate(W/2-84*u,70*u);g.scale(7*u,7*u);g.lineWidth=1.7;for(const d of PALM)g.stroke(new Path2D(d));g.restore();
+ // arrow the way this leaf slides open (left leaf ←, right leaf →)
+ const ay=H*.62,ax=W/2,len=90*u,dir=side;g.lineWidth=9*u;g.beginPath();g.moveTo(ax-dir*len/2,ay);g.lineTo(ax+dir*len/2,ay);g.stroke();
+ g.beginPath();g.moveTo(ax+dir*len/2,ay);g.lineTo(ax+dir*(len/2-26*u),ay-22*u);g.moveTo(ax+dir*len/2,ay);g.lineTo(ax+dir*(len/2-26*u),ay+22*u);g.stroke();
+ g.font=`700 ${Math.round(64*u)}px "Noto Sans",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText('ĐẨY',W/2,H*.83);
+ const t=new CanvasTexture(c);t.colorSpace=SRGBColorSpace;t.anisotropy=8;return t;
+}
+
 /** One material set per leaf: each clips away whatever has slid past its jamb (into the wall). */
 function leafMaterials(side:number,grain:CanvasTexture,fabric:CanvasTexture){
  // Right leaf keeps x ≤ jamb, left leaf keeps x ≥ −jamb.
@@ -50,6 +71,7 @@ function leafMaterials(side:number,grain:CanvasTexture,fabric:CanvasTexture){
   wood:new MeshStandardMaterial({map:grain,color:'#ffffff',roughness:.5,metalness:0,clippingPlanes}),
   teal:new MeshStandardMaterial({map:fabric,color:'#ffffff',roughness:.85,clippingPlanes}),
   brass:new MeshStandardMaterial({color:'#c9a560',roughness:.3,metalness:.8,clippingPlanes}),
+  plate:new MeshStandardMaterial({map:pushPlateTexture(side),roughness:.35,metalness:.35,emissive:'#f0d18d',emissiveIntensity:0,clippingPlanes}),
  };
 }
 
@@ -70,6 +92,8 @@ function Leaf({side,m}:{side:number;m:ReturnType<typeof leafMaterials>}){
    {/* Vertical pull next to the meeting edge (sliding door). */}
    {part([-side*1.88,1.45,f*.09],[.03,.42,.05],m.brass)}
   </group>)}
+  {/* 18/11: push plate on the foyer face (+z), between the pull and the panel centre */}
+  <mesh position={[-side*PUSH_PLATE.inset,PUSH_PLATE.y,PUSH_PLATE.z]} material={m.plate}><planeGeometry args={[PUSH_PLATE.w,PUSH_PLATE.h]}/></mesh>
  </>;
 }
 
@@ -86,7 +110,9 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
   const grain=grainTexture(),fabric=fabricTexture();
   return {grain,fabric,left:{g:leafGroup(-1),m:leafMaterials(-1,grain,fabric)},right:{g:leafGroup(1),m:leafMaterials(1,grain,fabric)}};
  },[]);
- useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric])t.dispose();for(const s of [parts.left,parts.right])for(const mat of Object.values(s.m))mat.dispose();},[parts]);
+ useEffect(()=>()=>{for(const t of [parts.grain,parts.fabric])t.dispose();for(const s of [parts.left,parts.right]){s.m.plate.map?.dispose();for(const mat of Object.values(s.m))mat.dispose();}},[parts]);
+ // 18/11: while the visitor waits, the push plates breathe softly (an invitation to tap) — ~15 redraws/s, door only
+ useEffect(()=>{if(!waiting)return;const id=setInterval(()=>invalidate(),66);return()=>clearInterval(id);},[waiting,invalidate]);
  // Dev-only evidence for the 15/11 "blank screen at the door" report: if the door is ever out of view
  // while the visitor waits, log the camera state and ask the controller to re-frame the door.
  const reported=useRef(false),waitStart=useRef(0),frustum=useMemo(()=>new Frustum(),[]),probe=useMemo(()=>new Vector3(...DOOR_CENTER),[]),mat=useMemo(()=>new Matrix4(),[]);
@@ -101,6 +127,8 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
   parts.left.g.visible=parts.right.g.visible=value<.999;
   // 16/11: the visitor waits at the H2 pose: watch that the door (the only thing that opens it) stays in view
   const waiting=Boolean(d&&d.target===0&&d.value===0&&Math.hypot(camera.position.x-ARRIVAL_START[0],camera.position.z-ARRIVAL_START[2])<.3);
+  // 18/11: the push plates breathe softly while the closed door waits for a tap
+  {const glow=d&&d.target===0&&d.value===0?.18+.18*Math.sin(performance.now()/420):0;parts.left.m.plate.emissiveIntensity=parts.right.m.plate.emissiveIntensity=glow;}
   if(!waiting)waitStart.current=0;else if(!waitStart.current)waitStart.current=performance.now();
   // Check only after 1.5 s of waiting, with fresh matrices (the first frames still carry the previous pose: false alarms).
   // (the establishing shot looks away from the door on purpose: no check while it runs)
@@ -122,7 +150,7 @@ export default function EntranceDoors({door,waiting=false,onOpen}:{door?:Mutable
   </group>
   {waiting&&onOpen&&<Html position={DOOR_CENTER as [number,number,number]} center zIndexRange={[12,0]}>
    {/* 17/11 (người dùng): biểu tượng bàn tay + vòng sáng lan tỏa thay cho chữ (kiểu điểm chạm của các tour 3D) */}
-   <button type="button" className="door-open-label" onClick={onOpen} aria-label="Chạm vào cửa để mở cửa vào phòng truyền thống" title="Chạm để mở cửa">
+   <button type="button" className="door-open-label door-open-sr" onClick={onOpen} aria-label="Chạm vào cửa để mở cửa vào phòng truyền thống" title="Chạm để mở cửa">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
    </button>
   </Html>}

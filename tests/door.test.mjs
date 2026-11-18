@@ -30,7 +30,7 @@ test('Entry waits for a tap ON THE DOOR; the sign above it names the school; V�
  assert.ok(!tour.includes('className="hall-door-prompt" onClick={openDoor}'),'16/11: no full-screen tap area opens the door (tapping the statue opened it)');
  has(tour,'onOpenDoor={openDoor}');
  has(doors,"<group onClick={e=>{if(!waiting||!onOpen||e.delta>8)return;e.stopPropagation();onOpen();}}");
- has(doors,'<Html position={DOOR_CENTER as [number,number,number]} center');has(doors,'className="door-open-label" onClick={onOpen}');
+ has(doors,'<Html position={DOOR_CENTER as [number,number,number]} center');has(doors,'className="door-open-label door-open-sr" onClick={onOpen}');has(doors,'material={m.plate}');   // 18/11: push plates on the leaves; the round button stays for keyboard/screen readers
  has(tour,"current==='gate'&&!atDoor){door.current.target=0;");
  has(doors,"export const DOOR_SIGN_LINES=['PHÒNG TRUYỀN THỐNG',");
  has(doors,'gl.localClippingEnabled=true');has(doors,'new Plane(new Vector3(-side,0,0),DOOR_JAMB)');

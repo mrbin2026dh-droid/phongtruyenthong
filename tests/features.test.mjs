@@ -7,4 +7,5 @@ test('17/11 tắt MC tạm thời: one switch hides every MC surface (welcome ca
  assert.ok(src('components/Welcome.tsx').includes('{MC_ENABLED&&<VirtualHost'));
  const tour=src('scene/HallTour.tsx');assert.ok(tour.includes('{MC_ENABLED&&ready&&')&&tour.includes("{MC_ENABLED&&icon(p.speaking?'Tắt lời dẫn':'Nghe giới thiệu','sound',audio)}"));
  assert.ok(src('PeopleApp.tsx').includes("{MC_ENABLED&&(view==='list'||view==='admin')&&!minimal&&<aside className=\"mc\">"));
+ assert.ok(src('PeopleApp.tsx').includes('{MC_ENABLED&&<button className="profile-listen"'),'18/11: profile read-aloud button off too');
 });

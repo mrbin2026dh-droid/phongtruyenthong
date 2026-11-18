@@ -3,7 +3,11 @@ import {ARRIVAL_START,gateLook} from './hallArrival.mjs';
 import {deptGroups,deptKey,isOffice,OFFICE_KEY} from '../data/arrangeByDept.mjs';
 const TEACHER_MOTTO='MỖI THẦY GIÁO, CÔ GIÁO LÀ MỘT TẤM GƯƠNG TỰ HỌC, TỰ SÁNG TẠO';
 export const HALL={width:24,depth:16,height:4.2,capacity:103,pitch:.9};
-export const BENCHES=[[-3.7,1.5],[3.7,1.5]];
+// 18/11 (người dùng): 2 ghế ra sảnh, song song vách kính cuối sảnh, quay mặt ra sân trường (lối giữa 1,6 m; không chắn
+// cửa phòng tượng z 10,0–12,2 ở tường phải). Giữa phòng: thảm lớn RUG thay chỗ ghế, nối lối thảm từ cửa.
+export const BENCHES=[[-2.15,12.85],[2.15,12.85]];
+export const RUG={x:0,z:1.5,width:10,depth:6,border:.14};   // 18/11: 10×6 m (≈1,7:1), viền = viền lối thảm
+const benchHit=(x,z)=>BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72);
 /** Back-wall teacher bays (oak slats 7.2 m): centred at ±7.5 since 16/11 — equal ≈0.9 m gaps to the Ban Giám hiệu
  * pier caps (x 3.02) and to the corners (x 12). Exported to Blender (slats + wall washers). */
 export const BACK_BAY={x:7.5,width:7.2};
@@ -128,7 +132,10 @@ export const baseStopId=id=>String(id||'').replace(/-low$/,'');
  * close-up bar — eye at the photo's height, aimed 5 cm low so the photo sits in the free upper part (kept walkable). */
 export function closeupStop(slot,title){
  const y=Math.min(2.3,Math.max(1.4,slot.y));
- for(const d of [CLOSEUP_DISTANCE,1.3,1.5]){
+ // 18/11 (người dùng: xem cận BGH trên điện thoại phóng quá to): stand back in proportion to the frame — a Ban Giám
+ // hiệu frame (1.5 m) is 1.56× a teacher frame (0.96 m), so it fills the screen like a teacher portrait does.
+ const k=Math.max(1,(slot.height||.96)/.96);
+ for(const d of [CLOSEUP_DISTANCE*k,1.3*k,1.5*k]){
   const eye=[slot.x+Math.sin(slot.yaw)*d,y,slot.z+Math.cos(slot.yaw)*d];
   if(isWalkable(eye))return {id:'closeup:'+slot.slotId,title,group:'closeup',slotId:slot.slotId,eye,target:[slot.x,slot.y-.05,slot.z],dwell:0};
  }
@@ -146,7 +153,7 @@ export function isWalkable([x,y,z]){
  // 15/11 (b): doorway strip, then the whole foyer floor (stay clear of the glass, stair opening and facade).
  if(z>7.45){
   if(z<=8.9)return Math.abs(x)<1.8;
-  if(x<4.1)return x>-4.1&&z<=13.3;
+  if(x<4.1)return x>-4.1&&z<=13.3&&!benchHit(x,z);
   // 16/11: the statue room — through the portal (≥ 42 cm from each jamb), then the room floor (≥ 35–40 cm off the
   // walls), never onto the pedestal.
   const R=STATUE_ROOM,inPortal=x<=R.x0+.3&&Math.abs(z-MONUMENT.z)<R.opening.width/2-.42;
@@ -156,7 +163,7 @@ export function isWalkable([x,y,z]){
  if(Math.abs(x)>11.5||Math.abs(z)>7.45)return false;
  if(Math.abs(x-MONUMENT.x)<MONUMENT.clearance&&Math.abs(z-MONUMENT.z)<MONUMENT.clearance)return false;
  if(x>3.35&&x<10.85&&z>6.65)return false; // cabinet cases and standing clearance
- return !BENCHES.some(([bx,bz])=>Math.abs(x-bx)<1.65&&Math.abs(z-bz)<.72);
+ return true;
 }
 /** 16/11: a leg through the doorway must cross both thresholds (z 7.45 and 8.9) at least 0.4 m inside the 1.8 m
  * half-opening — a diagonal from a hall corner straight to the foyer statue used to graze the jamb, and the rounded

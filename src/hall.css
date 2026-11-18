@@ -97,3 +97,8 @@
 .hall-scene .hall-version-bar .location-chip{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;background:none;box-shadow:none}
 /* 17/11 WCAG AA: chữ hướng dẫn trong bảng tùy chọn 4,3:1 → ≈ 6:1 */
 .hall-help{color:#4c5c55}
+/* 18/11: cửa có miếng dán “ĐẨY” bằng đồng trên từng cánh (chạm vào cửa để mở) → nút bàn tay tròn chỉ còn cho bàn phím /
+   trình đọc màn hình; hiện lại khi được chọn bằng phím Tab */
+.door-open-label.door-open-sr{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;overflow:hidden;clip:rect(0 0 0 0);padding:0;border:0;box-shadow:none}
+.door-open-label.door-open-sr::before,.door-open-label.door-open-sr::after{display:none}
+.door-open-label.door-open-sr:focus-visible{width:64px!important;height:64px!important;clip:auto;overflow:visible;border:1.5px solid #e0bd74}

@@ -15,11 +15,13 @@ test('Phones held sideways stand 1.9 m from teacher/staff walls; computers and u
  const plan=createHallPlan(fitHallStops(L.stops,2.16,true));
  for(const s of phone)assert.doesNotThrow(()=>findPath(plan,'entrance',s.id),s.id);
 });
-test('Every one of the 99 frames has a reachable close-up 1.1 m in front of it',()=>{
+test('Every frame has a reachable close-up in front of it (1.1 m, scaled up for the larger Ban Giám hiệu frames)',()=>{
  const L=layoutHall([]),stops=fitHallStops(L.stops,2.16,true);
  for(const slot of exhibitSlots()){
   const c=closeupStop(slot,'x');assert.ok(c,slot.slotId);
-  assert.ok(Math.abs(Math.hypot(c.eye[0]-slot.x,c.eye[2]-slot.z)-1.1)<1e-6&&isWalkable(c.eye),slot.slotId);
+  // 18/11: the distance grows with the frame (Ban Giám hiệu 1.5 m frames → 1.72 m), teachers stay at 1.1 m
+  const want=1.1*Math.max(1,(slot.height||.96)/.96);
+  assert.ok(Math.abs(Math.hypot(c.eye[0]-slot.x,c.eye[2]-slot.z)-want)<1e-6&&isWalkable(c.eye),slot.slotId);
   assert.doesNotThrow(()=>findPath(createHallPlan([...stops,c]),'entrance',c.id),slot.slotId);
  }
 });
