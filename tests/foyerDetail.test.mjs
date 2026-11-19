@@ -50,7 +50,7 @@ test('Bước 1: real-room reflection probes (floor, glass, environment) and qua
 test('18/11 (người dùng): bục góp ý ở sảnh — mở Zalo, không có chữ, không đi xuyên, chỉ “thở” ở sảnh',async()=>{
  const {FEEDBACK_LECTERN:L,isWalkable,BENCHES}=await import('../src/scene/hallLayout.mjs');
  const src=readFileSync(new URL('../src/scene/FeedbackLectern.tsx',import.meta.url),'utf8');
- assert.ok(src.includes("FEEDBACK_URL='https://zalo.me/0818810007'")&&src.includes("'noopener,noreferrer'"));
+ assert.ok(src.includes("FEEDBACK_URL='https://zalo.me/0818810007'"));
  assert.ok(!/fillText|Inscription|GildedSign/.test(src),'no text in 3D — icon only');
  assert.ok(src.includes('if(get().camera.position.z<8.6)return;'),'pulse only while in the foyer');
  assert.equal(isWalkable([L.x,1.7,L.z]),false,'cannot walk through the lectern');
@@ -66,9 +66,14 @@ test('18/11 (đo điện thoại, CPU 6×: getProgramInfoLog ≈ 1 s): shaders c
  assert.ok(hall.includes('<ShaderWarmup/>'));
 });
 
-test('18/11 (người dùng: máy tính bấm Zalo ra trang đăng nhập): máy tính hiện mã QR, màn cảm ứng mở thẳng Zalo',()=>{
+test('19/11 (người dùng): bấm bục góp ý → hộp thoại của web hỏi Có/Không, Có mới hiện mã QR; không hiện số điện thoại',()=>{
  const l=readFileSync(new URL('../src/scene/FeedbackLectern.tsx',import.meta.url),'utf8'),t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
- assert.ok(l.includes("if(!matchMedia('(pointer:coarse)').matches){window.dispatchEvent(new Event('museum-feedback'));return;}"));
- assert.ok(t.includes("window.addEventListener('museum-feedback',on)")&&t.includes("'gop-y/zalo-qr.svg'")&&t.includes('>Mở Zalo web</a>'));
+ const d=readFileSync(new URL('../src/components/FeedbackDialog.tsx',import.meta.url),'utf8'),css=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8');
+ assert.ok(l.includes("const open=(e:any)=>{e.stopPropagation();window.dispatchEvent(new Event('museum-feedback'));};"),'every device asks first');
+ assert.ok(!/window\.(confirm|alert)\(/.test(d+l+t),'no browser pop-up');
+ assert.ok(d.includes('Bạn có muốn góp ý cho nhà trường không?')&&d.includes('>Không</button>')&&d.includes(">Có</button>")&&d.includes("setStep('qr')"));
+ assert.ok(!/0818810007/.test(d+t),'phone number not shown in the dialog');
+ assert.ok(t.includes("<FeedbackDialog url={FEEDBACK_URL} qr={import.meta.env.BASE_URL+'gop-y/zalo-qr.svg'}"));
+ assert.ok(css.includes('.feedback-dialog{width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 32px)')&&css.includes('text-wrap:balance'),'fits every screen');
  assert.ok(existsSync(new URL('../public/gop-y/zalo-qr.svg',import.meta.url)));
 });

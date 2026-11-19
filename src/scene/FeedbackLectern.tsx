@@ -8,7 +8,7 @@ import {AdditiveBlending,CanvasTexture,MeshBasicMaterial,MeshStandardMaterial,SR
 import {FEEDBACK_LECTERN} from './hallLayout.mjs';
 import {SMALL_TEX} from './device';
 
-export const FEEDBACK_URL='https://zalo.me/0818810007',FEEDBACK_PHONE='0818810007';
+export const FEEDBACK_URL='https://zalo.me/0818810007';
 /** pulse of the medallion's glow (s, emissive range) — the same calm breathing as the door switch */
 export const FEEDBACK_PULSE={period:2.2,low:.35,high:1};
 
@@ -50,11 +50,8 @@ export default function FeedbackLectern(){
    const k=.5-.5*Math.cos((now-t0)/1000*2*Math.PI/FEEDBACK_PULSE.period);
    m.face.emissiveIntensity=FEEDBACK_PULSE.low+(FEEDBACK_PULSE.high-FEEDBACK_PULSE.low)*k;m.halo.opacity=.03+.10*k;invalidate();};
   raf.current=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf.current);},[m,get,invalidate]);
- // 18/11 (người dùng: trên máy tính zalo.me bắt đăng nhập): màn cảm ứng → mở thẳng ứng dụng Zalo; máy tính → khung mã QR
- // (HallTour, sự kiện museum-feedback) để quét bằng Zalo trên điện thoại, kèm nút mở Zalo web.
- const open=(e:any)=>{e.stopPropagation();
-  if(!matchMedia('(pointer:coarse)').matches){window.dispatchEvent(new Event('museum-feedback'));return;}
-  try{window.open(FEEDBACK_URL,'_blank','noopener,noreferrer');}catch{location.href=FEEDBACK_URL;}};
+ // 19/11 (người dùng): mọi thiết bị → hộp thoại hỏi Có/Không rồi mới hiện mã QR (FeedbackDialog, qua sự kiện museum-feedback)
+ const open=(e:any)=>{e.stopPropagation();window.dispatchEvent(new Event('museum-feedback'));};
  const over=()=>{document.body.style.cursor='pointer';},out=()=>{document.body.style.cursor='';};
  const tilt=.30;   // reading surface slopes down towards the visitor (~17°)
  return <group position={[L.x,0,L.z]} rotation={[0,L.yaw,0]}>
