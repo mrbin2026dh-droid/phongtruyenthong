@@ -137,9 +137,10 @@
 .immersive-tour .visitor-fullscreen.visitor-fullscreen:hover,.immersive-tour .visitor-sound.visitor-sound:hover{opacity:1;background-color:rgba(12,30,40,.5)}
 .immersive-tour .visitor-sound.visitor-sound[aria-pressed="false"]{color:rgba(255,255,255,.6)}
 @media (pointer:coarse){
- .immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{width:38px;height:38px;min-height:38px;min-width:38px}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{width:34px;height:34px;min-height:34px;min-width:34px}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen svg,.immersive-tour .visitor-sound.visitor-sound svg{width:15px;height:15px;stroke-width:1.6}
  .immersive-tour .visitor-fullscreen.visitor-fullscreen{right:8px;top:8px}
- .immersive-tour .visitor-sound.visitor-sound{right:52px;top:8px}
+ .immersive-tour .visitor-sound.visitor-sound{right:48px;top:8px}
 }
 
 /* 19/11 (người dùng: thanh menu dưới to, thô, chưa hiện đại): dải tròn kính mờ tối cùng kiểu hai nút góc trên —
@@ -156,5 +157,8 @@
 .immersive-tour .hall-scene .hall-dock>button:disabled{opacity:.32;background:transparent}
 .immersive-tour .hall-scene .hall-dock>button:nth-child(3):disabled{background:linear-gradient(135deg,#f3d896,#c79a48);opacity:.45}
 .immersive-tour .hall-scene .hall-dock>button:focus-visible{outline:2px solid #f4ce7b;outline-offset:2px}
-@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:38px;min-width:38px;height:38px;min-height:38px}}
+/* 19/11 (lần 2, người dùng: trên điện thoại vẫn hơi to, thô): cảm ứng 34 px, biểu tượng 15 px, nét mảnh hơn */
+@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:34px;min-width:34px;height:34px;min-height:34px}
+ .immersive-tour .hall-scene .hall-dock>button svg{width:15px;height:15px;stroke-width:1.6}
+ .immersive-tour .hall-scene .visitor-dock.hall-dock{padding:2px;gap:1px}}
 @media (prefers-reduced-motion:reduce){.immersive-tour .hall-scene .hall-dock>button{transition:none}}

@@ -112,5 +112,5 @@ test('19/11 (người dùng: thanh menu dưới to, thô): dải tròn kính m�
  const hall=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8');
  assert.ok(hall.includes('.immersive-tour .hall-scene .visitor-dock.hall-dock{gap:2px;padding:3px;border-radius:999px;'));
  assert.ok(hall.includes('.immersive-tour .hall-scene .hall-dock>button{width:32px;min-width:32px;height:32px;')&&hall.includes('.immersive-tour .hall-scene .hall-dock>button svg{width:16px;height:16px;'));
- assert.ok(hall.includes('@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:38px;'));
+ assert.ok(hall.includes('@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:34px;'));
 });
