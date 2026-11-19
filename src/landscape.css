@@ -16,7 +16,7 @@
  .immersive-tour .hall-intro button{padding:7px 14px;font-size:13px}
  .immersive-tour .visitor-controls{bottom:6px}
  .immersive-tour .hall-memory-note{max-height:40vh;overflow:auto;font-size:12px}
- .immersive-tour .hall-progress{font-size:11px;top:8px}
+ .immersive-tour .hall-progress{font-size:11px;top:8px;bottom:auto}   /* 19/11: bottom:auto — with both set it stretched into a tall white box */
 }
 /* hall.css loads later (lazy tour chunk), so these use a higher-specificity prefix. */
 @media (max-height:500px) and (orientation:landscape){

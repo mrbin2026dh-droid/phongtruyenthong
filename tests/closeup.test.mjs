@@ -114,3 +114,10 @@ test('19/11 (người dùng: thanh menu dưới to, thô): dải tròn kính m�
  assert.ok(hall.includes('.immersive-tour .hall-scene .hall-dock>button{width:32px;min-width:32px;height:32px;')&&hall.includes('.immersive-tour .hall-scene .hall-dock>button svg{width:16px;height:16px;'));
  assert.ok(hall.includes('@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:34px;'));
 });
+
+test('19/11 (người dùng, ghi nhớ): trình diễn tự động chỉ có cảnh — không ô tiến độ, không cần điều khiển',()=>{
+ const t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8'),l=readFileSync(new URL('../src/landscape.css',import.meta.url),'utf8');
+ assert.ok(!t.includes("'Trình diễn tự động'} · Điểm"),'no “Trình diễn tự động · Điểm x/y” pill');
+ assert.ok(t.includes('{ready&&!p.paused&&!automatic&&<TwinSticks'),'thumbsticks hidden while the presentation runs');
+ assert.ok(l.includes('.immersive-tour .hall-progress{font-size:11px;top:8px;bottom:auto}'),'a status pill never stretches top-to-bottom on a landscape phone');
+});
