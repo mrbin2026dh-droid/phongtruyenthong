@@ -60,3 +60,9 @@ test('17/11 (giật lag): the slide screen never drops the still resolution and 
  assert.ok(disp.includes('material={tvBody}')&&disp.includes('wallShadow()')&&!disp.includes('#4a3423'),'17/11: a wall-mounted display (black body, contact shadow), not a walnut picture frame');
  assert.ok(disp.includes('if(pt&&(Math.abs(pt.x-S.x)>w/2+.04||Math.abs(pt.y-S.y)>h/2+.04))return;'),'18/11: presses on the invisible neighbour slides (beyond the frame, behind the corner wall) are ignored');
 });
+
+test('19/11 (tivi đen trên điện thoại): a failed slide download is retried, never cached as a failure',()=>{
+ const d=readFileSync(new URL('../src/scene/GalleryDisplays.tsx',import.meta.url),'utf8');
+ assert.ok(d.includes('p.catch(()=>{if(cache.get(key)===p)cache.delete(key);});'));
+ assert.ok(d.includes('again=setTimeout(()=>setRetry(r=>r+1),4000)')&&d.includes('},[active,items,index,retry]);'));
+});

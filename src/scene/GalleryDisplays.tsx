@@ -51,7 +51,10 @@ function slide(it:DisplayItem){
    let t=it.caption;while(t.length>3&&g.measureText(t).width>W-180*u)t=t.slice(0,-2);if(t!==it.caption)t=t.trimEnd()+'…';g.fillText(t,W/2,H-62*u);}
   const tex=new CanvasTexture(c);tex.colorSpace=SRGBColorSpace;tex.anisotropy=maxAniso;
   idle(()=>{try{renderer?.initTexture(tex);}catch{/* uploaded on first draw instead */}resolve(tex);});});};img.onerror=reject;img.src=it.url;}));
- return cache.get(key)!;
+ // 19/11 (tivi đen trên điện thoại): a failed download used to stay cached as a rejected promise → black for good. Forget it,
+ // so the next attempt downloads again.
+ const p=cache.get(key)!;p.catch(()=>{if(cache.get(key)===p)cache.delete(key);});
+ return p;
 }
 /** Free the slides that are no longer near the current one (a phone has little GPU memory). */
 function trim(keep:Set<string>){for(const [k,p] of cache)if(!keep.has(k)){cache.delete(k);void p.then(t=>t.dispose()).catch(()=>undefined);}}
@@ -74,7 +77,7 @@ const ease=(t:number)=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 export default function GalleryDisplays({items,onOpen}:Props){
  const get=useThree(s=>s.get),invalidate=useThree(s=>s.invalidate),gl=useThree(s=>s.gl);
  const n=items.length,w=S.width,h=S.height;
- const [active,setActive]=useState(false),[index,setIndex]=useState(0),[tex,setTex]=useState<Record<string,CanvasTexture>>({});
+ const [active,setActive]=useState(false),[index,setIndex]=useState(0),[tex,setTex]=useState<Record<string,CanvasTexture>>({}),[retry,setRetry]=useState(0);
  // carousel: offset in slide widths (−1 … 1) — the slide at `index` sits at offset, its neighbours at offset ± 1.
  // Local +x of the screen (rotated to face the room) is the visitor's RIGHT: the next picture waits on the right.
  const car=useRef({offset:0,from:0,to:0,t0:0,anim:false,dragging:false,startX:0,startT:0,base:0,pxWidth:1,lastTouch:0});
@@ -87,11 +90,13 @@ export default function GalleryDisplays({items,onOpen}:Props){
  useEffect(()=>{setIndex(0);car.current.offset=0;},[items]);
  // load the current slide and its neighbours; free the rest
  useEffect(()=>{if(!active||!n)return;let live=true;
-  for(const d of [0,1,-1,2]){const it=at(index+d);if(it)slide(it).then(t=>{if(!live)return;setTex(m=>m[keyOf(it)]===t?m:{...m,[keyOf(it)]:t});invalidate();}).catch(()=>undefined);}
+  let again:ReturnType<typeof setTimeout>|undefined;
+  for(const d of [0,1,-1,2]){const it=at(index+d);if(it)slide(it).then(t=>{if(!live)return;setTex(m=>m[keyOf(it)]===t?m:{...m,[keyOf(it)]:t});invalidate();})
+   .catch(()=>{if(live&&!again)again=setTimeout(()=>setRetry(r=>r+1),4000);});}   // 19/11: try again in 4 s
   trim(new Set([-2,-1,0,1,2].map(d=>at(index+d)).filter(Boolean).map(it=>keyOf(it!))));
-  return()=>{live=false;};
+  return()=>{live=false;clearTimeout(again);};
  // eslint-disable-next-line react-hooks/exhaustive-deps
- },[active,items,index]);
+ },[active,items,index,retry]);
  // same commit as the new maps → the strip re-centres in the very frame the pictures change places
  useLayoutEffect(()=>{const c=car.current;if(c.anim||c.dragging)return;c.offset=0;if(strip.current)strip.current.position.x=0;invalidate();},[index,invalidate]);
  const slideTo=(to:number)=>{const c=car.current;c.from=c.offset;c.to=n>1?to:0;c.t0=performance.now();c.anim=true;invalidate();};

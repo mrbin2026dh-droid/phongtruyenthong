@@ -57,7 +57,7 @@ test('18/11 (người dùng: máy mạnh phải sắc nét): strong Android phon
  const probe=readFileSync(new URL('../src/scene/PerfProbe.tsx',import.meta.url),'utf8');
  assert.ok(probe.includes("STRONG_PHONE&&live.current.level==='low'?2:STILL_DPR_CAP"),'falls back to 2× when the auto level drops to Tiết kiệm');
  const baked=readFileSync(new URL('../src/scene/BakedHall.tsx',import.meta.url),'utf8');
- assert.ok(baked.includes('(small&&!STRONG_PHONE)'),'strong phones load the full 4096 room');
+ assert.ok(baked.includes("if(small||(nav.deviceMemory!==undefined&&nav.deviceMemory<=4))return 'hall-baked-mobile.glb';"),'19/11: every phone loads the 2048 room (GPU memory — the slide screen stayed black)');
  if(isStrongPhone){
   assert.equal(isStrongPhone({phone:true,ua:'Android 14',memory:8,cores:8}),true);
   assert.equal(isStrongPhone({phone:true,ua:'Android 14',memory:4,cores:8}),false);

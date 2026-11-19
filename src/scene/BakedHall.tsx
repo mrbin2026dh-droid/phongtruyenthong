@@ -1,4 +1,3 @@
-import {STRONG_PHONE} from './device';
 import {useEffect,useMemo} from 'react';
 import {useGLTF} from '@react-three/drei';
 import {markAssetReady} from './sceneAssets';
@@ -18,8 +17,9 @@ export function bakedVariant(){
  try{
   const nav=navigator as Navigator&{deviceMemory?:number};
   const small=Math.min(screen.width,screen.height)<900&&matchMedia('(pointer: coarse)').matches;
-  // 18/11: strong Android phones (device.ts STRONG_PHONE) load the full 4096 room like a computer
-  if((small&&!STRONG_PHONE)||(nav.deviceMemory!==undefined&&nav.deviceMemory<=4))return 'hall-baked-mobile.glb';
+  // 19/11 (người dùng: tivi đen trên điện thoại): bản 4096 tốn ~400 MB bộ nhớ đồ họa — điện thoại (kể cả máy mạnh) dùng bản
+  // 2048; máy mạnh vẫn nét hơn nhờ khung đứng yên 2,5× và ảnh/chữ cỡ máy tính (device.ts STRONG_PHONE).
+  if(small||(nav.deviceMemory!==undefined&&nav.deviceMemory<=4))return 'hall-baked-mobile.glb';
  }catch{/* default to full quality */}
  return 'hall-baked.glb';
 }
