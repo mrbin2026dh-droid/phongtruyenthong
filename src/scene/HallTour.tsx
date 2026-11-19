@@ -293,12 +293,18 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  },[automatic,ready,atDoor,moving,pause,panel,hostOpen,p.paused,current,layout]);
  // Hidden tab → pause; visible again → resume ONLY if the system paused it (14/11 fix: the entry walk
  // used to stay stuck on "Đang tạm dừng" after the visitor switched tabs while the scene was loading).
- useEffect(()=>{const suspend=()=>{if(document.hidden){autoPaused.current=true;setPause(true);input.current=neutralInput();}else if(autoPaused.current){autoPaused.current=false;setPause(false);}};document.addEventListener('visibilitychange',suspend);window.addEventListener('blur',suspend);return()=>{document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);};},[]);
+ useEffect(()=>{const suspend=()=>{if(document.hidden){autoPaused.current=true;setPause(true);input.current=stillInput();}else if(autoPaused.current){autoPaused.current=false;setPause(false);}};document.addEventListener('visibilitychange',suspend);window.addEventListener('blur',suspend);return()=>{document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);};},[]);
  const sound=useSyncExternalStore(subscribeSound,soundEnabled);
  useEffect(()=>{duckHallMusic(Boolean(p.speaking));},[p.speaking]);
  useEffect(()=>()=>stopHallSound(),[]);
  useEffect(()=>{if(panel)close.current?.focus();const esc=(e:KeyboardEvent)=>{if(e.key==='Escape'){setPanel(null);setManual(false);trigger.current?.focus();}};document.addEventListener('keydown',esc);return()=>document.removeEventListener('keydown',esc);},[panel]);
- useEffect(()=>{if(p.paused){setManual(false);input.current=neutralInput();}},[p.paused]);
+ // 19/11 (người dùng: đóng hồ sơ GV → camera xoay về giữa phòng): input.current=neutralInput() từng đặt lại cả bộ đếm
+ // “Đặt lại góc nhìn” về 0 — HallController thấy bộ đếm khác và tự xoay về hướng điểm dừng. Chỉ dừng di chuyển (giữ bộ đếm,
+ // tốc độ); đóng hồ sơ thì Tự bước bật lại nếu trước đó đang tự đi.
+ const stillInput=()=>{const c=input.current;return {...neutralInput(),reset:c.reset,speed:c.speed};};
+ const manualBeforePause=useRef(false);
+ useEffect(()=>{if(p.paused){manualBeforePause.current=manual;setManual(false);input.current=stillInput();}
+  else if(manualBeforePause.current){manualBeforePause.current=false;setManual(true);}},[p.paused]);
 
  // force: "Về cổng vào" may interrupt a walk or the presentation.
  const go=(id:string,force=false)=>{if(!ready||atDoor||(moving&&!force)||p.paused||!plan.nodes[id])return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);setCommand(c=>({serial:c.serial+1,from:current,to:id}));};

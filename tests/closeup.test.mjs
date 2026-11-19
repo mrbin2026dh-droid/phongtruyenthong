@@ -163,3 +163,10 @@ test('19/11 (người dùng): chân trang công khai cùng màu thanh tiêu đ�
  assert.ok(w.includes('footer.site-footer{display:flex;flex-direction:row;flex-wrap:nowrap;'),'one row even where an old rule stacks footers');
  assert.ok(w.includes('min-height:calc(100dvh - 90px - var(--footer-h,0px))'),'portrait welcome still one screen with the footer');
 });
+
+test('19/11 (người dùng: đóng hồ sơ GV → camera xoay về giữa phòng): dừng điều khiển nhưng giữ bộ đếm “Đặt lại góc nhìn”',()=>{
+ const t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ assert.ok(t.includes('const stillInput=()=>{const c=input.current;return {...neutralInput(),reset:c.reset,speed:c.speed};};'));
+ assert.ok(!t.includes('input.current=neutralInput();'),'never reset the counter (HallController would turn the view to the stop)');
+ assert.ok(t.includes('else if(manualBeforePause.current){manualBeforePause.current=false;setManual(true);}'),'Tự bước back after the profile closes');
+});
