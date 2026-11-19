@@ -141,3 +141,20 @@
  .immersive-tour .visitor-fullscreen.visitor-fullscreen{right:8px;top:8px}
  .immersive-tour .visitor-sound.visitor-sound{right:52px;top:8px}
 }
+
+/* 19/11 (người dùng: thanh menu dưới to, thô, chưa hiện đại): dải tròn kính mờ tối cùng kiểu hai nút góc trên —
+   nút 32 px (cảm ứng 38 px), biểu tượng mảnh 16 px, nút Trình diễn tròn vàng làm điểm nhấn, nút đang bật có nền sáng nhẹ. */
+.immersive-tour .hall-scene .visitor-dock.hall-dock{gap:2px;padding:3px;border-radius:999px;border:1px solid rgba(255,255,255,.24);
+ background:rgba(12,30,40,.42);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 22px rgba(8,20,28,.22)}
+.immersive-tour .hall-scene .hall-dock>button{width:32px;min-width:32px;height:32px;min-height:32px;padding:0;display:grid;place-items:center;
+ border:0;border-radius:50%;background:transparent;color:rgba(255,255,255,.9);transition:background-color .15s,color .15s,opacity .15s}
+.immersive-tour .hall-scene .hall-dock>button svg{width:16px;height:16px;stroke-width:1.8}
+.immersive-tour .hall-scene .hall-dock>button:hover{background:rgba(255,255,255,.14);color:#fff}
+.immersive-tour .hall-scene .hall-dock>button[aria-pressed="true"],.immersive-tour .hall-scene .hall-dock>button[aria-expanded="true"],.immersive-tour .hall-scene .hall-dock>button.active{background:rgba(255,255,255,.2);color:#ffe3a2}
+.immersive-tour .hall-scene .hall-dock>button:nth-child(3){background:linear-gradient(135deg,#f3d896,#c79a48);color:#14303a;margin:0 2px}
+.immersive-tour .hall-scene .hall-dock>button:nth-child(3):hover{filter:brightness(1.06)}
+.immersive-tour .hall-scene .hall-dock>button:disabled{opacity:.32;background:transparent}
+.immersive-tour .hall-scene .hall-dock>button:nth-child(3):disabled{background:linear-gradient(135deg,#f3d896,#c79a48);opacity:.45}
+.immersive-tour .hall-scene .hall-dock>button:focus-visible{outline:2px solid #f4ce7b;outline-offset:2px}
+@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:38px;min-width:38px;height:38px;min-height:38px}}
+@media (prefers-reduced-motion:reduce){.immersive-tour .hall-scene .hall-dock>button{transition:none}}

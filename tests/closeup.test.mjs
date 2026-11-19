@@ -107,3 +107,10 @@ test('19/11 (người dùng: bảng tên GV lệch trái trên điện thoại):
  assert.ok(m.includes('W=label?768:384,H=label?160:512;c.width=W*k;c.height=H*k;')&&m.includes('ctx.fillRect(0,0,W,H)')&&m.includes('W/2,label?63:260,W-24')&&m.includes(',W/2,118,W-20)'));
  assert.ok(!/c\.width\/2,label\?63/.test(m),'no physical-size centre');
 });
+
+test('19/11 (người dùng: thanh menu dưới to, thô): dải tròn kính mờ, nút 32 px (cảm ứng 38 px), biểu tượng 16 px',()=>{
+ const hall=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8');
+ assert.ok(hall.includes('.immersive-tour .hall-scene .visitor-dock.hall-dock{gap:2px;padding:3px;border-radius:999px;'));
+ assert.ok(hall.includes('.immersive-tour .hall-scene .hall-dock>button{width:32px;min-width:32px;height:32px;')&&hall.includes('.immersive-tour .hall-scene .hall-dock>button svg{width:16px;height:16px;'));
+ assert.ok(hall.includes('@media (pointer:coarse){.immersive-tour .hall-scene .hall-dock>button{width:38px;'));
+});
