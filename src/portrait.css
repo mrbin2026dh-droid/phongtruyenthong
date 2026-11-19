@@ -48,3 +48,12 @@
 }
 @media (pointer:coarse) and (max-width:700px){.thumbstick{bottom:64px}}
 @media (pointer:coarse) and (max-height:500px){.thumbstick{bottom:10px}.thumbstick-caption{display:none}}
+/* 19/11 (rà chuẩn, điểm 4): cần điều khiển nổi rõ trên mọi nền sàn (trước: vòng 1,1:1 so với sàn, biểu tượng 2,4:1) —
+   vòng kính tối như thanh menu, núm kem đặc, biểu tượng xanh đậm nét 1,8 (≥ 7:1). */
+.thumbstick .thumbstick-base{background:rgba(12,30,40,.38);border:1px solid rgba(255,255,255,.55);box-shadow:0 4px 16px rgba(8,20,28,.18);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.thumbstick.is-active .thumbstick-base{background:rgba(12,30,40,.48);border-color:#e2c888}
+.thumbstick-guide{stroke:rgba(255,255,255,.75);stroke-width:1.4}
+.thumbstick-guide circle{stroke:rgba(255,255,255,.6)}
+.thumbstick-knob{background:#f7f3e8;border-color:#ffffff;box-shadow:0 2px 8px rgba(8,20,28,.35)}
+.thumbstick-knob svg{stroke:#1f4048;stroke-width:1.8}
+.thumbstick.is-active .thumbstick-knob{background:#f0d58f;border-color:#fff3d0}

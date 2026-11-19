@@ -130,3 +130,13 @@ test('19/11 (người dùng): tạm dừng trình diễn → cần điều khi�
  const css=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8');
  assert.ok(css.includes('.thumbstick .thumbstick-base{width:76px;height:76px;min-width:76px;min-height:76px}'));
 });
+
+test('19/11 (rà chuẩn WCAG 2.2 / Apple HIG): màn cảm ứng vùng chạm 44 px (hình 34 px), nền kính đủ tương phản, ba chấm đặc, cần nổi rõ',()=>{
+ const hall=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8'),pc=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8');
+ const dock=readFileSync(new URL('../src/scene/VisitorDock.tsx',import.meta.url),'utf8');
+ assert.ok(hall.includes('position:relative;width:44px;min-width:44px;height:44px;min-height:44px;margin:-2px 0;background:transparent;filter:none}'),'44 px touch target');
+ assert.ok(hall.includes('.immersive-tour .hall-scene .hall-dock>button::before{content:\'\';position:absolute;inset:5px;border-radius:50%;'),'34 px visible circle');
+ assert.ok(hall.includes('background-color:rgba(12,30,40,.52)'),'darker glass: white icons ≥ 4.5:1 on a light ceiling');
+ assert.ok(dock.includes("name==='more'&&[5,12,19].map(cx=><circle key={cx} cx={cx} cy=\"12\" r=\"1.9\" fill=\"currentColor\""),'solid dots');
+ assert.ok(pc.includes('.thumbstick .thumbstick-base{background:rgba(12,30,40,.38);')&&pc.includes('.thumbstick-knob svg{stroke:#1f4048;stroke-width:1.8}'));
+});

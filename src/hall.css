@@ -162,3 +162,29 @@
  .immersive-tour .hall-scene .hall-dock>button svg{width:15px;height:15px;stroke-width:1.6}
  .immersive-tour .hall-scene .visitor-dock.hall-dock{padding:2px;gap:1px}}
 @media (prefers-reduced-motion:reduce){.immersive-tour .hall-scene .hall-dock>button{transition:none}}
+
+/* 19/11 (rà chuẩn WCAG 2.2 / Apple HIG / Material, người dùng duyệt “sửa cả 4”):
+   (1) màn cảm ứng: VÙNG CHẠM 44 px (Apple 44 pt, WCAG AAA) nhưng HÌNH vẫn nhỏ 34 px — nút trong suốt 44 px, vòng nhìn thấy
+       vẽ bằng ::before; các nút sát nhau (tâm cách 44 px) nên không chạm nhầm.
+   (2) nền kính đậm hơn (α .5): biểu tượng trắng ≥ 4,5:1 cả trên trần/tường sáng (trước 2,2–3,0:1, dưới mức 3:1). */
+.immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{background-color:rgba(12,30,40,.52)}
+.immersive-tour .hall-scene .visitor-dock.hall-dock{background:rgba(12,30,40,.52)}
+@media (pointer:coarse){
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{width:44px;height:44px;min-width:44px;min-height:44px;
+  background:transparent;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;opacity:1}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen::before,.immersive-tour .visitor-sound.visitor-sound::before{content:'';position:absolute;inset:5px;border-radius:50%;
+  background:rgba(12,30,40,.52);border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen svg,.immersive-tour .visitor-sound.visitor-sound svg{position:relative;z-index:1}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen{right:3px;top:3px}
+ .immersive-tour .visitor-sound.visitor-sound{right:47px;top:3px}
+ .immersive-tour .hall-scene .visitor-dock.hall-dock{padding:0 3px;gap:0;height:40px;align-items:center}
+ .immersive-tour .hall-scene .hall-dock>button,.immersive-tour .hall-scene .hall-dock>button:hover,.immersive-tour .hall-scene .hall-dock>button:nth-child(3),
+ .immersive-tour .hall-scene .hall-dock>button[aria-pressed="true"],.immersive-tour .hall-scene .hall-dock>button[aria-expanded="true"],.immersive-tour .hall-scene .hall-dock>button:disabled{
+  position:relative;width:44px;min-width:44px;height:44px;min-height:44px;margin:-2px 0;background:transparent;filter:none}
+ .immersive-tour .hall-scene .hall-dock>button::before{content:'';position:absolute;inset:5px;border-radius:50%;background:transparent;transition:background-color .15s}
+ .immersive-tour .hall-scene .hall-dock>button svg{position:relative;z-index:1}
+ .immersive-tour .hall-scene .hall-dock>button:nth-child(3)::before{background:linear-gradient(135deg,#f3d896,#c79a48)}
+ .immersive-tour .hall-scene .hall-dock>button[aria-pressed="true"]::before,.immersive-tour .hall-scene .hall-dock>button[aria-expanded="true"]::before{background:rgba(255,255,255,.22)}
+ .immersive-tour .hall-scene .hall-dock>button:active::before{background:rgba(255,255,255,.16)}
+ .immersive-tour .hall-scene .hall-dock>button:nth-child(3):active::before{background:linear-gradient(135deg,#f7e2ad,#d2a75a)}
+}
