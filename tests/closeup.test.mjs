@@ -152,8 +152,8 @@ test('19/11 (người dùng: đóng xem cận bị đưa ra cửa; hồ sơ trê
 test('19/11 (người dùng: màn hình đầu tiên trên điện thoại cân đối): khung chào phủ đủ màn dọc; ngang thấy ngay nút Bắt đầu',()=>{
  const w=readFileSync(new URL('../src/welcome.css',import.meta.url),'utf8');
  assert.ok(w.includes('.welcome-intro .welcome-lead{text-wrap:balance}'),'no lonely “3D.”');
- assert.ok(w.includes('.welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px);box-sizing:border-box}'),'portrait: the card fills the screen');
- assert.ok(w.includes('.welcome-page{padding:8px 12px;height:calc(100dvh - 44px);box-sizing:border-box;display:flex}'),'landscape: one screen, start button visible');
+ assert.ok(w.includes('.welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px - var(--footer-h,0px));box-sizing:border-box}'),'portrait: the card fills the screen (above the footer)');
+ assert.ok(w.includes('.welcome-page{padding:8px 12px;height:calc(100dvh - 44px - var(--footer-h,0px));box-sizing:border-box;display:flex}'),'landscape: one screen, start button visible');
 });
 
 test('19/11 (người dùng): chân trang công khai cùng màu thanh tiêu đề, ghi tên trường; không có trong phòng 3D',()=>{
