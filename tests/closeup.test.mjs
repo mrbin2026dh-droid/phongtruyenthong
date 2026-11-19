@@ -101,3 +101,9 @@ test('19/11 (rà soát): ▶ ở sảnh mở cửa rồi tự trình diễn; ch�
  const {roleText}=await import('../src/data/catalog.mjs');
  assert.equal(roleText('Giáo Viên'),'Giáo viên');assert.equal(roleText('Nhân Viên'),'Nhân viên');assert.equal(roleText('Phó Hiệu trưởng'),'Phó Hiệu trưởng');assert.equal(roleText('Tổ trưởng'),'Tổ trưởng');
 });
+
+test('19/11 (người dùng: bảng tên GV lệch trái trên điện thoại): phone labels are drawn with the logical 768 × 160 size',()=>{
+ const m=readFileSync(new URL('../src/scene/BlenderMuseum.tsx',import.meta.url),'utf8');
+ assert.ok(m.includes('W=label?768:384,H=label?160:512;c.width=W*k;c.height=H*k;')&&m.includes('ctx.fillRect(0,0,W,H)')&&m.includes('W/2,label?63:260,W-24')&&m.includes(',W/2,118,W-20)'));
+ assert.ok(!/c\.width\/2,label\?63/.test(m),'no physical-size centre');
+});
