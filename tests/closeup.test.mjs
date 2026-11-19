@@ -128,7 +128,7 @@ test('19/11 (người dùng): tạm dừng trình diễn → cần điều khi�
  assert.equal(Math.round(-stickVector(0,-22,22).y*100),100,'full deflection = full speed');
  assert.equal(stickVector(0,-2,22).y,0,'dead zone kept');
  const css=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8');
- assert.ok(css.includes('.thumbstick .thumbstick-base{width:76px;height:76px;min-width:76px;min-height:76px}'));
+ assert.ok(css.includes('.thumbstick .thumbstick-base{width:88px;height:88px;min-width:88px;min-height:88px}'),'19/11: 88 px on touch screens');
 });
 
 test('19/11 (rà chuẩn WCAG 2.2 / Apple HIG): màn cảm ứng vùng chạm 44 px (hình 34 px), nền kính đủ tương phản, ba chấm đặc, cần nổi rõ',()=>{
