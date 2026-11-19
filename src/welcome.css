@@ -58,3 +58,27 @@
 @media(max-width:700px){.welcome-intro{padding:28px 22px 24px}.welcome-intro .welcome-lead{font-size:15.5px;max-width:330px}.welcome-intro .welcome-ornament{margin:20px auto 22px}}
 /* 17/11: ảnh sân trường chụp từ trên cao — khung máy tính dẹt (≈2,3:1) → lấy phần trên nhiều hơn để thấy trọn dãy nhà chính và băng rôn */
 .welcome-campus img{object-position:center 5%}
+/* 19/11 (người dùng: kiểm tra màn hình đầu tiên trên điện thoại có cân đối chưa) —
+   dọc: khung giới thiệu phủ đủ chiều cao màn hình (trước còn 190–330 px nền trống bên dưới), ảnh sân trường giãn theo,
+   chữ chia dòng cân (không còn chữ “3D.” rơi một mình);
+   ngang: thanh tiêu đề gọn 44 px và khung vừa một màn hình — nút “Bắt đầu tham quan” luôn thấy ngay (trước nằm dưới mép). */
+.welcome-intro .welcome-lead{text-wrap:balance}
+@media (orientation:portrait) and (max-width:700px){
+ .welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px);box-sizing:border-box}
+ .welcome-hero{flex:1;grid-template-rows:minmax(200px,1fr) auto}
+ .welcome-campus{aspect-ratio:auto;min-height:200px}
+ .welcome-intro{padding:26px 22px 26px}
+}
+@media (orientation:landscape) and (max-height:500px){
+ header:has(+ main .welcome-page),header:has(+ .welcome-page){height:44px;min-height:0;padding:0 16px;gap:10px;box-sizing:border-box;flex-wrap:nowrap}
+ header:has(+ main .welcome-page) .emblem,header:has(+ .welcome-page) .emblem{width:28px;height:28px;font-size:14px;outline-offset:2px}
+ header:has(+ main .welcome-page) .brand b,header:has(+ .welcome-page) .brand b{font-size:14px}
+ header:has(+ main .welcome-page) .brand small,header:has(+ .welcome-page) .brand small{font-size:8px;margin-top:2px}
+ .welcome-page{padding:8px 12px;height:calc(100dvh - 44px);box-sizing:border-box;display:flex}
+ .welcome-hero{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+ .welcome-campus{min-height:0}
+ .welcome-intro{padding:14px 22px;justify-content:center}
+ .welcome-intro .welcome-lead{font-size:14px;line-height:1.65;max-width:340px}
+ .welcome-intro .welcome-ornament{margin:12px auto 14px}
+ .welcome-intro .welcome-start{min-height:44px}
+}

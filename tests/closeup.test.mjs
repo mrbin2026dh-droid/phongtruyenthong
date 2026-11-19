@@ -148,3 +148,10 @@ test('19/11 (người dùng: đóng xem cận bị đưa ra cửa; hồ sơ trê
  assert.ok(t.includes("if(id==='closeup-back'&&restoreManual.current){"),'Tự bước comes back on');
  assert.ok(pc.includes('dialog:has(.profile-v2){width:min(720px,calc(100vw - 24px));max-height:calc(100dvh - 16px)}')&&pc.includes('.profile.profile-v2{grid-template-columns:112px 1fr;gap:18px}'),'landscape: photo left, facts right — one screen');
 });
+
+test('19/11 (người dùng: màn hình đầu tiên trên điện thoại cân đối): khung chào phủ đủ màn dọc; ngang thấy ngay nút Bắt đầu',()=>{
+ const w=readFileSync(new URL('../src/welcome.css',import.meta.url),'utf8');
+ assert.ok(w.includes('.welcome-intro .welcome-lead{text-wrap:balance}'),'no lonely “3D.”');
+ assert.ok(w.includes('.welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px);box-sizing:border-box}'),'portrait: the card fills the screen');
+ assert.ok(w.includes('.welcome-page{padding:8px 12px;height:calc(100dvh - 44px);box-sizing:border-box;display:flex}'),'landscape: one screen, start button visible');
+});
