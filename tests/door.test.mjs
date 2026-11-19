@@ -136,7 +136,7 @@ test('Scene is revealed only after the room, statue and all portraits have loade
 test('Walking sticks are always offered inside the room; touching one switches to walking mode (image 3)',()=>{
  const tour=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
  const sticks=readFileSync(new URL('../src/scene/TwinSticks.tsx',import.meta.url),'utf8');
- assert.ok(tour.includes('{ready&&!p.paused&&!automatic&&<TwinSticks input={input} onEngage={engageStick}/>}'),'on screen in the foyer, at the door and walking; 19/11 (user): hidden during the automatic presentation');
+ assert.ok(tour.includes('{ready&&!p.paused&&(!automatic||pause)&&<TwinSticks input={input} onEngage={engageStick}/>}'),'on screen in the foyer, at the door and walking; 19/11 (user): hidden during the automatic presentation');
  assert.ok(tour.includes("const engageStick=()=>{if(atDoor&&intro&&effects){window.dispatchEvent(new Event('museum-intro-skip'));return;}if(doorOpening||arriving)return;enterManual();};"),'touch: skip the opening shot / take over; ignored while the door opens');
  const ctl=readFileSync(new URL('../src/scene/HallController.tsx',import.meta.url),'utf8');
  assert.ok(ctl.includes('const k=live.current.controlsLocked?0:1;')&&ctl.includes('const f=k*n.forward+'),'sticks inert while controls are locked');

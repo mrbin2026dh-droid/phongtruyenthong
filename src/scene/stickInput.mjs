@@ -3,7 +3,8 @@ export function stickVector(dx,dy,radius,deadZone=.14){
  if(!Number.isFinite(dx+dy+radius)||radius<=0)return {x:0,y:0,px:0,py:0};
  const length=Math.hypot(dx,dy),clamped=Math.min(length,radius),ratio=clamped/radius;
  if(length===0||ratio<=deadZone)return {x:0,y:0,px:0,py:0};
- const magnitude=(ratio-deadZone)/(1-deadZone);
+ // 19/11 (người dùng: cần trên điện thoại phải vuốt xa): đáp ứng cong — nửa quãng đã ~60 % tốc độ (trước 42 %, tuyến tính)
+ const magnitude=Math.pow((ratio-deadZone)/(1-deadZone),.6);
  return {x:dx/length*magnitude,y:dy/length*magnitude,px:dx/length*clamped,py:dy/length*clamped};
 }
 export function writeStick(input,kind,vector){

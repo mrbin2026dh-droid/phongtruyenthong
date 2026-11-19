@@ -37,3 +37,14 @@
  main.museum-view{padding:8px 12px 10px}
  .immersive-tour .guided-scene,.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 70px);min-height:0}
 }
+/* 19/11 (người dùng: cần điều khiển trên điện thoại quá to, phải vuốt xa): màn cảm ứng — vòng 76 px (trước 96–98), núm 34 px;
+   quãng kéo hết cỡ ~22 px; đặt thấp hơn vì thanh menu đã nhỏ. */
+@media (pointer:coarse){
+ .thumbstick{width:80px}
+ .thumbstick .thumbstick-base{width:76px;height:76px;min-width:76px;min-height:76px}
+ .thumbstick-knob{left:calc(50% - 17px);top:calc(50% - 17px);width:34px;height:34px}
+ .thumbstick-knob svg{width:18px;height:18px}
+ .thumbstick-caption{font-size:9px;padding:2px 8px}
+}
+@media (pointer:coarse) and (max-width:700px){.thumbstick{bottom:64px}}
+@media (pointer:coarse) and (max-height:500px){.thumbstick{bottom:10px}.thumbstick-caption{display:none}}

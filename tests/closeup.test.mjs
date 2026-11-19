@@ -118,6 +118,15 @@ test('19/11 (người dùng: thanh menu dưới to, thô): dải tròn kính m�
 test('19/11 (người dùng, ghi nhớ): trình diễn tự động chỉ có cảnh — không ô tiến độ, không cần điều khiển',()=>{
  const t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8'),l=readFileSync(new URL('../src/landscape.css',import.meta.url),'utf8');
  assert.ok(!t.includes("'Trình diễn tự động'} · Điểm"),'no “Trình diễn tự động · Điểm x/y” pill');
- assert.ok(t.includes('{ready&&!p.paused&&!automatic&&<TwinSticks'),'thumbsticks hidden while the presentation runs');
+ assert.ok(t.includes('{ready&&!p.paused&&(!automatic||pause)&&<TwinSticks'),'thumbsticks hidden while the presentation runs');
  assert.ok(l.includes('.immersive-tour .hall-progress{font-size:11px;top:8px;bottom:auto}'),'a status pill never stretches top-to-bottom on a landscape phone');
+});
+
+test('19/11 (người dùng): tạm dừng trình diễn → cần điều khiển hiện lại; cần nhỏ hơn, đẩy nhẹ đã đi nhanh hơn',async()=>{
+ const {stickVector}=await import('../src/scene/stickInput.mjs');
+ const half=stickVector(0,-11,22);assert.ok(-half.y>.55&&-half.y<.65,'half way ≈ 60 % speed');
+ assert.equal(Math.round(-stickVector(0,-22,22).y*100),100,'full deflection = full speed');
+ assert.equal(stickVector(0,-2,22).y,0,'dead zone kept');
+ const css=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8');
+ assert.ok(css.includes('.thumbstick .thumbstick-base{width:76px;height:76px;min-width:76px;min-height:76px}'));
 });
