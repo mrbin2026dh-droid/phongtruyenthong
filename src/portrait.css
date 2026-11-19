@@ -57,3 +57,31 @@
 .thumbstick-knob{background:#f7f3e8;border-color:#ffffff;box-shadow:0 2px 8px rgba(8,20,28,.35)}
 .thumbstick-knob svg{stroke:#1f4048;stroke-width:1.8}
 .thumbstick.is-active .thumbstick-knob{background:#f0d58f;border-color:#fff3d0}
+/* 19/11 (người dùng: hồ sơ GV trên điện thoại bị khuất, phải kéo xuống): hồ sơ vừa trọn một màn hình điện thoại.
+   Dọc: ảnh 42 % chiều ngang (≤ 150 px) ở giữa, thông tin gọn bên dưới. Ngang: ảnh 112 px bên trái, thông tin bên phải,
+   bỏ dòng “PHÒNG TRUYỀN THỐNG”, tiêu đề 19 px. */
+@media (max-width:600px) and (orientation:portrait){
+ dialog:has(.profile-v2){width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}
+ dialog:has(.profile-v2) .dialog-content{padding:18px 16px 14px}
+ dialog:has(.profile-v2) .eyebrow{margin-bottom:4px}
+ dialog:has(.profile-v2) h2{font-size:21px;margin:0 40px 12px 0;line-height:1.25}
+ .profile.profile-v2{grid-template-columns:1fr;gap:12px}
+ .profile-v2 .profile-photo{width:min(150px,42vw);padding:6px;margin:0 auto}
+ .profile-v2 .profile-role{margin:0 0 6px;padding-bottom:8px;font-size:12px;text-align:center}
+ .profile-v2 dl{font-size:13.5px}
+ .profile-v2 dl div{grid-template-columns:112px 1fr;gap:8px;padding:6px 0}
+ .profile-v2 dt{font-size:12px}
+}
+@media (max-height:500px) and (orientation:landscape){
+ dialog:has(.profile-v2){width:min(720px,calc(100vw - 24px));max-height:calc(100dvh - 16px)}
+ dialog:has(.profile-v2) .dialog-content{padding:12px 20px 12px}
+ dialog:has(.profile-v2) .eyebrow{display:none}
+ dialog:has(.profile-v2) h2{font-size:19px;margin:2px 44px 10px 0;line-height:1.25}
+ dialog:has(.profile-v2) .close{top:4px;right:6px}
+ .profile.profile-v2{grid-template-columns:112px 1fr;gap:18px}
+ .profile-v2 .profile-photo{width:112px;padding:5px;margin:0}
+ .profile-v2 .profile-role{margin:0 0 4px;padding-bottom:6px;font-size:11.5px;text-align:left}
+ .profile-v2 dl{font-size:13px}
+ .profile-v2 dl div{grid-template-columns:120px 1fr;gap:8px;padding:4px 0}
+ .profile-v2 dt{font-size:12px}
+}

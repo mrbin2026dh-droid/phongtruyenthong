@@ -142,7 +142,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
    .map((s:any)=>{const n=closeupStop({...s},s.person.name);return n?{...n,wall:s.wall}:null;}).filter(Boolean);},[closeup,layout]);
  // 17/11: phones visit each portrait bay row by row (“…-low” stops) — the presentation follows the fitted list
  const tourStops:any[]=useMemo(()=>fitHallStops(layout.stops,aspect,phone),[layout,aspect,phone]);
- const plan:any=useMemo(()=>createHallPlan([...tourStops,...closeupNodes]),[tourStops,closeupNodes]);
+ // 19/11 (người dùng: chạm cô Đào Thị Thanh Thúy rồi đóng → bị đưa ra cửa): khi đang tự đi, `current` vẫn là điểm dừng cũ
+ // (lối vào). Giờ ghi đúng chỗ đứng + hướng nhìn lúc chạm ảnh thành một điểm tạm “closeup-back”; đóng xem cận thì về đó.
+ const [backNode,setBackNode]=useState<any>(null),restoreManual=useRef(false);
+ const plan:any=useMemo(()=>createHallPlan([...tourStops,...closeupNodes,...(backNode?[backNode]:[])]),[tourStops,closeupNodes,backNode]);
  const [command,setCommand]=useState<{serial:number;from:string;to:string;manual?:boolean;instant?:boolean}>({serial:0,from:'entrance',to:'entrance'}),[current,setCurrent]=useState('entrance'),[moving,setMoving]=useState(false),[pause,setPause]=useState(false),[manual,setManual]=useState(false),[panel,setPanel]=useState<'map'|'more'|null>(null),[ready,setReady]=useState(false),[failed,setFailed]=useState(false),[effects,setEffects]=useState(true),[voice,setVoice]=useState(false);
  const [automatic,setAutomatic]=useState(false),[complete,setComplete]=useState(false),[chooseMode,setChooseMode]=useState(false);
  const pose=useRef<VisitorPose>({x:0,z:9.1,yaw:0}),route=useRef<RouteState>(null);
@@ -254,10 +257,12 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
  const skipEntry=()=>{clearTimeout(walkTimer.current);door.current={target:1,value:1};setDoorOpening(false);setPause(false);setCommand(c=>({...c,serial:Math.max(1,c.serial+1),from:'arrival',to:'entrance',instant:true}));};
  const active=layout.stops.find((s:any)=>s.id===baseStopId(current));
  const openCloseup=(slotId:string)=>{if(!ready||atDoor||p.paused||moving)return;
+  if(!closeup){const q=pose.current;restoreManual.current=manual&&!automatic;
+   setBackNode({id:'closeup-back',title:'Chỗ vừa đứng',eye:[q.x,1.7,q.z],target:[q.x-Math.sin(q.yaw)*3,1.7,q.z-Math.cos(q.yaw)*3]});}
   setCloseup(c=>({slotId,back:c?.back??(current.startsWith('closeup:')?'entrance':current),from:c?.slotId}));
   setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);
   setCommand(c=>({serial:c.serial+1,from:current,to:'closeup:'+slotId}));};
- const leaveCloseup=()=>{const back=closeup?.back||'entrance';setCloseup(null);setCommand(c=>({serial:c.serial+1,from:current,to:plan.nodes[back]?back:'entrance'}));};
+ const leaveCloseup=()=>{const back=plan.nodes['closeup-back']?'closeup-back':closeup?.back||'entrance';setCloseup(null);setCommand(c=>({serial:c.serial+1,from:current,to:plan.nodes[back]?back:'entrance'}));};
  // 19/11: ← = the portrait on the visitor's left, → = on the right (closeupNeighbor), as seen facing the wall
  const stepCloseup=(dir:number)=>{if(!closeupSlot)return;const next=closeupNeighbor(layout.slots,closeupSlot,dir);if(next)openCloseup(next.slotId);};
  const selectPortrait=(id:string)=>{
@@ -347,6 +352,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     onArrive={id=>{const entered=arriving&&id==='entrance';setCurrent(id);setMoving(false);setArriving(false);
      // 16/11 (user): “luôn luôn” the manual visit — after the door the visitor walks freely (Tự bước on, no mode chooser);
      // the ▶ button still starts the automatic presentation.
+     if(id==='closeup-back'&&restoreManual.current){restoreManual.current=false;setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);return;}
      if(entered&&autoAfterEntry.current){autoAfterEntry.current=false;start(true);}
      else if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}}}
     onMotion={setMoving}

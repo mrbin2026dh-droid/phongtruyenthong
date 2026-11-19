@@ -140,3 +140,11 @@ test('19/11 (rà chuẩn WCAG 2.2 / Apple HIG): màn cảm ứng vùng chạm 44
  assert.ok(dock.includes("name==='more'&&[5,12,19].map(cx=><circle key={cx} cx={cx} cy=\"12\" r=\"1.9\" fill=\"currentColor\""),'solid dots');
  assert.ok(pc.includes('.thumbstick .thumbstick-base{background:rgba(12,30,40,.38);')&&pc.includes('.thumbstick-knob svg{stroke:#1f4048;stroke-width:1.8}'));
 });
+
+test('19/11 (người dùng: đóng xem cận bị đưa ra cửa; hồ sơ trên điện thoại bị khuất)',()=>{
+ const t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8'),pc=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8');
+ assert.ok(t.includes("setBackNode({id:'closeup-back',title:'Chỗ vừa đứng',eye:[q.x,1.7,q.z],target:[q.x-Math.sin(q.yaw)*3,1.7,q.z-Math.cos(q.yaw)*3]});"),'remember where the visitor stood');
+ assert.ok(t.includes("const back=plan.nodes['closeup-back']?'closeup-back':closeup?.back||'entrance';"),'leave → back to that spot, not to the last stop (the door)');
+ assert.ok(t.includes("if(id==='closeup-back'&&restoreManual.current){"),'Tự bước comes back on');
+ assert.ok(pc.includes('dialog:has(.profile-v2){width:min(720px,calc(100vw - 24px));max-height:calc(100dvh - 16px)}')&&pc.includes('.profile.profile-v2{grid-template-columns:112px 1fr;gap:18px}'),'landscape: photo left, facts right — one screen');
+});
