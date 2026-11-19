@@ -29,7 +29,8 @@ jobs:
       - run: npm test
       - run: npm run build
         env:
-          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          # 19/11: tên miền riêng truyenthongchuvanan.online (Pages → Custom domain) — web nằm ở gốc tên miền
+          VITE_BASE_PATH: /
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
