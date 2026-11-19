@@ -63,3 +63,34 @@ test('Ban Giám hiệu frame follows the referenced design (05-HUONG-DAN-AI/THIE
  assert.ok(scene.includes('<mesh position={[0,ly-LIGHT_POOL.height/2,LEADER_BACK+.002]}>'),'pool starts at the lamp and only falls downwards (no halo above the lamp / behind the title)');
  const pool=scene.match(/LIGHT_POOL=\{width:([\d.]+),height:([\d.]+),opacity:([\d.]+)\}/);assert.ok(pool&&+pool[3]<=.4,'accent kept moderate (measured ≈3.7:1 over the fabric)');
 });
+
+test('19/11 (người dùng): ← sang người bên TRÁI, → sang người bên PHẢI như người xem nhìn thấy, trên mọi bức tường',async()=>{
+ const {closeupNeighbor}=await import('../src/scene/hallLayout.mjs');
+ const slots=exhibitSlots();
+ // the visitor's right hand facing each wall (camera right = forward × up)
+ const right={back:[1,0],right:[0,1],front:[-1,0],left:[0,-1]};
+ const pos=s=>s.x*right[s.wall][0]+s.z*right[s.wall][1];
+ for(const wall of ['back','right','front','left']){
+  const row=slots.filter(s=>s.group==='teacher'&&s.wall===wall&&s.y>2).sort((a,b)=>pos(a)-pos(b));
+  if(row.length<3)continue;
+  const mid=row[Math.floor(row.length/2)];
+  const r=closeupNeighbor(slots,mid,1),l=closeupNeighbor(slots,mid,-1);
+  assert.equal(r.wall,wall);assert.equal(l.wall,wall);assert.ok(pos(r)>pos(mid)&&pos(l)<pos(mid),wall+': → right, ← left');
+  assert.ok(Math.abs(r.y-mid.y)<.3&&Math.abs(l.y-mid.y)<.3,'same row');
+ }
+ // the leadership: deputy · principal · deputy (left → right as the visitor faces the back wall)
+ const hp=slots.find(s=>s.group==='principal');
+ assert.ok(closeupNeighbor(slots,hp,1).x>hp.x&&closeupNeighbor(slots,hp,-1).x<hp.x);
+ // turning a corner: the right end of the back wall continues on the right wall
+ const back=slots.filter(s=>s.group==='teacher'&&s.wall==='back'&&s.y>2).sort((a,b)=>a.x-b.x);
+ assert.equal(closeupNeighbor(slots,back.at(-1),1).wall,'right');
+});
+
+test('19/11 (người dùng: iPhone cầm dọc xuống dòng xấu; nút nhạc/toàn màn hình to, thô)',()=>{
+ const css=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8'),hall=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8');
+ assert.ok(readFileSync(new URL('../src/main.tsx',import.meta.url),'utf8').includes("import './portrait.css';"));
+ assert.ok(css.includes('@media (orientation:portrait) and (pointer:coarse) and (max-width:600px)')&&css.includes('.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 68px);min-height:0}'),'the 3D view fills an upright phone');
+ assert.ok(css.includes('.hall-scene:has(.hall-panel-shade) .thumbstick'),'thumbsticks never cover an open panel');
+ assert.ok(css.includes('.immersive-tour .hall-closeup-name{order:-1;flex:1 0 100%'),'close-up bar: name above the buttons on a narrow phone');
+ assert.ok(hall.includes('top:10px;width:34px;height:34px')&&hall.includes('border-radius:50%'),'small round glass buttons');
+});

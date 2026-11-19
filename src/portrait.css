@@ -1,0 +1,28 @@
+/* 19/11 (người dùng: iPhone không xoay ngang được — giao diện màn dọc xuống dòng rất xấu). Điện thoại cầm dọc:
+   thanh tiêu đề gọn 56 px, khung 3D dùng hết phần còn lại của màn hình (trước đây còn ~140 px trống bên dưới và màn chờ
+   bị cắt chữ), bảng Tùy chọn / Sơ đồ không bị hai cần điều khiển đè lên, các hàng chữ + ô chọn tự xuống dòng gọn. */
+@media (orientation:portrait) and (pointer:coarse) and (max-width:600px){
+ header:has(+ main.museum-view){height:56px;min-height:0;padding:6px 12px;gap:10px;flex-wrap:nowrap;box-sizing:border-box}
+ header:has(+ main.museum-view) .emblem{width:34px;height:34px;font-size:17px;outline-offset:3px}
+ header:has(+ main.museum-view) .brand{gap:10px}
+ header:has(+ main.museum-view) .brand b{font-size:14px;letter-spacing:.4px}
+ header:has(+ main.museum-view) .brand small{font-size:8px;letter-spacing:2px;margin-top:3px}
+ main.museum-view{padding:6px}
+ .immersive-tour .guided-scene,.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 68px);min-height:0}
+ .visit-rotate-hint{margin:12px auto 0;padding:8px 12px;gap:10px;max-width:calc(100% - 28px);font-size:12px;line-height:1.45;box-sizing:border-box}
+ .visit-rotate-hint svg{flex-basis:28px;width:28px;height:28px}
+ .visit-rotate-hint span{text-wrap:balance}
+}
+/* every screen: an open panel is never covered by the two thumbsticks */
+.hall-scene:has(.hall-panel-shade) .thumbstick,.hall-scene:has(.visitor-panel) .thumbstick{visibility:hidden}
+/* label + select rows (Tốc độ, Chất lượng hình) wrap as a whole instead of breaking the words */
+.hall-panel .visitor-options label,.visitor-panel .visitor-options label{flex-wrap:wrap;gap:6px 12px}
+.hall-panel .visitor-options label select,.visitor-panel .visitor-options label select{flex:1 1 170px;min-width:0;max-width:100%}
+/* close-up bar on a narrow upright phone: the name on its own line, the four buttons below (it used to cut “Xem hồ sơ”) */
+@media (max-width:480px){
+ .immersive-tour .hall-closeup{flex-wrap:wrap;justify-content:center;width:calc(100% - 20px);max-width:360px;row-gap:4px;box-sizing:border-box}
+ .immersive-tour .hall-closeup-name{order:-1;flex:1 0 100%;max-width:none;align-items:center;text-align:center;padding:2px 6px 0}
+ .immersive-tour .hall-closeup .hall-closeup-profile{flex:1 1 auto}
+ /* the two-row bar is taller: lift the thumbsticks above it */
+ .immersive-tour .hall-closeup-on .thumbstick{bottom:124px}
+}

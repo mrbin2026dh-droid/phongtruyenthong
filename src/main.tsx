@@ -51,3 +51,4 @@ import './wayfinding.css';
 import './joystick.css';
 import './welcome.css';
 import './landscape.css';
+import './portrait.css';

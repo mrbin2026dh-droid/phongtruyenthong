@@ -1,7 +1,7 @@
 import {screenGrab} from './screenGrab';
 import {useSyncExternalStore} from 'react';
 import {Suspense,lazy,useMemo,useRef,useState,useEffect} from 'react';
-import {layoutHall,createHallPlan,fitHallStops,closeupStop,closeupOrder,FRONT_SCREEN,baseStopId} from './hallLayout.mjs';
+import {layoutHall,createHallPlan,fitHallStops,closeupStop,closeupNeighbor,FRONT_SCREEN,baseStopId} from './hallLayout.mjs';
 import {nextPresentationStop,presentationDwell} from './hallPresentation.mjs';
 import {hallPreview} from './hallPreview.mjs';
 import Dialog from '../components/Dialog';
@@ -257,8 +257,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);
   setCommand(c=>({serial:c.serial+1,from:current,to:'closeup:'+slotId}));};
  const leaveCloseup=()=>{const back=closeup?.back||'entrance';setCloseup(null);setCommand(c=>({serial:c.serial+1,from:current,to:plan.nodes[back]?back:'entrance'}));};
- const stepCloseup=(dir:number)=>{if(!closeupSlot)return;const order=closeupOrder(layout.slots,closeupSlot.group);if(order.length<2)return;
-  const i=order.findIndex((s:any)=>s.slotId===closeupSlot.slotId);openCloseup(order[(i+dir+order.length)%order.length].slotId);};
+ // 19/11: ← = the portrait on the visitor's left, → = on the right (closeupNeighbor), as seen facing the wall
+ const stepCloseup=(dir:number)=>{if(!closeupSlot)return;const next=closeupNeighbor(layout.slots,closeupSlot,dir);if(next)openCloseup(next.slotId);};
  const selectPortrait=(id:string)=>{
   if(phone&&!p.admin){const slot=layout.slots.find((s:any)=>s.person.id===id);if(slot&&closeup?.slotId!==slot.slotId){openCloseup(slot.slotId);return;}}
   p.onSelect(id);};
@@ -371,10 +371,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
   </section></div>}
 
   {closeup&&closeupSlot&&!panel&&!p.paused&&<div className="hall-closeup" role="group" aria-label={'Xem cận chân dung '+closeupSlot.person.name}>
-   <button type="button" className="hall-closeup-step" aria-label="Người trước" disabled={moving} onClick={()=>stepCloseup(-1)}><TourIcon name="left"/></button>
+   <button type="button" className="hall-closeup-step" aria-label="Người bên trái" disabled={moving} onClick={()=>stepCloseup(-1)}><TourIcon name="left"/></button>
    <div className="hall-closeup-name"><b>{closeupSlot.person.name}</b><small>{closeupSlot.person.role}</small></div>
    <button type="button" className="hall-closeup-profile" onClick={()=>p.onSelect(closeupSlot.person.id)}>Xem hồ sơ</button>
-   <button type="button" className="hall-closeup-step" aria-label="Người sau" disabled={moving} onClick={()=>stepCloseup(1)}><TourIcon name="right"/></button>
+   <button type="button" className="hall-closeup-step" aria-label="Người bên phải" disabled={moving} onClick={()=>stepCloseup(1)}><TourIcon name="right"/></button>
    <button type="button" className="hall-closeup-close" aria-label="Thoát xem cận" onClick={leaveCloseup}><TourIcon name="close"/></button>
   </div>}
   <div className={'visitor-controls'+(dockHidden?' is-hidden':'')}><nav className="visitor-dock hall-dock" aria-label="Điều hướng phòng chung">

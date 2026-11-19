@@ -124,3 +124,20 @@
 .feedback-qr-img{width:min(220px,62vw);height:auto;aspect-ratio:1;border-radius:14px;border:1px solid rgba(23,56,62,.18);background:#fff;padding:10px;box-sizing:border-box}
 .feedback-hint{margin:0;max-width:28ch;font-size:15px;line-height:1.55;color:#33415a}
 @media (prefers-reduced-motion:reduce){.feedback-yes,.feedback-no{transition:none}}
+
+/* 19/11 (người dùng: nút nhạc và toàn màn hình quá to, thô, che cảnh): hai nút tròn nhỏ dạng kính mờ, biểu tượng mảnh.
+   Màn cảm ứng 38 px. */
+.immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{
+ top:10px;width:34px;height:34px;min-height:34px;min-width:34px;padding:0;display:grid;place-items:center;border-radius:50%;
+ background:rgba(12,30,40,.34) padding-box;border:1px solid rgba(255,255,255,.38);color:#fff;box-shadow:none;
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:.82;transition:opacity .2s,background-color .2s}
+.immersive-tour .visitor-fullscreen.visitor-fullscreen{right:10px}
+.immersive-tour .visitor-sound.visitor-sound{right:52px}
+.immersive-tour .visitor-fullscreen.visitor-fullscreen svg,.immersive-tour .visitor-sound.visitor-sound svg{width:16px;height:16px;stroke-width:1.8}
+.immersive-tour .visitor-fullscreen.visitor-fullscreen:hover,.immersive-tour .visitor-sound.visitor-sound:hover{opacity:1;background-color:rgba(12,30,40,.5)}
+.immersive-tour .visitor-sound.visitor-sound[aria-pressed="false"]{color:rgba(255,255,255,.6)}
+@media (pointer:coarse){
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen,.immersive-tour .visitor-sound.visitor-sound{width:38px;height:38px;min-height:38px;min-width:38px}
+ .immersive-tour .visitor-fullscreen.visitor-fullscreen{right:8px;top:8px}
+ .immersive-tour .visitor-sound.visitor-sound{right:52px;top:8px}
+}

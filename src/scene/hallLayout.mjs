@@ -154,6 +154,25 @@ export function closeupOrder(slots,group){
  return slots.filter(s=>s.group===group||(group!=='teacher'&&group!=='staff'&&(s.group==='principal'||s.group==='deputy')))
   .sort((a,b)=>wallOrder[a.wall]-wallOrder[b.wall]||along(a)-along(b)||b.y-a.y);
 }
+/** 19/11 (người dùng: bấm mũi tên trái phải sang người bên TRÁI): the neighbour as the visitor SEES it — facing the wall,
+ * ← is the portrait to the left in the same row, → the one to the right. At the end of a wall the walk turns the corner to
+ * the next wall (→ continues on the wall to the right: back → right → front → left), entering at its near end; with one
+ * wall only it wraps round. A row with no other portrait falls back to the whole wall. */
+const RIGHT_OF={back:[1,0],right:[0,1],front:[-1,0],left:[0,-1]};   // (x, z) of the visitor's right hand facing the wall
+const RING=['back','right','front','left'];
+export function closeupNeighbor(slots,slot,dir){
+ const pool=closeupOrder(slots,slot.group).filter(s=>s.slotId!==slot.slotId);if(!pool.length)return null;
+ const pos=s=>{const r=RIGHT_OF[s.wall]||[1,0];return s.x*r[0]+s.z*r[1];};
+ const pick=list=>list.sort((a,b)=>(pos(a)-pos(b))*dir||Math.abs(a.y-slot.y)-Math.abs(b.y-slot.y))[0];
+ for(const sameRow of [true,false]){
+  const inRow=s=>!sameRow||Math.abs(s.y-slot.y)<.3;
+  const here=pool.filter(s=>s.wall===slot.wall&&inRow(s)&&(pos(s)-pos(slot))*dir>1e-6);
+  if(here.length)return pick(here);
+  const start=RING.indexOf(slot.wall);
+  for(let k=1;k<=4;k++){const wall=RING[((start+dir*k)%4+4)%4];const list=pool.filter(s=>s.wall===wall&&inRow(s));if(list.length)return pick(list);}
+ }
+ return null;
+}
 export function isWalkable([x,y,z]){
  if(!Number.isFinite(x+y+z)||y<1.3||y>2.4)return false;
  // 15/11 (b): doorway strip, then the whole foyer floor (stay clear of the glass, stair opening and facade).
