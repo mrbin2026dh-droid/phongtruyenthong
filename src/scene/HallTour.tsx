@@ -5,6 +5,7 @@ import {layoutHall,createHallPlan,fitHallStops,closeupStop,closeupNeighbor,FRONT
 import {nextPresentationStop,presentationDwell} from './hallPresentation.mjs';
 import {hallPreview} from './hallPreview.mjs';
 import Dialog from '../components/Dialog';
+import {roleText} from '../data/catalog.mjs';
 import {FEEDBACK_URL} from './FeedbackLectern';
 import FeedbackDialog from '../components/FeedbackDialog';
 // Admin tools are compiled only into the local dev server; the public build contains none of them.
@@ -296,7 +297,10 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
 
  // force: "Về cổng vào" may interrupt a walk or the presentation.
  const go=(id:string,force=false)=>{if(!ready||atDoor||(moving&&!force)||p.paused||!plan.nodes[id])return;setAutomatic(false);setChooseMode(false);setComplete(false);setPanel(null);setManual(false);setPause(false);setCommand(c=>({serial:c.serial+1,from:current,to:id}));};
- function start(fromHere=false){if(atDoor){openDoor();return;}setChooseMode(false);setComplete(false);setManual(false);setPause(false);setPanel(null);remaining.current=presentationDwell(active);setAutomatic(true);if((!fromHere&&current!=='entrance')||current==='finish')setCommand(c=>({serial:c.serial+1,from:current,to:'entrance'}));}
+ // 19/11 (rà soát trước khi công bố): ở sảnh, ▶ “Trình diễn tự động” chỉ mở cửa rồi đứng yên — phải bấm lần nữa. Giờ ghi nhớ
+ // ý định: vào tới điểm đầu là trình diễn tự chạy luôn.
+ const autoAfterEntry=useRef(false);
+ function start(fromHere=false){if(atDoor){autoAfterEntry.current=true;openDoor();return;}setChooseMode(false);setComplete(false);setManual(false);setPause(false);setPanel(null);remaining.current=presentationDwell(active);setAutomatic(true);if((!fromHere&&current!=='entrance')||current==='finish')setCommand(c=>({serial:c.serial+1,from:current,to:'entrance'}));}
  const toggle=(next:'map'|'more',e:React.MouseEvent<HTMLButtonElement>)=>{trigger.current=e.currentTarget;setManual(false);setPanel(v=>v===next?null:next);};
  function full(){if(document.fullscreenElement)void document.exitFullscreen();else void host.current?.requestFullscreen();}
  function audio(){if(p.speaking){p.onSilence();setVoice(false);}else{setVoice(true);p.onNarrate(hallNarration(active,{displayed:layout.displayed,mockCount:p.mockCount}));}}
@@ -343,7 +347,8 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
     onArrive={id=>{const entered=arriving&&id==='entrance';setCurrent(id);setMoving(false);setArriving(false);
      // 16/11 (user): “luôn luôn” the manual visit — after the door the visitor walks freely (Tự bước on, no mode chooser);
      // the ▶ button still starts the automatic presentation.
-     if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}}}
+     if(entered&&autoAfterEntry.current){autoAfterEntry.current=false;start(true);}
+     else if(entered){setCommand(c=>({serial:c.serial+1,from:id,to:id,manual:true}));setManual(true);}}}
     onMotion={setMoving}
     onSelect={selectPortrait}
     onGo={go}
@@ -372,7 +377,7 @@ function Visit(p:Props&AdminProps&{layout:any;onPage:(n:number)=>void;mockCount:
 
   {closeup&&closeupSlot&&!panel&&!p.paused&&<div className="hall-closeup" role="group" aria-label={'Xem cận chân dung '+closeupSlot.person.name}>
    <button type="button" className="hall-closeup-step" aria-label="Người bên trái" disabled={moving} onClick={()=>stepCloseup(-1)}><TourIcon name="left"/></button>
-   <div className="hall-closeup-name"><b>{closeupSlot.person.name}</b><small>{closeupSlot.person.role}</small></div>
+   <div className="hall-closeup-name"><b>{closeupSlot.person.name}</b><small>{roleText(closeupSlot.person.role)}</small></div>
    <button type="button" className="hall-closeup-profile" onClick={()=>p.onSelect(closeupSlot.person.id)}>Xem hồ sơ</button>
    <button type="button" className="hall-closeup-step" aria-label="Người bên phải" disabled={moving} onClick={()=>stepCloseup(1)}><TourIcon name="right"/></button>
    <button type="button" className="hall-closeup-close" aria-label="Thoát xem cận" onClick={leaveCloseup}><TourIcon name="close"/></button>

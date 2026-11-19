@@ -16,6 +16,8 @@ export function nameKey(value){return String(value||'').normalize('NFD').replace
 export function migratePeople(seed){
  return seed.people.map(({periods,...p},i)=>({...p,group:/^(Hiệu trưởng|Phó Hiệu trưởng)$/i.test(p.role)?'management':p.role==='Nhân viên'?'staff':'teacher',birthYear:null,photoRatio:i%2?2/3:3/4,workHistory:[{id:p.id+'-work-1',startYear:p.startYear,endYear:p.endYear,role:p.role}]}));
 }
+/** 19/11 (rà soát trước khi công bố): chức danh nhập tay lúc “Giáo Viên”, lúc “Giáo viên” — hiển thị thống nhất “Giáo viên”, “Nhân viên” (giữ nguyên “Phó Hiệu trưởng”, “Tổ trưởng”…). */
+export const roleText=r=>String(r||'').trim().replace(/\s+/g,' ').replace(/(Giáo|Nhân) Viên/g,'$1 viên');
 export function workHistoryText(p){
  return p.workHistory.map((h,i)=>h.startYear+' – '+(h.endYear??(p.status==='Đang công tác'&&i===p.workHistory.length-1?'nay':'chưa xác định'))).join('; ');
 }

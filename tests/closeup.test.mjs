@@ -94,3 +94,10 @@ test('19/11 (người dùng: iPhone cầm dọc xuống dòng xấu; nút nhạc
  assert.ok(css.includes('.immersive-tour .hall-closeup-name{order:-1;flex:1 0 100%'),'close-up bar: name above the buttons on a narrow phone');
  assert.ok(hall.includes('top:10px;width:34px;height:34px')&&hall.includes('border-radius:50%'),'small round glass buttons');
 });
+
+test('19/11 (rà soát): ▶ ở sảnh mở cửa rồi tự trình diễn; chức danh hiển thị thống nhất',async()=>{
+ const t=readFileSync(new URL('../src/scene/HallTour.tsx',import.meta.url),'utf8');
+ assert.ok(t.includes('if(atDoor){autoAfterEntry.current=true;openDoor();return;}')&&t.includes('if(entered&&autoAfterEntry.current){autoAfterEntry.current=false;start(true);}'));
+ const {roleText}=await import('../src/data/catalog.mjs');
+ assert.equal(roleText('Giáo Viên'),'Giáo viên');assert.equal(roleText('Nhân Viên'),'Nhân viên');assert.equal(roleText('Phó Hiệu trưởng'),'Phó Hiệu trưởng');assert.equal(roleText('Tổ trưởng'),'Tổ trưởng');
+});
