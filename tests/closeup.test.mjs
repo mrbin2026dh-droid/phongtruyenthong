@@ -89,7 +89,7 @@ test('19/11 (người dùng): ← sang người bên TRÁI, → sang người b�
 test('19/11 (người dùng: iPhone cầm dọc xuống dòng xấu; nút nhạc/toàn màn hình to, thô)',()=>{
  const css=readFileSync(new URL('../src/portrait.css',import.meta.url),'utf8'),hall=readFileSync(new URL('../src/hall.css',import.meta.url),'utf8');
  assert.ok(readFileSync(new URL('../src/main.tsx',import.meta.url),'utf8').includes("import './portrait.css';"));
- assert.ok(css.includes('@media (orientation:portrait) and (pointer:coarse) and (max-width:600px)')&&css.includes('.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 68px);min-height:0}'),'the 3D view fills an upright phone');
+ assert.ok(css.includes('@media (orientation:portrait) and (pointer:coarse) and (max-width:600px)')&&css.includes('.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 56px);min-height:0}')&&css.includes('header:has(+ main.museum-view){height:52px;'),'the 3D view fills an upright phone; slim tour header (19/11)');
  assert.ok(css.includes('.hall-scene:has(.hall-panel-shade) .thumbstick'),'thumbsticks never cover an open panel');
  assert.ok(css.includes('.immersive-tour .hall-closeup-name{order:-1;flex:1 0 100%'),'close-up bar: name above the buttons on a narrow phone');
  assert.ok(hall.includes('top:10px;width:34px;height:34px')&&hall.includes('border-radius:50%'),'small round glass buttons');

@@ -2,13 +2,13 @@
    thanh tiêu đề gọn 56 px, khung 3D dùng hết phần còn lại của màn hình (trước đây còn ~140 px trống bên dưới và màn chờ
    bị cắt chữ), bảng Tùy chọn / Sơ đồ không bị hai cần điều khiển đè lên, các hàng chữ + ô chọn tự xuống dòng gọn. */
 @media (orientation:portrait) and (pointer:coarse) and (max-width:600px){
- header:has(+ main.museum-view){height:56px;min-height:0;padding:6px 12px;gap:10px;flex-wrap:nowrap;box-sizing:border-box}
- header:has(+ main.museum-view) .emblem{width:34px;height:34px;font-size:17px;outline-offset:3px}
- header:has(+ main.museum-view) .brand{gap:10px}
- header:has(+ main.museum-view) .brand b{font-size:14px;letter-spacing:.4px}
- header:has(+ main.museum-view) .brand small{font-size:8px;letter-spacing:2px;margin-top:3px}
- main.museum-view{padding:6px}
- .immersive-tour .guided-scene,.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 68px);min-height:0}
+ header:has(+ main.museum-view){height:46px;min-height:0;padding:0 12px;gap:10px;flex-wrap:nowrap;box-sizing:border-box}
+ header:has(+ main.museum-view) .emblem{width:28px;height:28px;font-size:14px;outline-offset:2px}
+ header:has(+ main.museum-view) .brand{gap:9px}
+ header:has(+ main.museum-view) .brand b{font-size:13px;letter-spacing:.5px}
+ header:has(+ main.museum-view) .brand small{font-size:7.5px;letter-spacing:2px;margin-top:2px}
+ main.museum-view{padding:5px}
+ .immersive-tour .guided-scene,.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 56px);min-height:0}
  .visit-rotate-hint{margin:12px auto 0;padding:8px 12px;gap:10px;max-width:calc(100% - 28px);font-size:12px;line-height:1.45;box-sizing:border-box}
  .visit-rotate-hint svg{flex-basis:28px;width:28px;height:28px}
  .visit-rotate-hint span{text-wrap:balance}
@@ -25,4 +25,15 @@
  .immersive-tour .hall-closeup .hall-closeup-profile{flex:1 1 auto}
  /* the two-row bar is taller: lift the thumbsticks above it */
  .immersive-tour .hall-closeup-on .thumbstick{bottom:124px}
+}
+/* 19/11 (người dùng: thanh tiêu đề xanh chiếm quá nhiều chỗ khi tham quan): trong phòng 3D thanh tiêu đề gọn 52 px trên
+   máy tính / máy tính bảng (trước 83 px), chỉ vàng mảnh 1 px, logo và chữ nhỏ lại; khung 3D nới ra phần còn lại. Trang chào giữ nguyên. */
+@media (min-width:601px) and (min-height:501px){
+ header:has(+ main.museum-view){height:52px;min-height:0;padding:0 24px;gap:14px;flex-wrap:nowrap;box-sizing:border-box;border-bottom-width:1px}
+ header:has(+ main.museum-view) .emblem{width:32px;height:32px;font-size:16px;outline-offset:3px}
+ header:has(+ main.museum-view) .brand{gap:11px}
+ header:has(+ main.museum-view) .brand b{font-size:15px;letter-spacing:.6px}
+ header:has(+ main.museum-view) .brand small{font-size:8.5px;letter-spacing:2.6px;margin-top:3px}
+ main.museum-view{padding:8px 12px 10px}
+ .immersive-tour .guided-scene,.immersive-tour .guided-scene.hall-scene{height:calc(100dvh - 70px);min-height:0}
 }
