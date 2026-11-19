@@ -64,7 +64,7 @@
    ngang: thanh tiêu đề gọn 44 px và khung vừa một màn hình — nút “Bắt đầu tham quan” luôn thấy ngay (trước nằm dưới mép). */
 .welcome-intro .welcome-lead{text-wrap:balance}
 @media (orientation:portrait) and (max-width:700px){
- .welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px);box-sizing:border-box}
+ .welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px - var(--footer-h,0px));box-sizing:border-box}
  .welcome-hero{flex:1;grid-template-rows:minmax(200px,1fr) auto}
  .welcome-campus{aspect-ratio:auto;min-height:200px}
  .welcome-intro{padding:26px 22px 26px}
@@ -74,11 +74,34 @@
  header:has(+ main .welcome-page) .emblem,header:has(+ .welcome-page) .emblem{width:28px;height:28px;font-size:14px;outline-offset:2px}
  header:has(+ main .welcome-page) .brand b,header:has(+ .welcome-page) .brand b{font-size:14px}
  header:has(+ main .welcome-page) .brand small,header:has(+ .welcome-page) .brand small{font-size:8px;margin-top:2px}
- .welcome-page{padding:8px 12px;height:calc(100dvh - 44px);box-sizing:border-box;display:flex}
+ .welcome-page{padding:8px 12px;height:calc(100dvh - 44px - var(--footer-h,0px));box-sizing:border-box;display:flex}
  .welcome-hero{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
  .welcome-campus{min-height:0}
  .welcome-intro{padding:14px 22px;justify-content:center}
  .welcome-intro .welcome-lead{font-size:14px;line-height:1.65;max-width:340px}
  .welcome-intro .welcome-ornament{margin:12px auto 14px}
  .welcome-intro .welcome-start{min-height:44px}
+}
+/* 19/11 (người dùng): chân trang công khai — cùng nền xanh đậm và chỉ vàng của thanh tiêu đề, một dòng chữ ở giữa,
+   cao cố định để màn hình chào vẫn vừa đúng một màn hình điện thoại (trừ --footer-h). */
+:root{--footer-h:48px}
+footer.site-footer{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:10px;height:var(--footer-h);box-sizing:border-box;padding:0 16px;
+ background:linear-gradient(100deg,#07172b,#152d49 55%,#0a1c33);border-top:1px solid #c4984b;box-shadow:0 -3px 14px #1b130d26;
+ color:#f0d9a6;text-align:center}
+footer.site-footer span{font:600 clamp(11.5px,3.4vw,14px)/1.3 "Noto Serif",Georgia,serif;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+footer.site-footer::before,footer.site-footer::after{content:'';flex:0 1 46px;height:1px;background:linear-gradient(90deg,transparent,#c4984b99,transparent)}
+@media (max-width:540px){footer.site-footer::before,footer.site-footer::after{display:none}}
+@media (orientation:landscape) and (max-height:500px){:root{--footer-h:34px}footer.site-footer span{font-size:12px}}
+@supports (padding:max(0px)){footer.site-footer{padding-bottom:env(safe-area-inset-bottom,0px);height:calc(var(--footer-h) + env(safe-area-inset-bottom,0px))}}
+/* màn dọc thấp (iPhone SE 667 px): ảnh tối thiểu 150 px, khoảng đệm gọn — vẫn vừa một màn hình có chân trang */
+@media (orientation:portrait) and (max-width:700px) and (max-height:700px){
+ .welcome-hero{grid-template-rows:minmax(150px,1fr) auto}.welcome-campus{min-height:150px}
+ .welcome-intro{padding:18px 20px 18px}.welcome-intro .welcome-lead{font-size:15px;line-height:1.7}.welcome-intro .welcome-ornament{margin:14px auto 16px}
+}
+/* chân trang luôn sát đáy màn hình (máy tính: trước nằm giữa trang, dưới còn trống) */
+#root:has(> footer.site-footer){min-height:100dvh;display:flex;flex-direction:column}
+#root:has(> footer.site-footer)>main{flex:1 0 auto}
+@media (min-width:701px) and (min-height:501px){
+ #root:has(> footer.site-footer)>main.welcome-host{display:flex;flex-direction:column}
+ main.welcome-host>.welcome-page{flex:1;width:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center}
 }

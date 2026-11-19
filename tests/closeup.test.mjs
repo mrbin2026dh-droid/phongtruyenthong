@@ -155,3 +155,11 @@ test('19/11 (người dùng: màn hình đầu tiên trên điện thoại cân 
  assert.ok(w.includes('.welcome-page{display:flex;flex-direction:column;min-height:calc(100dvh - 90px);box-sizing:border-box}'),'portrait: the card fills the screen');
  assert.ok(w.includes('.welcome-page{padding:8px 12px;height:calc(100dvh - 44px);box-sizing:border-box;display:flex}'),'landscape: one screen, start button visible');
 });
+
+test('19/11 (người dùng): chân trang công khai cùng màu thanh tiêu đề, ghi tên trường; không có trong phòng 3D',()=>{
+ const a=readFileSync(new URL('../src/PeopleApp.tsx',import.meta.url),'utf8'),w=readFileSync(new URL('../src/welcome.css',import.meta.url),'utf8');
+ assert.ok(a.includes('{view!==\'room\'&&minimal&&<footer className="site-footer"><span>Trường THCS Chu Văn An - Đăk Hà - Quảng Ngãi</span></footer>}'));
+ assert.ok(w.includes('background:linear-gradient(100deg,#07172b,#152d49 55%,#0a1c33);border-top:1px solid #c4984b'),'same navy as the header');
+ assert.ok(w.includes('footer.site-footer{display:flex;flex-direction:row;flex-wrap:nowrap;'),'one row even where an old rule stacks footers');
+ assert.ok(w.includes('min-height:calc(100dvh - 90px - var(--footer-h,0px))'),'portrait welcome still one screen with the footer');
+});

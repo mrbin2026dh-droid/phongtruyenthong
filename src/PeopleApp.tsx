@@ -78,6 +78,8 @@ export default function PeopleApp(){
  {(view==='list'||view==='admin')&&!minimal&&<section className="modules" aria-label="Ba phân hệ"><button className="module-card available" onClick={()=>navigate('room')}><span>01 · ĐANG THỬ NGHIỆM</span><h3>CBQL – Giáo viên – Nhân viên</h3><p>Những người đã và đang công tác tại trường</p><b>Vào tham quan →</b></button>{[2,3].map(n=><button className="module-card" key={n} onClick={()=>setModule(n)}><span>0{n} · ĐANG XÂY DỰNG</span><h3>Tôn vinh {n===2?'giáo viên':'học sinh'} xuất sắc</h3><p>Khu vực giới thiệu — chưa triển khai</p><b>Xem thông báo →</b></button>)}</section>}
  {MC_ENABLED&&(view==='list'||view==='admin')&&!minimal&&<aside className="mc"><div><b>MC · Lời dẫn thử nghiệm</b><p role="status">{caption}</p></div><button onClick={()=>speaking?silence():speak(greeting)}>{speaking?'Tắt âm thanh':'Nghe lời chào'}</button></aside>}</main>
  {view!=='room'&&!minimal&&<footer><i>Tự hào quá khứ — Kiến tạo tương lai</i></footer>}
+ {/* 19/11 (người dùng): chân trang trang công khai, cùng màu thanh tiêu đề; không có trong phòng 3D */}
+ {view!=='room'&&minimal&&<footer className="site-footer"><span>Trường THCS Chu Văn An - Đăk Hà - Quảng Ngãi</span></footer>}
  {view!=='room'&&<UpdateBar/>}
  {module&&<Dialog title="Phân hệ đang xây dựng" onClose={()=>setModule(null)}><p>Khu vực “Tôn vinh {module===2?'giáo viên':'học sinh'} xuất sắc” hiện đang xây dựng. Vui lòng quay lại sau.</p><button className="gold" onClick={()=>setModule(null)}>Đã hiểu</button></Dialog>}
  {/* 17/11 (người dùng): hồ sơ là thật — bỏ ghi chú “giả lập”, mã hồ sơ, dòng trống; trình bày lại gọn, trang trọng */}
